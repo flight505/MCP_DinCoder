@@ -26,6 +26,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV TRANSPORT_MODE=stateless
 ENV MCP_TRANSPORT="streamable-http"
+ENV MCP_HOST="0.0.0.0"
 
 # Install only production dependencies
 RUN npm ci --omit=dev

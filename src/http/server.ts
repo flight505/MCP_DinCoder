@@ -310,10 +310,11 @@ export class McpHttpServer {
    */
   async start(port?: number): Promise<void> {
     const listenPort = port || this.config.port || 8123;
+    const listenHost = process.env.MCP_HOST || '0.0.0.0'; // Bind to all interfaces for Docker
     
     return new Promise((resolve) => {
-      this.server = this.app.listen(listenPort, () => {
-        console.error(`MCP server running at http://localhost:${listenPort}`);
+      this.server = this.app.listen(listenPort, listenHost, () => {
+        console.error(`MCP server running at http://${listenHost}:${listenPort}`);
         console.error(`Transport mode: ${this.config.transportMode}`);
         console.error(`Protocol version: 2025-03-26`);
         resolve();

@@ -14,13 +14,20 @@ export { McpHttpServer, createServer, TransportMode };
 
 // Start server - Always run for HTTP entry point
 // Smithery requires CommonJS output, so we can't use import.meta
+console.error('===== MCP DinCoder Server Startup =====');
+console.error(`Version: ${VERSION}`);
+console.error(`Environment: ${process.env.NODE_ENV || 'development'}`);
+console.error(`Transport: ${process.env.MCP_TRANSPORT || 'not set'}`);
+
 const port = parseInt(process.env.PORT || '8123', 10);
 const mode = process.env.TRANSPORT_MODE === 'stateful' 
   ? TransportMode.STATEFUL 
   : TransportMode.STATELESS;
 
-console.error(`MCP DinCoder v${VERSION} - Starting...`);
-console.error(`Port: ${port}, Mode: ${mode}`);
+console.error(`Configuration:`);
+console.error(`  Port: ${port}`);
+console.error(`  Mode: ${mode}`);
+console.error(`  Host: ${process.env.MCP_HOST || '0.0.0.0'}`);
 
 const server = new McpHttpServer({
   port,
@@ -34,7 +41,11 @@ const server = new McpHttpServer({
   },
 });
 
-server.start(port).catch((error) => {
-  console.error('Failed to start server:', error);
+console.error('Starting HTTP server...');
+server.start(port).then(() => {
+  console.error('✅ Server started successfully');
+  console.error('Ready to accept connections');
+}).catch((error) => {
+  console.error('❌ Failed to start server:', error);
   process.exit(1);
 });
