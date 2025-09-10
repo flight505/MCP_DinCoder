@@ -54,6 +54,7 @@
     "@modelcontextprotocol/sdk": "^1.17.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "mcp-dincoder": "^0.1.2",
     "zod": "^3.25.76"
   },
   "devDependencies": {

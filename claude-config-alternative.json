@@ -1,0 +1,5 @@
+{
+  "dincoder": {
+    "command": "/opt/homebrew/bin/mcp-dincoder"
+  }
+}
