@@ -106,7 +106,7 @@ export class McpHttpServer {
           // Return info page for browser access
           res.status(200).json({
             name: 'MCP DinCoder Server',
-            version: '0.1.4',
+            version: '0.1.5',
             protocol: protocolVersion,
             transport: this.config.transportMode,
             status: 'running',
