@@ -44,7 +44,7 @@
   "author": "DinCoder Contributors",
   "license": "MIT",
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   },
   "repository": {
     "type": "git",
