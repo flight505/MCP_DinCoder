@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "description": "DinCoder - Driven Intent Negotiation Contract-Oriented Deterministic Executable Runtime. The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution.",
   "type": "module",
-  "main": "dist/index-stdio.js",
-  "types": "dist/index-stdio.d.ts",
+  "main": "dist/index.js",
+  "module": "src/index.ts",
+  "types": "dist/index.d.ts",
   "bin": {
     "mcp-dincoder": "./dist/index-stdio.js"
   },
