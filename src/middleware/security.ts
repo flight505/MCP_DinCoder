@@ -141,7 +141,9 @@ export function validateRequestMiddleware() {
     if (req.method === 'POST' && req.path === '/mcp') {
       const contentType = req.headers['content-type'];
       
-      if (!contentType || !contentType.includes('application/json')) {
+      // Skip validation if no content-type (will be handled by body parser)
+      // or if it includes application/json (with or without charset)
+      if (contentType && !contentType.includes('application/json')) {
         res.status(406).json({
           error: 'Not Acceptable',
           message: 'Content-Type must be application/json',

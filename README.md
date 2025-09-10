@@ -1,15 +1,40 @@
-# MCP DinCoder 🚀
+# DinCoder 🚀
 
-A spec-driven development orchestrator that exposes Spec Kit tools through the Model Context Protocol (MCP), enabling AI assistants to drive systematic software development workflows.
+**D**riven **I**ntent **N**egotiation — **C**ontract-**O**riented **D**eterministic **E**xecutable **R**untime
+
+> *The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution*
+
+**Transform "prompt-then-code-dump" workflows into systematic, specification-driven development**
+
+DinCoder packages GitHub's Spec-Driven Development (SDD) methodology into a Model Context Protocol server, eliminating the guesswork that plagues AI-assisted coding. Through **intent negotiation**, **contract-oriented design**, and **deterministic execution**, this server ensures AI builds exactly what you intend—not what it guesses you might want.
+
+## What is DinCoder?
+
+DinCoder represents a paradigm shift in AI-assisted development:
+
+- **Driven Intent Negotiation**: Your intent is captured through collaborative specification, not guessed from prompts
+- **Contract-Oriented**: Every component has clear contracts—APIs, data models, and test scenarios defined upfront
+- **Deterministic**: Same spec produces consistent, predictable results every time
+- **Executable Runtime**: Specifications aren't just documents—they're executable artifacts that generate code
+
+## Why Spec-Driven Development?
+
+Most AI coding workflows fail because they leave thousands of details implicit. When you give an AI a vague prompt, it has to guess at requirements, leading to code that "looks right, but doesn't quite work." This **"vibe coding"** approach might work for quick prototypes, but fails for production systems.
+
+**DinCoder eliminates that guesswork** by:
+- 📋 **Making the spec a living artifact** - Your specification is the source of truth, not the code
+- 🎯 **Separating "what" from "how"** - The spec defines what users need; the plan defines how to build it
+- ✅ **Breaking work into testable units** - Tasks are small, reviewable, and validated incrementally
+- 🔄 **Enabling iteration without rewrites** - Change the spec, regenerate the implementation
 
 ## Features
 
-- **Spec-Driven Development**: Full Spec Kit integration (specify → plan → tasks → implement)
-- **MCP Streamable HTTP**: Protocol Revision 2025-03-26 compliant implementation
-- **Smithery Ready**: Designed for deployment on Smithery platform (WebSocket hosting)
-- **Quality Assurance**: Built-in tools for formatting, linting, testing, and security audits
-- **Multi-Agent Support**: Works with Claude Code, GitHub Copilot, and Gemini CLI
-- **Session Management**: Stateless and stateful operation modes with UUID-based sessions
+- **🎯 Spec-Driven Workflow**: Full Spec Kit integration (specify → plan → tasks → implement)
+- **🔌 MCP Protocol**: Streamable HTTP (Protocol Revision 2025-03-26) compliant
+- **☁️ Smithery Ready**: Designed for deployment on Smithery platform
+- **✨ Quality First**: Built-in formatting, linting, testing, and security audits
+- **🤖 Multi-Agent**: Works with Claude Code, GitHub Copilot, and Gemini CLI
+- **🔄 Dual Mode**: Stateless and stateful operation with session management
 
 ## Quick Start
 
@@ -85,29 +110,66 @@ npm run test:watch
 
 ## Available Tools
 
-### Spec Kit Tools
+### 🎯 Core Spec-Driven Development Tools
 
-| Tool | Description |
-|------|-------------|
-| `specify.start` | Initialize a new spec-driven project |
-| `specify.describe` | Create project specification |
-| `plan.create` | Generate technical plan from specification |
-| `tasks.generate` | Generate actionable tasks from plan |
-| `tasks.tick` | Mark a task as complete |
-| `artifacts.read` | Read normalized JSON for spec/plan/tasks |
-| `research.append` | Append to research document |
-| `git.create_branch` | Create a working branch for a feature |
+These tools implement the four-phase SDD workflow that transforms specifications into working code:
 
-### Quality Tools
+#### Phase 1: SPECIFY - Create Living Specifications
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| `specify.start` | **Initialize spec-driven project** | Starting a new feature or system from scratch |
+| `specify.describe` | **Create comprehensive PRD** | Transform vague ideas into testable requirements |
+| `research.append` | **Document research findings** | Capture technical constraints and decisions |
 
-| Tool | Description |
-|------|-------------|
-| `quality.format` | Run Prettier code formatter |
-| `quality.lint` | Run ESLint linter |
-| `quality.test` | Run tests with optional coverage |
-| `quality.security_audit` | Run npm security audit |
-| `quality.deps_update` | Check for dependency updates |
-| `quality.license_check` | Check dependency licenses |
+The **Specify phase** establishes your source of truth. Instead of letting AI guess at requirements, you create unambiguous specifications that capture WHAT users need and WHY. The spec becomes a living artifact that drives all subsequent development.
+
+#### Phase 2: PLAN - Choose Technical Approach
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| `plan.create` | **Generate architecture decisions** | Map requirements to concrete technical choices |
+| `artifacts.read` | **Access spec/plan/task data** | Review and validate technical decisions |
+
+The **Plan phase** transforms specifications into actionable technical strategies. Every technology choice is justified and traced back to specific requirements. This ensures your tech stack serves your business needs, not the other way around.
+
+#### Phase 3: TASKS - Break Down Into Units
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| `tasks.generate` | **Create granular work items** | Decompose plan into testable, reviewable chunks |
+| `tasks.tick` | **Track task completion** | Mark progress and maintain workflow state |
+
+The **Tasks phase** eliminates thousand-line code dumps. Work is broken into small, independently testable units that can be reviewed and validated in isolation. Each task has clear acceptance criteria derived from specifications.
+
+#### Phase 4: IMPLEMENT - Build With Validation
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| `git.create_branch` | **Create feature branches** | Isolate implementation work for each task |
+| Implementation happens through your AI coding agent using the generated tasks as precise instructions |
+
+The **Implement phase** produces code that serves the specification. Instead of reviewing massive code blocks, you validate focused changes that solve specific problems. The AI knows exactly what to build because the specification told it.
+
+### 🔧 Quality Assurance Tools
+
+Ensure code meets specifications and production standards:
+
+| Tool | Purpose | Best Practice |
+|------|---------|---------------|
+| `quality.format` | **Code formatting with Prettier** | Run before commits to maintain consistency |
+| `quality.lint` | **Static analysis with ESLint** | Catch issues early in development |
+| `quality.test` | **Execute test suites** | Validate code against specifications |
+| `quality.security_audit` | **Check for vulnerabilities** | Run before deployments |
+| `quality.deps_update` | **Dependency management** | Keep dependencies current and secure |
+| `quality.license_check` | **License compliance** | Ensure legal compatibility |
+
+### 📊 The SDD Advantage
+
+Traditional prompt-based workflows produce code through guesswork. Spec-Driven Development produces code through systematic validation:
+
+```
+Traditional: Vague Prompt → AI Guesses → "Looks Right" Code → Production Failures
+SDD:         Clear Spec → Validated Plan → Testable Tasks → Quality Code
+```
+
+This structure is what improves quality versus "vibe coding" - the spec is your source of truth, the plan chooses the technical approach, and tasks break work into small, testable units.
 
 ## Examples
 

@@ -1,0 +1,53 @@
+# Source files
+src/
+tests/
+
+# Configuration files
+.github/
+.vscode/
+*.config.js
+*.config.ts
+.eslintrc*
+.prettierrc*
+vitest.config.ts
+tsconfig.json
+smithery.yaml
+
+# Development files
+*.log
+*.md
+!README.md
+examples/
+docs/
+specs/
+coverage/
+.env*
+
+# Test files
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+test-*.mjs
+
+# Build artifacts
+*.tsbuildinfo
+
+# IDE
+.idea/
+*.sublime-*
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.git/
+.gitignore
+.npmignore
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+plan.md
+CLAUDE.md

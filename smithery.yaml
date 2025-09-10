@@ -1,0 +1,64 @@
+runtime: typescript
+
+# DinCoder - The Spec-Driven MCP Server
+# Driven Intent Negotiation — Contract-Oriented Deterministic Executable Runtime
+
+name: DinCoder
+description: |
+  Transform "prompt-then-code-dump" workflows into systematic, specification-driven development.
+  DinCoder packages GitHub's Spec-Driven Development methodology into an MCP server that ensures
+  AI builds exactly what you intend through intent negotiation, contract-oriented design, and
+  deterministic execution.
+
+# Build configuration for TypeScript runtime
+build:
+  script: npm run build
+
+# Development configuration
+dev:
+  script: npm run dev:http
+
+# Entry point for the server
+module: src/index.ts
+
+# Environment variables for Smithery deployment
+env:
+  PORT: "3000"
+  MODE: "stateless"
+  ALLOWED_ORIGINS: "https://*.smithery.ai,https://*.claude.ai"
+
+# MCP server configuration
+mcp:
+  # Protocol version support
+  protocolVersion: "2025-03-26"
+  
+  # Server capabilities
+  capabilities:
+    tools: true
+    resources: false
+    prompts: false
+    notifications: false
+  
+  # Transport configuration
+  transport:
+    type: "streamable-http"
+    endpoint: "/mcp"
+    
+# Tags for discoverability
+tags:
+  - spec-driven-development
+  - sdd
+  - ai-coding
+  - contract-oriented
+  - deterministic
+  - spec-kit
+  - github
+  - claude-code
+  - copilot
+  - mcp
+
+# Repository information
+repository: https://github.com/dincoder/mcp-server
+
+# License
+license: MIT

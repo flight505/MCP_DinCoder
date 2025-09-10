@@ -1,6 +1,5 @@
 import { Request } from 'express';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 import { randomUUID } from 'node:crypto';
 
 /**
@@ -25,6 +24,7 @@ export interface TransportConfig {
 export class SessionManager {
   private sessions: Map<string, {
     transport: StreamableHTTPServerTransport;
+    server?: any; // MCP Server instance
     lastAccess: number;
   }> = new Map();
   
@@ -41,7 +41,8 @@ export class SessionManager {
    * Get or create a session
    */
   getSession(sessionId?: string): { 
-    transport: StreamableHTTPServerTransport; 
+    transport: StreamableHTTPServerTransport;
+    server?: any; 
     sessionId: string;
     isNew: boolean;
   } {
@@ -51,7 +52,8 @@ export class SessionManager {
       const session = this.sessions.get(sessionId)!;
       session.lastAccess = now;
       return { 
-        transport: session.transport, 
+        transport: session.transport,
+        server: session.server, 
         sessionId,
         isNew: false,
       };
@@ -64,11 +66,20 @@ export class SessionManager {
       enableJsonResponse: true, // Enable JSON responses
     });
 
-    // Apply same Content-Type fix as stateless transport
+    // Apply same Content-Type fix and notification handling as stateless transport
     const originalHandleRequest = transport.handleRequest.bind(transport);
     transport.handleRequest = async function(req: any, res: any, parsedBody?: unknown) {
+      // Check if this is a notification (no id field)
+      const isNotification = parsedBody && typeof parsedBody === 'object' && 
+                            'jsonrpc' in parsedBody && !('id' in parsedBody);
+      
       const originalWriteHead = res.writeHead;
       res.writeHead = function(statusCode: number, headers?: any) {
+        // For notifications, change 202 to 204 per MCP spec
+        if (isNotification && statusCode === 202) {
+          return originalWriteHead.call(this, 204, headers);
+        }
+        
         if (statusCode >= 400 && statusCode < 600) {
           if (!headers || !headers['Content-Type']) {
             return originalWriteHead.call(this, statusCode, {
@@ -92,6 +103,16 @@ export class SessionManager {
       sessionId: newSessionId,
       isNew: true,
     };
+  }
+
+  /**
+   * Set server for a session
+   */
+  setSessionServer(sessionId: string, server: any): void {
+    const session = this.sessions.get(sessionId);
+    if (session) {
+      session.server = server;
+    }
   }
 
   /**
@@ -146,12 +167,21 @@ export function createStatelessTransport(): StreamableHTTPServerTransport {
     enableJsonResponse: true, // Enable JSON responses for simple request/response
   });
 
-  // Monkey-patch handleRequest to ensure Content-Type is set
+  // Monkey-patch handleRequest to ensure Content-Type is set and handle notifications properly
   const originalHandleRequest = transport.handleRequest.bind(transport);
   transport.handleRequest = async function(req: any, res: any, parsedBody?: unknown) {
+    // Check if this is a notification (no id field)
+    const isNotification = parsedBody && typeof parsedBody === 'object' && 
+                          'jsonrpc' in parsedBody && !('id' in parsedBody);
+    
     // Intercept writeHead to ensure Content-Type is set for JSON responses
     const originalWriteHead = res.writeHead;
     res.writeHead = function(statusCode: number, headers?: any) {
+      // For notifications, change 202 to 204 per MCP spec
+      if (isNotification && statusCode === 202) {
+        return originalWriteHead.call(this, 204, headers);
+      }
+      
       // If sending an error status and no Content-Type set, add it
       if (statusCode >= 400 && statusCode < 600) {
         if (!headers || !headers['Content-Type']) {
@@ -206,11 +236,12 @@ export function getSessionIdFromRequest(req: Request): string | undefined {
  * Checks if request is an initialization request
  */
 export function isInitRequest(body: unknown): boolean {
-  try {
-    return isInitializeRequest(body);
-  } catch {
-    return false;
+  // Simple check - just look for method === 'initialize'
+  // The SDK's isInitializeRequest is too strict and requires clientInfo
+  if (body && typeof body === 'object' && 'method' in body) {
+    return (body as any).method === 'initialize';
   }
+  return false;
 }
 
 /**

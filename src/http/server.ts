@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { createServer } from '../server/createServer.js';
 import { createApp, AppConfig } from './app.js';
 import {
@@ -43,6 +43,9 @@ export class McpHttpServer {
     
     // Setup MCP endpoints
     this.setupEndpoints();
+    
+    // Add error handling middleware at the end
+    this.setupErrorHandlers();
   }
 
   /**
@@ -245,7 +248,7 @@ export class McpHttpServer {
     }
     
     try {
-      const { transport, sessionId, isNew } = this.sessionManager!.getSession(
+      const { transport, server: existingServer, sessionId, isNew } = this.sessionManager!.getSession(
         isInit ? undefined : requestSessionId
       );
       
@@ -255,9 +258,12 @@ export class McpHttpServer {
       }
       
       // Connect server if new session
+      let server = existingServer;
       if (isNew) {
-        const server = createServer();
+        server = createServer();
         await server.connect(transport);
+        // Store the server in the session
+        this.sessionManager!.setSessionServer(sessionId, server);
       }
       
       await transport.handleRequest(req as any, res as any, req.body);
@@ -275,6 +281,28 @@ export class McpHttpServer {
         });
       }
     }
+  }
+
+  /**
+   * Setup error handlers
+   */
+  private setupErrorHandlers(): void {
+    // JSON parsing error handler
+    this.app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
+      if (err && (err.type === 'entity.parse.failed' || err instanceof SyntaxError)) {
+        // JSON parse error
+        res.status(400).json({
+          jsonrpc: '2.0',
+          error: {
+            code: -32700,
+            message: 'Parse error: Invalid JSON'
+          },
+          id: null
+        });
+        return;
+      }
+      next(err);
+    });
   }
 
   /**
