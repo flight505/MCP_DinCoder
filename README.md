@@ -17,9 +17,40 @@ A spec-driven development orchestrator that exposes Spec Kit tools through the M
 
 - Node.js >= 20.0.0
 - npm or pnpm
-- Git
 
 ### Installation
+
+#### For Claude Code / VS Code Users
+
+Install the server globally via npm:
+
+```bash
+npm install -g @dincoder/mcp-server
+```
+
+Then add it to Claude Code:
+
+```bash
+claude mcp add dincoder -- npx -y @dincoder/mcp-server
+```
+
+Or configure manually in your Claude Code config:
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- Linux: `~/.config/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "dincoder": {
+      "command": "npx",
+      "args": ["-y", "@dincoder/mcp-server"]
+    }
+  }
+}
+```
+
+#### For Development
 
 ```bash
 # Clone the repository
@@ -31,15 +62,12 @@ npm install
 
 # Build the project
 npm run build
-```
 
-### Running Locally
+# Run with stdio transport (default)
+npm start
 
-```bash
-# Start the MCP server
-npm run start:local
-
-# The server will be available at http://localhost:3000/mcp
+# Run with HTTP transport
+npm run start:http
 ```
 
 ### Running Tests

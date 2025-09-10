@@ -146,32 +146,32 @@ Goal: Ensure autonomous agents don't degrade the codebase.
 
 ⸻
 
-Story 9 — Validation & conformance to MCP spec
+Story 9 — Validation & conformance to MCP spec ✅
 
 Goal: Prove we follow the letter of the spec.
 
-	•	Add JSON‑RPC schema tests for requests/responses.  ￼
-	•	Add tests for resumability using SSE id and Last-Event-ID headers (server may support replay).  ￼
-	•	Add a test for rejecting invalid Origin.  ￼
-	•	Add tests ensuring single endpoint path for POST/GET/DELETE (/mcp).  ￼
-	•	Verify MCP‑Protocol‑Version negotiation is honored.  ￼
-	•	Create docs/conformance.md summarizing checks with links to spec sections.  ￼
+	• ✅	Add JSON‑RPC schema tests for requests/responses.  ￼
+	• ✅	Add tests for resumability using SSE id and Last-Event-ID headers (server may support replay).  ￼
+	• ✅	Add a test for rejecting invalid Origin.  ￼
+	• ✅	Add tests ensuring single endpoint path for POST/GET/DELETE (/mcp).  ￼
+	• ✅	Verify MCP‑Protocol‑Version negotiation is honored.  ￼
+	• ✅	Create docs/conformance.md summarizing checks with links to spec sections.  ￼
 
 ⸻
 
-Story 10 — Configuration, security & ops
+Story 10 — Configuration, security & ops ✅
 
 Goal: Make it safe to run remotely.
 
-	•	Parse Smithery ?config=<base64> and map to internal config schema (Zod).  ￼
-	•	Add CONFIG_ORIGIN_WHITELIST and validate on every request.  ￼
-	•	Support API key auth via Authorization: Bearer <token> (optional).
-	•	Integrate structured logging (pino); never leak secrets in logs.
-	•	Health endpoint GET /healthz (non‑MCP) with build info.
-	•	Rate limiting on /mcp (token bucket per IP/session).
-	•	Add CORS controls (default deny; allow configured origins).
-	•	Provide Dockerfile (node:22-alpine) with non‑root user.
-	•	Add SECURITY.md listing threat model and mitigations (DNS rebinding, auth).  ￼
+	• ✅	Parse Smithery ?config=<base64> and map to internal config schema (Zod).  ￼
+	• ✅	Add CONFIG_ORIGIN_WHITELIST and validate on every request.  ￼
+	• ✅	Support API key auth via Authorization: Bearer <token> (optional).
+	• ✅	Integrate structured logging (pino); never leak secrets in logs.
+	• ✅	Health endpoint GET /healthz (non‑MCP) with build info.
+	• ✅	Rate limiting on /mcp (token bucket per IP/session).
+	• ✅	Add CORS controls (default deny; allow configured origins).
+	• ✅	Provide Dockerfile (node:22-alpine) with non‑root user.
+	• ✅	Add SECURITY.md listing threat model and mitigations (DNS rebinding, auth).  ￼
 
 ⸻
 

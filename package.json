@@ -1,14 +1,19 @@
 {
-  "name": "mcp-dincoder",
+  "name": "@dincoder/mcp-server",
   "version": "0.0.1",
-  "description": "Spec-Driven MCP Orchestrator with Streamable HTTP transport",
+  "description": "MCP DinCoder Server - Spec-driven development assistant",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/index-stdio.js",
+  "types": "dist/index-stdio.d.ts",
+  "bin": {
+    "mcp-dincoder": "./dist/index-stdio.js"
+  },
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsup src/index.ts --format esm --dts --clean",
-    "start:local": "node dist/index.js",
+    "dev": "tsx watch src/index-stdio.ts",
+    "dev:http": "tsx watch src/index.ts",
+    "build": "tsup src/index-stdio.ts src/index.ts --format esm --dts --clean",
+    "start": "node dist/index-stdio.js",
+    "start:http": "node dist/index.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
@@ -33,6 +38,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.5",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "zod": "^3.25.76"
   },

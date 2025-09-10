@@ -61,7 +61,26 @@ export class SessionManager {
     const newSessionId = randomUUID();
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => newSessionId,
+      enableJsonResponse: true, // Enable JSON responses
     });
+
+    // Apply same Content-Type fix as stateless transport
+    const originalHandleRequest = transport.handleRequest.bind(transport);
+    transport.handleRequest = async function(req: any, res: any, parsedBody?: unknown) {
+      const originalWriteHead = res.writeHead;
+      res.writeHead = function(statusCode: number, headers?: any) {
+        if (statusCode >= 400 && statusCode < 600) {
+          if (!headers || !headers['Content-Type']) {
+            return originalWriteHead.call(this, statusCode, {
+              ...headers,
+              'Content-Type': 'application/json'
+            });
+          }
+        }
+        return originalWriteHead.call(this, statusCode, headers);
+      };
+      return originalHandleRequest(req, res, parsedBody);
+    };
     
     this.sessions.set(newSessionId, {
       transport,
@@ -119,11 +138,36 @@ export class SessionManager {
 
 /**
  * Creates a stateless transport (new instance per request)
+ * Wraps the transport to ensure proper Content-Type headers
  */
 export function createStatelessTransport(): StreamableHTTPServerTransport {
-  return new StreamableHTTPServerTransport({
+  const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined, // No session management
+    enableJsonResponse: true, // Enable JSON responses for simple request/response
   });
+
+  // Monkey-patch handleRequest to ensure Content-Type is set
+  const originalHandleRequest = transport.handleRequest.bind(transport);
+  transport.handleRequest = async function(req: any, res: any, parsedBody?: unknown) {
+    // Intercept writeHead to ensure Content-Type is set for JSON responses
+    const originalWriteHead = res.writeHead;
+    res.writeHead = function(statusCode: number, headers?: any) {
+      // If sending an error status and no Content-Type set, add it
+      if (statusCode >= 400 && statusCode < 600) {
+        if (!headers || !headers['Content-Type']) {
+          return originalWriteHead.call(this, statusCode, {
+            ...headers,
+            'Content-Type': 'application/json'
+          });
+        }
+      }
+      return originalWriteHead.call(this, statusCode, headers);
+    };
+
+    return originalHandleRequest(req, res, parsedBody);
+  };
+
+  return transport;
 }
 
 /**

@@ -55,6 +55,20 @@ export class McpHttpServer {
         const protocolVersion = getProtocolVersion(req);
         res.setHeader('MCP-Protocol-Version', protocolVersion);
         
+        // Ensure body is parsed
+        if (!req.body || typeof req.body !== 'object') {
+          console.error('Invalid body:', req.body);
+          res.status(400).json({
+            jsonrpc: '2.0',
+            error: {
+              code: -32700,
+              message: 'Parse error: Request body must be valid JSON'
+            },
+            id: null
+          });
+          return;
+        }
+        
         if (this.config.transportMode === TransportMode.STATELESS) {
           await this.handleStatelessRequest(req, res);
         } else {
@@ -186,8 +200,28 @@ export class McpHttpServer {
       server.close();
     });
     
-    await server.connect(transport);
-    await transport.handleRequest(req, res, req.body);
+    try {
+      // Connect the server to the transport (this also starts the transport)
+      await server.connect(transport);
+      
+      // Pass the body directly as the JSON-RPC message
+      // The transport will handle the request and send responses
+      await transport.handleRequest(req as any, res as any, req.body);
+    } catch (error) {
+      console.error('Transport handling error:', error);
+      // If transport fails, return a proper JSON-RPC error
+      if (!res.headersSent) {
+        res.status(200).json({
+          jsonrpc: '2.0',
+          error: {
+            code: -32603,
+            message: 'Internal error',
+            data: error instanceof Error ? error.message : 'Unknown error'
+          },
+          id: req.body?.id || null
+        });
+      }
+    }
   }
 
   /**
@@ -205,27 +239,42 @@ export class McpHttpServer {
           code: -32600,
           message: 'Session ID required for non-initialization requests',
         },
-        id: null,
+        id: req.body?.id || null,
       });
       return;
     }
     
-    const { transport, sessionId, isNew } = this.sessionManager!.getSession(
-      isInit ? undefined : requestSessionId
-    );
-    
-    // Set session ID header for new sessions
-    if (isInit && isNew) {
-      res.setHeader('Mcp-Session-Id', sessionId);
+    try {
+      const { transport, sessionId, isNew } = this.sessionManager!.getSession(
+        isInit ? undefined : requestSessionId
+      );
+      
+      // Set session ID header for new sessions
+      if (isInit && isNew) {
+        res.setHeader('Mcp-Session-Id', sessionId);
+      }
+      
+      // Connect server if new session
+      if (isNew) {
+        const server = createServer();
+        await server.connect(transport);
+      }
+      
+      await transport.handleRequest(req as any, res as any, req.body);
+    } catch (error) {
+      console.error('Stateful request handling error:', error);
+      if (!res.headersSent) {
+        res.status(200).json({
+          jsonrpc: '2.0',
+          error: {
+            code: -32603,
+            message: 'Internal error',
+            data: error instanceof Error ? error.message : 'Unknown error'
+          },
+          id: req.body?.id || null
+        });
+      }
     }
-    
-    // Connect server if new session
-    if (isNew) {
-      const server = createServer();
-      await server.connect(transport);
-    }
-    
-    await transport.handleRequest(req, res, req.body);
   }
 
   /**
