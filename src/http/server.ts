@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { randomUUID } from 'node:crypto';
 import { createServer } from '../server/createServer.js';
 import { createApp, AppConfig } from './app.js';
 import {
@@ -194,6 +195,17 @@ export class McpHttpServer {
    * Handle stateless request
    */
   private async handleStatelessRequest(req: Request, res: Response): Promise<void> {
+    // In stateless mode, we create a new server/transport per request
+    // The SDK handles session management internally
+    const isInit = isInitRequest(req.body);
+    
+    // If this is an init request, we can optionally set a session ID header
+    // but it's not required in stateless mode since each request is independent
+    if (isInit) {
+      const sessionId = randomUUID();
+      res.setHeader('Mcp-Session-Id', sessionId);
+    }
+    
     const server = createServer();
     const transport = createStatelessTransport();
     
@@ -252,8 +264,8 @@ export class McpHttpServer {
         isInit ? undefined : requestSessionId
       );
       
-      // Set session ID header for new sessions
-      if (isInit && isNew) {
+      // Set session ID header on all initialization requests
+      if (isInit) {
         res.setHeader('Mcp-Session-Id', sessionId);
       }
       

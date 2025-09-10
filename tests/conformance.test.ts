@@ -134,7 +134,11 @@ describe('MCP Specification Conformance', () => {
           method: 'initialize',
           params: {
             protocolVersion: '2025-03-26',
-            capabilities: {}
+            capabilities: {},
+            clientInfo: {
+              name: 'test-client',
+              version: '1.0.0'
+            }
           }
         });
 
@@ -153,7 +157,11 @@ describe('MCP Specification Conformance', () => {
           method: 'initialize',
           params: {
             protocolVersion: '2025-03-26',
-            capabilities: {}
+            capabilities: {},
+            clientInfo: {
+              name: 'test-client',
+              version: '1.0.0'
+            }
           }
         });
 
@@ -191,7 +199,11 @@ describe('MCP Specification Conformance', () => {
           method: 'initialize',
           params: {
             protocolVersion: '2025-03-26',
-            capabilities: {}
+            capabilities: {},
+            clientInfo: {
+              name: 'test-client',
+              version: '1.0.0'
+            }
           }
         });
 
@@ -214,7 +226,11 @@ describe('MCP Specification Conformance', () => {
           method: 'initialize',
           params: {
             protocolVersion: '2025-03-26',
-            capabilities: {}
+            capabilities: {},
+            clientInfo: {
+              name: 'test-client',
+              version: '1.0.0'
+            }
           }
         });
 
@@ -248,7 +264,11 @@ describe('MCP Specification Conformance', () => {
           method: 'initialize',
           params: {
             protocolVersion: '2025-03-26',
-            capabilities: {}
+            capabilities: {},
+            clientInfo: {
+              name: 'test-client',
+              version: '1.0.0'
+            }
           }
         });
 

@@ -179,10 +179,10 @@ export function loggingMiddleware(config: Config) {
     const ip = req.ip;
     
     if (config.logLevel === 'debug') {
-      console.log(`[${timestamp}] ${method} ${path} from ${ip}`);
-      console.log('Headers:', req.headers);
+      console.error(`[${timestamp}] ${method} ${path} from ${ip}`);
+      console.error('Headers:', req.headers);
       if (req.body) {
-        console.log('Body:', JSON.stringify(req.body, null, 2));
+        console.error('Body:', JSON.stringify(req.body, null, 2));
       }
     } else if (config.logLevel === 'info') {
       console.error(`[${timestamp}] ${method} ${path}`);

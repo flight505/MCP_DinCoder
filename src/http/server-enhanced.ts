@@ -172,7 +172,7 @@ export class EnhancedMcpHttpServer {
         req.on('close', () => {
           clearInterval(interval);
           if (this.config.logLevel === 'debug') {
-            console.log(`SSE connection closed for session: ${sessionId}`);
+            console.error(`SSE connection closed for session: ${sessionId}`);
           }
         });
         
@@ -296,11 +296,11 @@ export class EnhancedMcpHttpServer {
       const host = this.config.host;
       
       this.server = this.app.listen(port, host, () => {
-        console.log(`MCP server running at http://${host}:${port}`);
-        console.log(`Mode: ${this.config.mode}`);
-        console.log(`Auth: ${this.config.enableAuth ? 'enabled' : 'disabled'}`);
-        console.log(`Rate limiting: ${this.config.rateLimit.enabled ? 'enabled' : 'disabled'}`);
-        console.log(`Protocol version: 2025-03-26`);
+        console.error(`MCP server running at http://${host}:${port}`);
+        console.error(`Mode: ${this.config.mode}`);
+        console.error(`Auth: ${this.config.enableAuth ? 'enabled' : 'disabled'}`);
+        console.error(`Rate limiting: ${this.config.rateLimit.enabled ? 'enabled' : 'disabled'}`);
+        console.error(`Protocol version: 2025-03-26`);
         resolve();
       });
     });
@@ -313,7 +313,7 @@ export class EnhancedMcpHttpServer {
     return new Promise((resolve) => {
       if (this.server) {
         this.server.close(() => {
-          console.log('MCP server stopped');
+          console.error('MCP server stopped');
           resolve();
         });
       } else {
