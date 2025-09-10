@@ -1,5 +1,5 @@
 {
-  "name": "@dincoder/mcp-server",
+  "name": "mcp-dincoder",
   "version": "0.1.0",
   "description": "DinCoder - Driven Intent Negotiation Contract-Oriented Deterministic Executable Runtime. The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution.",
   "type": "module",
