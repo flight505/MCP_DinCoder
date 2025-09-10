@@ -18,9 +18,6 @@ build:
 dev:
   script: npm run dev:http
 
-# Entry point for the server
-module: src/index.ts
-
 # Environment variables for Smithery deployment
 env:
   PORT: "3000"
