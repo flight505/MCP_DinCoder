@@ -39,22 +39,22 @@ Goal: Pin authoritative sources and pin versions.
 
 ⸻
 
-Story 2 — Greenfield repo bootstrap & developer workflow
+Story 2 — Greenfield repo bootstrap & developer workflow ✅
 
 Goal: Create a clean, boring, reproducible TypeScript workspace.
 
-	•	Initialize repo: git init; create main branch; set default Node to >=20.
-	•	Create package.json with type: "module" and scripts: dev, build, lint, format, test, start:local.
-	•	Add tsconfig.json (module/moduleResolution: "NodeNext", target: ES2022, strict: true, outDir: dist, rootDir: src). **CRITICAL: Must use NodeNext for MCP SDK compatibility.**
-	•	Install runtime deps: @modelcontextprotocol/sdk (^1.17.5+), zod, express.  ￼
-	•	Install dev deps: typescript, tsx, vitest, @vitest/coverage-v8, supertest, @types/node, @types/express, eslint, @eslint/js, typescript-eslint, prettier, tsup.
-	•	Add .editorconfig (2 spaces, LF, utf‑8).
-	•	Add .nvmrc with Node LTS; document with README blurb.
-	•	Configure ESLint: eslint.config.mjs with TS parser, node/globals, import rules.
-	•	Configure Prettier: prettier.config.cjs.
+	• ✅	Initialize repo: git init; create main branch; set default Node to >=20.
+	• ✅	Create package.json with type: "module" and scripts: dev, build, lint, format, test, start:local.
+	• ✅	Add tsconfig.json (module/moduleResolution: "NodeNext", target: ES2022, strict: true, outDir: dist, rootDir: src). **CRITICAL: Must use NodeNext for MCP SDK compatibility.**
+	• ✅	Install runtime deps: @modelcontextprotocol/sdk (^1.17.5+), zod, express.  ￼
+	• ✅	Install dev deps: typescript, tsx, vitest, @vitest/coverage-v8, supertest, @types/node, @types/express, eslint, @eslint/js, typescript-eslint, prettier, tsup.
+	• ✅	Add .editorconfig (2 spaces, LF, utf‑8).
+	• ✅	Add .nvmrc with Node LTS; document with README blurb.
+	• ✅	Configure ESLint: eslint.config.mjs with TS parser, node/globals, import rules.
+	• ✅	Configure Prettier: prettier.config.cjs.
 	•	Add Husky + lint-staged pre‑commit (format + eslint on staged).
-	•	Add LICENSE (MIT) and basic README.md skeleton.
-	•	Commit as "chore: bootstrap repo".
+	• ✅	Add LICENSE (MIT) and basic README.md skeleton.
+	• ✅	Commit as "chore: bootstrap repo".
 
 ⸻
 
