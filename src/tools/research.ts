@@ -24,12 +24,30 @@ export async function researchAppend(params: z.infer<typeof ResearchAppendSchema
   await validateWorkspacePath(resolvedPath);
   
   try {
-    // Create research directory if it doesn't exist
-    const researchDir = path.join(resolvedPath, 'docs', 'research');
-    await fs.mkdir(researchDir, { recursive: true });
+    // Check if .dincoder directory exists
+    const dincoderPath = path.join(resolvedPath, '.dincoder');
+    const dincoderExists = await fs.access(dincoderPath).then(() => true).catch(() => false);
     
-    // Use a consistent research document
-    const researchPath = path.join(researchDir, 'decisions.md');
+    if (!dincoderExists) {
+      // Create .dincoder directory if it doesn't exist (for backwards compatibility)
+      await fs.mkdir(dincoderPath, { recursive: true });
+      
+      // Create initial research.md
+      const researchPath = path.join(dincoderPath, 'research.md');
+      const initialContent = `# Research Documentation
+
+## Project Research & Technical Decisions
+
+This document captures key research findings and technical decisions made during development.
+
+---
+
+`;
+      await fs.writeFile(researchPath, initialContent, 'utf-8');
+    }
+    
+    // Use .dincoder/research.md
+    const researchPath = path.join(dincoderPath, 'research.md');
     
     // Check if file exists
     let existingContent = '';
@@ -37,7 +55,9 @@ export async function researchAppend(params: z.infer<typeof ResearchAppendSchema
       existingContent = await fs.readFile(researchPath, 'utf-8');
     } catch {
       // File doesn't exist, create header
-      existingContent = `# Research & Decisions
+      existingContent = `# Research Documentation
+
+## Project Research & Technical Decisions
 
 This document captures key research findings and technical decisions made during development.
 
@@ -61,6 +81,9 @@ ${content}
     const updatedContent = existingContent + entry;
     await fs.writeFile(researchPath, updatedContent, 'utf-8');
     
+    // Count total entries for metrics
+    const entryCount = (updatedContent.match(/^## /gm) || []).length - 1; // Subtract header
+    
     return {
       success: true,
       message: `Appended research for topic: ${topic}`,
@@ -69,6 +92,12 @@ ${content}
         timestamp,
         location: researchPath,
         entryLength: content.length,
+        totalEntries: entryCount,
+        nextSteps: [
+          'Use artifacts_read to view all project artifacts',
+          'Continue documenting decisions as the project evolves',
+          'Review research.md periodically to maintain context'
+        ]
       },
     };
   } catch (error) {

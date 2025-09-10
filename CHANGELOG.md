@@ -2,6 +2,44 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.6] - 2025-01-10
+
+### Fixed
+- **CRITICAL**: Fixed tool naming pattern validation error that prevented Claude Desktop integration
+  - Changed all 15 tool names from periods (.) to underscores (_) to comply with MCP pattern `^[a-zA-Z0-9_-]{1,64}$`
+  - Example: `specify.start` → `specify_start`
+
+### Changed
+- **Major Refactor**: Standardized all tools to use `.dincoder` directory structure
+  - All project files now stored in `.dincoder/` instead of scattered directories
+  - Simplified file management and improved consistency
+  
+### Improved
+- **specify_start**: Complete rewrite to create directory structure directly instead of calling external `uvx` command
+  - Now creates `.dincoder/` with spec.json, plan.json, tasks.json, and research.md templates
+  
+- **specify_describe**: Enhanced with intelligent parsing to extract goals and requirements from natural language
+  
+- **plan_create**: Added smart extraction of technologies, patterns, and phases from constraints
+  
+- **tasks_generate**: Complete rewrite for JSON-based task management with automatic generation from scope
+  
+- **tasks_tick**: Added dependency checking and proper status management
+  
+- **git tools**: Enhanced error messages with actionable next steps for common scenarios
+  
+- **artifacts_read**: Updated to read from unified `.dincoder` directory
+
+### Added
+- Comprehensive testing guide (TESTING_GUIDE.md) for Claude Desktop integration
+- Detailed tool descriptions for better AI understanding
+- Better error handling across all tools with helpful messages
+
+### Developer Experience
+- All 32 tests passing
+- Build completes successfully with TypeScript strict mode
+- Ready for npm publication
+
 ## [0.1.3] - 2025-01-10
 
 ### Fixed

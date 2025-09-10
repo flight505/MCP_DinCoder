@@ -55,14 +55,15 @@ describe('MCP HTTP Server', () => {
   });
 
   describe('GET /mcp (SSE)', () => {
-    it('should return 405 for stateless mode', async () => {
+    it('should return info page for browser GET requests in stateless mode', async () => {
       const response = await request(`http://localhost:${port}`)
         .get('/mcp')
-        .expect(405);
+        .expect(200);
 
       expect(response.body).toMatchObject({
-        error: 'Method not allowed',
-        message: 'SSE not supported in stateless mode',
+        name: 'MCP DinCoder Server',
+        status: 'running',
+        transport: 'stateless'
       });
     });
   });

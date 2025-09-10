@@ -42,132 +42,209 @@ export async function tasksGenerate(params: z.infer<typeof TasksGenerateSchema>)
   await validateWorkspacePath(resolvedPath);
   
   try {
-    // Read plan if provided
-    // let planContent = '';
-    if (planPath) {
-      const resolvedPlanPath = path.resolve(resolvedPath, planPath);
-      // planContent = await fs.readFile(resolvedPlanPath, 'utf-8');
-      await fs.readFile(resolvedPlanPath, 'utf-8');
+    // Check if .dincoder directory exists
+    const dincoderPath = path.join(resolvedPath, '.dincoder');
+    const dincoderExists = await fs.access(dincoderPath).then(() => true).catch(() => false);
+    
+    if (!dincoderExists) {
+      throw new Error('Project not initialized. Please run specify_start first.');
     }
     
-    // Create tasks directory
-    const tasksDir = path.join(resolvedPath, 'specs', 'tasks');
-    await fs.mkdir(tasksDir, { recursive: true });
+    // Read existing plan.json if no planPath provided
+    let plan: any = null;
+    if (!planPath) {
+      const defaultPlanPath = path.join(dincoderPath, 'plan.json');
+      const planExists = await fs.access(defaultPlanPath).then(() => true).catch(() => false);
+      if (planExists) {
+        const planContent = await fs.readFile(defaultPlanPath, 'utf-8');
+        plan = JSON.parse(planContent);
+      }
+    } else {
+      const resolvedPlanPath = path.resolve(resolvedPath, planPath);
+      const planContent = await fs.readFile(resolvedPlanPath, 'utf-8');
+      plan = JSON.parse(planContent);
+    }
     
-    // Generate tasks filename
-    const timestamp = new Date().toISOString().slice(0, 10);
-    const tasksName = `tasks-${timestamp}.md`;
-    const tasksPath = path.join(tasksDir, tasksName);
+    // Read existing tasks.json
+    const tasksPath = path.join(dincoderPath, 'tasks.json');
+    const tasksExists = await fs.access(tasksPath).then(() => true).catch(() => false);
     
-    // Generate sample tasks based on scope
-    const tasks: Task[] = [
-      {
-        id: 'TASK-001',
+    let tasksData: any = {};
+    if (tasksExists) {
+      const tasksContent = await fs.readFile(tasksPath, 'utf-8');
+      tasksData = JSON.parse(tasksContent);
+    } else {
+      tasksData = {
+        projectName: plan?.projectName || 'Unnamed Project',
+        createdAt: new Date().toISOString(),
+        tasks: [],
+        nextTaskId: 1,
+        completedCount: 0,
+        totalCount: 0
+      };
+    }
+    
+    // Generate new tasks based on scope and plan
+    const newTasks: Task[] = [];
+    const baseId = tasksData.nextTaskId || 1;
+    
+    // Parse scope for task generation hints
+    const scopeLines = scope.split('\n').filter(line => line.trim());
+    
+    // Look for specific task mentions
+    const taskPatterns = /\b(implement|create|build|design|test|document|deploy|configure|setup|integrate)\b/gi;
+    const taskActions: string[] = [];
+    scopeLines.forEach(line => {
+      const matches = line.match(taskPatterns);
+      if (matches) {
+        taskActions.push(...matches.map(m => m.toLowerCase()));
+      }
+    });
+    
+    // Generate tasks based on scope and plan
+    if (taskActions.includes('setup') || taskActions.includes('configure') || !taskActions.length) {
+      newTasks.push({
+        id: `TASK-${String(baseId + newTasks.length).padStart(3, '0')}`,
         title: 'Environment Setup',
-        description: 'Set up development environment and install dependencies',
+        description: `Set up development environment for: ${scope}`,
         status: 'pending',
         dependencies: [],
         storyPoints: 1,
         createdAt: new Date().toISOString(),
-      },
-      {
-        id: 'TASK-002',
-        title: 'Create Project Structure',
-        description: 'Initialize project structure with required directories',
+      });
+    }
+    
+    if (taskActions.includes('design') || plan?.architecture) {
+      newTasks.push({
+        id: `TASK-${String(baseId + newTasks.length).padStart(3, '0')}`,
+        title: 'Design Architecture',
+        description: `Design system architecture based on: ${scope}`,
         status: 'pending',
-        dependencies: ['TASK-001'],
-        storyPoints: 1,
+        dependencies: newTasks.length > 0 ? [newTasks[0].id] : [],
+        storyPoints: 2,
         createdAt: new Date().toISOString(),
-      },
-      {
-        id: 'TASK-003',
-        title: 'Implement Core Components',
-        description: `Implement core components for: ${scope}`,
+      });
+    }
+    
+    if (taskActions.includes('implement') || taskActions.includes('create') || taskActions.includes('build')) {
+      newTasks.push({
+        id: `TASK-${String(baseId + newTasks.length).padStart(3, '0')}`,
+        title: 'Core Implementation',
+        description: `Implement core functionality: ${scope}`,
         status: 'pending',
-        dependencies: ['TASK-002'],
+        dependencies: newTasks.length > 0 ? [newTasks[newTasks.length - 1].id] : [],
         storyPoints: 3,
         createdAt: new Date().toISOString(),
-      },
-      {
-        id: 'TASK-004',
-        title: 'Add Unit Tests',
-        description: 'Write unit tests for core components',
+      });
+    }
+    
+    if (taskActions.includes('test') || plan?.performanceTargets) {
+      newTasks.push({
+        id: `TASK-${String(baseId + newTasks.length).padStart(3, '0')}`,
+        title: 'Testing',
+        description: `Write and execute tests for: ${scope}`,
         status: 'pending',
-        dependencies: ['TASK-003'],
+        dependencies: newTasks.filter(t => t.title.includes('Implementation')).map(t => t.id),
         storyPoints: 2,
         createdAt: new Date().toISOString(),
-      },
-      {
-        id: 'TASK-005',
-        title: 'Integration Testing',
-        description: 'Perform integration testing',
-        status: 'pending',
-        dependencies: ['TASK-003', 'TASK-004'],
-        storyPoints: 2,
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: 'TASK-006',
+      });
+    }
+    
+    if (taskActions.includes('document')) {
+      newTasks.push({
+        id: `TASK-${String(baseId + newTasks.length).padStart(3, '0')}`,
         title: 'Documentation',
-        description: 'Create documentation for implemented features',
+        description: `Create documentation for: ${scope}`,
         status: 'pending',
-        dependencies: ['TASK-003'],
+        dependencies: newTasks.filter(t => t.title.includes('Implementation')).map(t => t.id),
         storyPoints: 1,
         createdAt: new Date().toISOString(),
-      },
-    ];
+      });
+    }
     
-    // Create markdown content
-    const tasksContent = `# Tasks
-
-## Scope
-${scope}
-
-${planPath ? `## Referenced Plan\n${planPath}\n` : ''}
-
-## Task List
-
-${tasks.map(task => `
-### ${task.id}: ${task.title}
-- **Status**: ${task.status}
-- **Story Points**: ${task.storyPoints}
-- **Dependencies**: ${task.dependencies.length > 0 ? task.dependencies.join(', ') : 'None'}
-- **Description**: ${task.description}
-- **Created**: ${task.createdAt}
-`).join('')}
-
-## Task Summary
-- Total Tasks: ${tasks.length}
-- Total Story Points: ${tasks.reduce((sum, t) => sum + t.storyPoints, 0)}
-- Pending: ${tasks.filter(t => t.status === 'pending').length}
-- In Progress: ${tasks.filter(t => t.status === 'in-progress').length}
-- Completed: ${tasks.filter(t => t.status === 'completed').length}
-
----
-Generated: ${new Date().toISOString()}
-`;
+    if (taskActions.includes('deploy')) {
+      newTasks.push({
+        id: `TASK-${String(baseId + newTasks.length).padStart(3, '0')}`,
+        title: 'Deployment',
+        description: `Deploy to production: ${scope}`,
+        status: 'pending',
+        dependencies: newTasks.filter(t => t.title.includes('Testing')).map(t => t.id),
+        storyPoints: 2,
+        createdAt: new Date().toISOString(),
+      });
+    }
     
-    // Write tasks file
-    await fs.writeFile(tasksPath, tasksContent, 'utf-8');
+    // Add generic tasks if no specific actions found and few tasks generated
+    if (newTasks.length < 3) {
+      newTasks.push(
+        {
+          id: `TASK-${String(baseId + newTasks.length).padStart(3, '0')}`,
+          title: 'Analysis & Planning',
+          description: `Analyze requirements and plan implementation for: ${scope}`,
+          status: 'pending',
+          dependencies: [],
+          storyPoints: 2,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: `TASK-${String(baseId + newTasks.length).padStart(3, '0')}`,
+          title: 'Implementation',
+          description: `Implement features for: ${scope}`,
+          status: 'pending',
+          dependencies: [`TASK-${String(baseId + newTasks.length - 1).padStart(3, '0')}`],
+          storyPoints: 3,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: `TASK-${String(baseId + newTasks.length).padStart(3, '0')}`,
+          title: 'Review & Testing',
+          description: `Review and test implementation for: ${scope}`,
+          status: 'pending',
+          dependencies: [`TASK-${String(baseId + newTasks.length).padStart(3, '0')}`],
+          storyPoints: 2,
+          createdAt: new Date().toISOString(),
+        }
+      );
+    }
     
-    // Also save as JSON for programmatic access
-    const tasksJsonPath = path.join(tasksDir, `tasks-${timestamp}.json`);
-    await fs.writeFile(tasksJsonPath, JSON.stringify(tasks, null, 2), 'utf-8');
+    // Update tasks data
+    tasksData.tasks = [...(tasksData.tasks || []), ...newTasks];
+    tasksData.nextTaskId = baseId + newTasks.length;
+    tasksData.totalCount = tasksData.tasks.length;
+    tasksData.updatedAt = new Date().toISOString();
+    
+    // Add plan reference if available
+    if (plan) {
+      tasksData.basedOnPlan = {
+        constraints: plan.constraints,
+        technologies: plan.architecture?.technologies,
+        phases: plan.implementation?.phases
+      };
+    }
+    
+    // Write updated tasks
+    await fs.writeFile(tasksPath, JSON.stringify(tasksData, null, 2), 'utf-8');
     
     return {
       success: true,
       tasksPath,
-      tasksJsonPath,
-      message: `Generated ${tasks.length} tasks`,
-      tasks: tasks.map(t => ({
+      message: `Generated ${newTasks.length} new tasks`,
+      tasks: newTasks.map(t => ({
         id: t.id,
         title: t.title,
         dependencies: t.dependencies,
+        storyPoints: t.storyPoints
       })),
       details: {
-        totalTasks: tasks.length,
-        totalStoryPoints: tasks.reduce((sum, t) => sum + t.storyPoints, 0),
-        location: tasksDir,
+        newTasks: newTasks.length,
+        totalTasks: tasksData.tasks.length,
+        totalStoryPoints: tasksData.tasks.reduce((sum: number, t: Task) => sum + t.storyPoints, 0),
+        location: dincoderPath,
+        nextSteps: [
+          'Use tasks_tick to mark tasks as complete',
+          'Use artifacts_read to view all tasks',
+          'Edit tasks.json directly for fine-tuning'
+        ]
       },
     };
   } catch (error) {
@@ -186,25 +263,25 @@ export async function tasksTick(params: z.infer<typeof TasksTickSchema>) {
   await validateWorkspacePath(resolvedPath);
   
   try {
-    // Find most recent tasks file if not specified
+    // Use .dincoder/tasks.json as default
+    const dincoderPath = path.join(resolvedPath, '.dincoder');
+    const defaultTasksPath = path.join(dincoderPath, 'tasks.json');
+    
     let resolvedTasksPath = tasksPath;
     if (!resolvedTasksPath) {
-      const tasksDir = path.join(resolvedPath, 'specs', 'tasks');
-      const files = await fs.readdir(tasksDir);
-      const jsonFiles = files.filter(f => f.endsWith('.json')).sort().reverse();
-      
-      if (jsonFiles.length === 0) {
-        throw new Error('No tasks files found');
+      const tasksExists = await fs.access(defaultTasksPath).then(() => true).catch(() => false);
+      if (!tasksExists) {
+        throw new Error('No tasks file found. Please run tasks_generate first.');
       }
-      
-      resolvedTasksPath = path.join(tasksDir, jsonFiles[0]);
+      resolvedTasksPath = defaultTasksPath;
     } else {
       resolvedTasksPath = path.resolve(resolvedPath, tasksPath);
     }
     
     // Read tasks
     const tasksContent = await fs.readFile(resolvedTasksPath, 'utf-8');
-    const tasks: Task[] = JSON.parse(tasksContent);
+    const tasksData = JSON.parse(tasksContent);
+    const tasks: Task[] = tasksData.tasks || [];
     
     // Find and update task
     const taskIndex = tasks.findIndex(t => t.id === taskId);
@@ -221,6 +298,26 @@ export async function tasksTick(params: z.infer<typeof TasksTickSchema>) {
           id: task.id,
           title: task.title,
           status: task.status,
+          completedAt: task.completedAt
+        },
+      };
+    }
+    
+    // Check dependencies
+    const incompleteDeps = task.dependencies.filter(depId => {
+      const dep = tasks.find(t => t.id === depId);
+      return dep && dep.status !== 'completed';
+    });
+    
+    if (incompleteDeps.length > 0) {
+      return {
+        success: false,
+        message: `Cannot complete task ${taskId}. Dependencies not completed: ${incompleteDeps.join(', ')}`,
+        task: {
+          id: task.id,
+          title: task.title,
+          status: task.status,
+          blockedBy: incompleteDeps
         },
       };
     }
@@ -229,16 +326,12 @@ export async function tasksTick(params: z.infer<typeof TasksTickSchema>) {
     task.status = 'completed';
     task.completedAt = new Date().toISOString();
     
-    // Save updated tasks
-    await fs.writeFile(resolvedTasksPath, JSON.stringify(tasks, null, 2), 'utf-8');
+    // Update counts
+    tasksData.completedCount = tasks.filter(t => t.status === 'completed').length;
+    tasksData.updatedAt = new Date().toISOString();
     
-    // Update markdown file if it exists
-    const mdPath = resolvedTasksPath.replace('.json', '.md');
-    try {
-      await updateMarkdownTasks(mdPath, tasks);
-    } catch {
-      // Markdown file might not exist, ignore
-    }
+    // Save updated tasks
+    await fs.writeFile(resolvedTasksPath, JSON.stringify(tasksData, null, 2), 'utf-8');
     
     return {
       success: true,
@@ -251,51 +344,22 @@ export async function tasksTick(params: z.infer<typeof TasksTickSchema>) {
       },
       progress: {
         total: tasks.length,
-        completed: tasks.filter(t => t.status === 'completed').length,
-        remaining: tasks.filter(t => t.status !== 'completed').length,
+        completed: tasksData.completedCount,
+        remaining: tasks.length - tasksData.completedCount,
+        percentComplete: Math.round((tasksData.completedCount / tasks.length) * 100)
       },
+      nextTasks: tasks
+        .filter(t => t.status === 'pending' && 
+          t.dependencies.every(depId => {
+            const dep = tasks.find(td => td.id === depId);
+            return !dep || dep.status === 'completed';
+          }))
+        .map(t => ({ id: t.id, title: t.title }))
+        .slice(0, 3)
     };
   } catch (error) {
     throw new Error(`Failed to update task: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
-}
-
-/**
- * Update markdown file with task status
- */
-async function updateMarkdownTasks(mdPath: string, tasks: Task[]): Promise<void> {
-  let content = await fs.readFile(mdPath, 'utf-8');
-  
-  // Update status lines
-  for (const task of tasks) {
-    const statusRegex = new RegExp(`(${task.id}[^\\n]*\\n- \\*\\*Status\\*\\*: )\\w+`, 'g');
-    content = content.replace(statusRegex, `$1${task.status}`);
-    
-    if (task.completedAt) {
-      const taskSection = new RegExp(`(${task.id}[^\\n]*\\n(?:.*\\n){4})`, 'g');
-      content = content.replace(taskSection, (match) => {
-        if (!match.includes('Completed:')) {
-          return match + `- **Completed**: ${task.completedAt}\n`;
-        }
-        return match;
-      });
-    }
-  }
-  
-  // Update summary
-  const summarySection = content.match(/## Task Summary[\s\S]*?(?=\n##|\n---|$)/);
-  if (summarySection) {
-    const newSummary = `## Task Summary
-- Total Tasks: ${tasks.length}
-- Total Story Points: ${tasks.reduce((sum, t) => sum + t.storyPoints, 0)}
-- Pending: ${tasks.filter(t => t.status === 'pending').length}
-- In Progress: ${tasks.filter(t => t.status === 'in-progress').length}
-- Completed: ${tasks.filter(t => t.status === 'completed').length}`;
-    
-    content = content.replace(/## Task Summary[\s\S]*?(?=\n##|\n---|$)/, newSummary);
-  }
-  
-  await fs.writeFile(mdPath, content, 'utf-8');
 }
 
 /**

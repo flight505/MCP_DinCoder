@@ -91,8 +91,8 @@ export function createServer(config: Partial<ServerConfig> = {}): McpServer {
 function registerTools(server: McpServer): void {
   // Spec Kit tools
   server.tool(
-    'specify.start',
-    'Initialize a new spec-driven project',
+    'specify_start',
+    'Initialize a new spec-driven project. Creates .dincoder directory with spec.json template. Use this as the first step when starting a new project.',
     SpecifyStartSchema.shape,
     async (params) => {
       const result = await specifyStart(SpecifyStartSchema.parse(params));
@@ -108,8 +108,8 @@ function registerTools(server: McpServer): void {
   );
   
   server.tool(
-    'specify.describe',
-    'Create project specification',
+    'specify_describe',
+    'Create or update project specification with detailed requirements, goals, and constraints. Use after specify_start to define what the project should do.',
     SpecifyDescribeSchema.shape,
     async (params) => {
       const result = await specifyDescribe(SpecifyDescribeSchema.parse(params));
@@ -125,8 +125,8 @@ function registerTools(server: McpServer): void {
   );
   
   server.tool(
-    'plan.create',
-    'Generate technical plan from specification',
+    'plan_create',
+    'Generate technical implementation plan from the project specification. Creates a step-by-step technical approach with milestones and architecture decisions.',
     PlanCreateSchema.shape,
     async (params) => {
       const result = await planCreate(PlanCreateSchema.parse(params));
@@ -142,8 +142,8 @@ function registerTools(server: McpServer): void {
   );
   
   server.tool(
-    'tasks.generate',
-    'Generate actionable tasks from plan',
+    'tasks_generate',
+    'Generate granular, actionable tasks from the technical plan. Creates a task list with specific implementation steps that can be executed sequentially.',
     TasksGenerateSchema.shape,
     async (params) => {
       const result = await tasksGenerate(TasksGenerateSchema.parse(params));
@@ -159,8 +159,8 @@ function registerTools(server: McpServer): void {
   );
   
   server.tool(
-    'tasks.tick',
-    'Mark a task as complete',
+    'tasks_tick',
+    'Mark a specific task as complete by its ID. Updates the task status and tracks progress through the implementation.',
     TasksTickSchema.shape,
     async (params) => {
       const result = await tasksTick(TasksTickSchema.parse(params));
@@ -177,8 +177,8 @@ function registerTools(server: McpServer): void {
   
   // Quality tools
   server.tool(
-    'quality.format',
-    'Run code formatter (Prettier)',
+    'quality_format',
+    'Run Prettier code formatter to ensure consistent code style. Automatically formats JavaScript, TypeScript, JSON, and other supported files.',
     QualityFormatSchema.shape,
     async (params) => {
       const result = await qualityFormat(QualityFormatSchema.parse(params));
@@ -194,8 +194,8 @@ function registerTools(server: McpServer): void {
   );
   
   server.tool(
-    'quality.lint',
-    'Run linter (ESLint)',
+    'quality_lint',
+    'Run ESLint to check for code quality issues, potential bugs, and style violations. Helps maintain code standards and catch errors early.',
     QualityLintSchema.shape,
     async (params) => {
       const result = await qualityLint(QualityLintSchema.parse(params));
@@ -211,8 +211,8 @@ function registerTools(server: McpServer): void {
   );
   
   server.tool(
-    'quality.test',
-    'Run tests with optional coverage',
+    'quality_test',
+    'Run test suite with optional code coverage reporting. Executes all unit and integration tests to ensure code correctness.',
     QualityTestSchema.shape,
     async (params) => {
       const result = await qualityTest(QualityTestSchema.parse(params));
@@ -228,8 +228,8 @@ function registerTools(server: McpServer): void {
   );
   
   server.tool(
-    'quality.security_audit',
-    'Run security audit',
+    'quality_security_audit',
+    'Run npm/yarn security audit to check for known vulnerabilities in dependencies. Identifies and reports security issues that need attention.',
     QualitySecurityAuditSchema.shape,
     async (params) => {
       const result = await qualitySecurityAudit(QualitySecurityAuditSchema.parse(params));
@@ -245,8 +245,8 @@ function registerTools(server: McpServer): void {
   );
   
   server.tool(
-    'quality.deps_update',
-    'Check for dependency updates',
+    'quality_deps_update',
+    'Check for available updates to project dependencies. Lists outdated packages and their latest versions for potential upgrades.',
     QualityDepsUpdateSchema.shape,
     async (params) => {
       const result = await qualityDepsUpdate(QualityDepsUpdateSchema.parse(params));
@@ -262,8 +262,8 @@ function registerTools(server: McpServer): void {
   );
   
   server.tool(
-    'quality.license_check',
-    'Check dependency licenses for compatibility',
+    'quality_license_check',
+    'Analyze licenses of all dependencies to ensure compatibility with project requirements. Identifies potential licensing conflicts or restrictions.',
     QualityLicenseCheckSchema.shape,
     async (params) => {
       const result = await qualityLicenseCheck(QualityLicenseCheckSchema.parse(params));
@@ -280,8 +280,8 @@ function registerTools(server: McpServer): void {
   
   // Artifacts tools
   server.tool(
-    'artifacts.read',
-    'Read and return normalized JSON for spec/plan/tasks',
+    'artifacts_read',
+    'Read and return the current state of spec.json, plan.json, or tasks.json files. Use to retrieve project artifacts in normalized JSON format.',
     ArtifactsReadSchema.shape,
     async (params) => {
       const result = await artifactsRead(ArtifactsReadSchema.parse(params));
@@ -298,8 +298,8 @@ function registerTools(server: McpServer): void {
   
   // Research tools
   server.tool(
-    'research.append',
-    'Append to research document for decisions taken',
+    'research_append',
+    'Append technical decisions, trade-offs, and research findings to the research.md document. Maintains a record of architectural choices and reasoning.',
     ResearchAppendSchema.shape,
     async (params) => {
       const result = await researchAppend(ResearchAppendSchema.parse(params));
@@ -316,8 +316,8 @@ function registerTools(server: McpServer): void {
   
   // Git tools
   server.tool(
-    'git.create_branch',
-    'Create a working branch for a feature',
+    'git_create_branch',
+    'Create a new Git branch for implementing a specific feature or fix. Follows naming conventions and ensures clean branch creation from main/master.',
     GitCreateBranchSchema.shape,
     async (params) => {
       const result = await gitCreateBranch(GitCreateBranchSchema.parse(params));
@@ -334,8 +334,8 @@ function registerTools(server: McpServer): void {
   
   // Keep test tool for compatibility
   server.tool(
-    'test.echo',
-    'Echo test tool',
+    'test_echo',
+    'Simple echo tool for testing MCP server connectivity. Returns the input message prefixed with "Echo:". Use for debugging and connection verification.',
     {
       message: z.string().describe('Message to echo'),
     },

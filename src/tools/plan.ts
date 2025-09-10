@@ -24,134 +24,144 @@ export async function planCreate(params: z.infer<typeof PlanCreateSchema>) {
   await validateWorkspacePath(resolvedPath);
   
   try {
-    // Read spec if provided
-    let specContent = '';
-    if (specPath) {
-      const resolvedSpecPath = path.resolve(resolvedPath, specPath);
-      specContent = await fs.readFile(resolvedSpecPath, 'utf-8');
+    // Check if .dincoder directory exists
+    const dincoderPath = path.join(resolvedPath, '.dincoder');
+    const dincoderExists = await fs.access(dincoderPath).then(() => true).catch(() => false);
+    
+    if (!dincoderExists) {
+      throw new Error('Project not initialized. Please run specify_start first.');
     }
     
-    // Create plans directory
-    const plansDir = path.join(resolvedPath, 'specs', 'plans');
-    await fs.mkdir(plansDir, { recursive: true });
+    // Read existing spec.json if no specPath provided
+    let spec: any = null;
+    if (!specPath) {
+      const defaultSpecPath = path.join(dincoderPath, 'spec.json');
+      const specExists = await fs.access(defaultSpecPath).then(() => true).catch(() => false);
+      if (specExists) {
+        const specContent = await fs.readFile(defaultSpecPath, 'utf-8');
+        spec = JSON.parse(specContent);
+      }
+    } else {
+      const resolvedSpecPath = path.resolve(resolvedPath, specPath);
+      const specContent = await fs.readFile(resolvedSpecPath, 'utf-8');
+      spec = JSON.parse(specContent);
+    }
     
-    // Generate plan filename
-    const timestamp = new Date().toISOString().slice(0, 10);
-    const planName = `plan-${timestamp}.md`;
-    const planPath = path.join(plansDir, planName);
+    // Read existing plan.json
+    const planPath = path.join(dincoderPath, 'plan.json');
+    const planExists = await fs.access(planPath).then(() => true).catch(() => false);
     
-    // Create plan content
-    const planContent = `# Technical Plan
-
-## Constraints
-${constraintsText}
-
-## Architecture
-<!-- Define system architecture -->
-
-### Components
-<!-- List major components -->
-
-### Data Model
-<!-- Define data structures and schemas -->
-
-### API Contracts
-<!-- Define interfaces and contracts -->
-
-## Implementation Approach
-<!-- Describe implementation strategy -->
-
-### Technology Stack
-- Language: TypeScript
-- Framework: Express
-- Protocol: MCP Streamable HTTP
-
-### Security Considerations
-- Origin validation
-- Session management
-- Authentication
-
-### Performance Requirements
-<!-- Define performance targets -->
-
-## Dependencies
-<!-- List external dependencies -->
-
-## Risks and Mitigations
-<!-- Identify risks and mitigation strategies -->
-
-${specContent ? `## Referenced Specification\n${specContent}` : ''}
-
----
-Generated: ${new Date().toISOString()}
-`;
+    let plan: any = {};
+    if (planExists) {
+      const planContent = await fs.readFile(planPath, 'utf-8');
+      plan = JSON.parse(planContent);
+    }
     
-    // Write plan file
-    await fs.writeFile(planPath, planContent, 'utf-8');
+    // Update plan with new constraints and spec info
+    plan.updatedAt = new Date().toISOString();
+    plan.constraints = constraintsText;
     
-    // Create data model file
-    const dataModelPath = path.join(plansDir, `data-model-${timestamp}.ts`);
-    const dataModelContent = `/**
- * Data Model for ${planName}
- * Generated: ${new Date().toISOString()}
- */
-
-import { z } from 'zod';
-
-// TODO: Define Zod schemas based on plan requirements
-
-export const ExampleSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export type Example = z.infer<typeof ExampleSchema>;
-`;
+    // Parse constraints for common patterns
+    const lines = constraintsText.split('\n').filter(line => line.trim());
     
-    await fs.writeFile(dataModelPath, dataModelContent, 'utf-8');
+    // Look for technology mentions
+    const techPatterns = /\b(react|vue|angular|typescript|javascript|python|java|go|rust|node|express|fastapi|django|spring)\b/gi;
+    const technologies = new Set<string>();
+    lines.forEach(line => {
+      const matches = line.match(techPatterns);
+      if (matches) {
+        matches.forEach(tech => technologies.add(tech.toLowerCase()));
+      }
+    });
     
-    // Create contracts file
-    const contractsPath = path.join(plansDir, `contracts-${timestamp}.ts`);
-    const contractsContent = `/**
- * API Contracts for ${planName}
- * Generated: ${new Date().toISOString()}
- */
-
-// TODO: Define interface contracts
-
-export interface ServiceContract {
-  initialize(): Promise<void>;
-  execute(params: unknown): Promise<unknown>;
-  shutdown(): Promise<void>;
-}
-
-export interface ToolContract {
-  name: string;
-  description: string;
-  schema: unknown;
-  handler: (params: unknown) => Promise<unknown>;
-}
-`;
+    if (technologies.size > 0) {
+      plan.architecture = plan.architecture || {};
+      plan.architecture.technologies = Array.from(technologies);
+    }
     
-    await fs.writeFile(contractsPath, contractsContent, 'utf-8');
+    // Look for architectural patterns
+    const archPatterns = /\b(microservice|monolith|serverless|rest|graphql|websocket|event-driven|mvc|mvvm|clean architecture)\b/gi;
+    const patterns = new Set<string>();
+    lines.forEach(line => {
+      const matches = line.match(archPatterns);
+      if (matches) {
+        matches.forEach(pattern => patterns.add(pattern.toLowerCase()));
+      }
+    });
+    
+    if (patterns.size > 0) {
+      plan.architecture = plan.architecture || {};
+      plan.architecture.patterns = Array.from(patterns);
+    }
+    
+    // Add spec information if available
+    if (spec) {
+      plan.basedOnSpec = {
+        projectName: spec.projectName,
+        description: spec.description,
+        goals: spec.goals,
+        requirements: spec.requirements
+      };
+    }
+    
+    // Look for phases/milestones
+    const phaseLines = lines.filter(line => 
+      line.match(/\b(phase|milestone|step|stage)\s*\d+/i)
+    );
+    
+    if (phaseLines.length > 0) {
+      plan.implementation = plan.implementation || {};
+      plan.implementation.phases = phaseLines.map((line, index) => ({
+        id: `phase-${index + 1}`,
+        description: line.trim(),
+        status: 'pending'
+      }));
+    }
+    
+    // Look for security considerations
+    const securityLines = lines.filter(line => 
+      line.match(/\b(security|auth|encrypt|ssl|tls|oauth|jwt|cors|xss|csrf|sql injection)\b/i)
+    );
+    
+    if (securityLines.length > 0) {
+      plan.securityConsiderations = securityLines.map(line => line.trim());
+    }
+    
+    // Look for performance requirements
+    const perfLines = lines.filter(line => 
+      line.match(/\b(performance|latency|throughput|response time|load|concurrent|cache)\b/i)
+    );
+    
+    if (perfLines.length > 0) {
+      plan.performanceTargets = perfLines.map(line => line.trim());
+    }
+    
+    // Write updated plan
+    await fs.writeFile(planPath, JSON.stringify(plan, null, 2), 'utf-8');
     
     return {
       success: true,
-      files: {
-        plan: planPath,
-        dataModel: dataModelPath,
-        contracts: contractsPath,
-      },
-      message: 'Created technical plan with data model and contracts',
+      planPath,
+      message: 'Updated technical plan',
       details: {
-        planName,
-        location: plansDir,
+        location: dincoderPath,
+        updatedFields: {
+          constraints: true,
+          technologies: technologies.size > 0,
+          patterns: patterns.size > 0,
+          phases: phaseLines.length > 0,
+          security: securityLines.length > 0,
+          performance: perfLines.length > 0
+        },
+        nextSteps: [
+          'Review and edit plan.json directly for fine-tuning',
+          'Use tasks_generate to create actionable tasks',
+          'Use artifacts_read to view current plan'
+        ]
       },
     };
   } catch (error) {
-    throw new Error(`Failed to create plan: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to create/update plan: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 

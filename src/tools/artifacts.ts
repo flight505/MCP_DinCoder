@@ -23,48 +23,60 @@ export async function artifactsRead(params: z.infer<typeof ArtifactsReadSchema>)
   await validateWorkspacePath(resolvedPath);
   
   try {
-    const specsDir = path.join(resolvedPath, 'specs');
+    const dincoderPath = path.join(resolvedPath, '.dincoder');
+    const dincoderExists = await fs.access(dincoderPath).then(() => true).catch(() => false);
+    
+    if (!dincoderExists) {
+      return {
+        success: false,
+        message: 'Project not initialized. Please run specify_start first.',
+        artifacts: {},
+        details: {
+          artifactType,
+          location: dincoderPath,
+          error: 'Directory .dincoder not found'
+        },
+      };
+    }
+    
     const artifacts: any = {};
     
-    // Read spec files
+    // Read spec.json
     if (artifactType === 'spec' || artifactType === 'all') {
-      const specFiles = await findLatestArtifact(specsDir, 'spec-*.md');
-      if (specFiles.length > 0) {
-        const specContent = await fs.readFile(specFiles[0], 'utf-8');
-        artifacts.spec = parseSpecContent(specContent);
+      const specPath = path.join(dincoderPath, 'spec.json');
+      const specExists = await fs.access(specPath).then(() => true).catch(() => false);
+      
+      if (specExists) {
+        const specContent = await fs.readFile(specPath, 'utf-8');
+        artifacts.spec = JSON.parse(specContent);
       }
     }
     
-    // Read plan files
+    // Read plan.json
     if (artifactType === 'plan' || artifactType === 'all') {
-      const plansDir = path.join(specsDir, 'plans');
-      const planFiles = await findLatestArtifact(plansDir, 'plan-*.md');
-      if (planFiles.length > 0) {
-        const planContent = await fs.readFile(planFiles[0], 'utf-8');
-        artifacts.plan = parsePlanContent(planContent);
-      }
+      const planPath = path.join(dincoderPath, 'plan.json');
+      const planExists = await fs.access(planPath).then(() => true).catch(() => false);
       
-      // Also include data model and contracts if available
-      const dataModelFiles = await findLatestArtifact(plansDir, 'data-model-*.ts');
-      if (dataModelFiles.length > 0) {
-        artifacts.dataModel = await fs.readFile(dataModelFiles[0], 'utf-8');
-      }
-      
-      const contractsFiles = await findLatestArtifact(plansDir, 'contracts-*.ts');
-      if (contractsFiles.length > 0) {
-        artifacts.contracts = await fs.readFile(contractsFiles[0], 'utf-8');
+      if (planExists) {
+        const planContent = await fs.readFile(planPath, 'utf-8');
+        artifacts.plan = JSON.parse(planContent);
       }
     }
     
-    // Read tasks files  
+    // Read tasks.json
     if (artifactType === 'tasks' || artifactType === 'all') {
-      const tasksDir = path.join(specsDir, 'tasks');
-      const tasksFiles = await findLatestArtifact(tasksDir, 'tasks-*.json');
-      if (tasksFiles.length > 0) {
-        const tasksContent = await fs.readFile(tasksFiles[0], 'utf-8');
+      const tasksPath = path.join(dincoderPath, 'tasks.json');
+      const tasksExists = await fs.access(tasksPath).then(() => true).catch(() => false);
+      
+      if (tasksExists) {
+        const tasksContent = await fs.readFile(tasksPath, 'utf-8');
         artifacts.tasks = JSON.parse(tasksContent);
       }
     }
+    
+    // Check if research.md exists (not part of artifacts but good to know)
+    const researchPath = path.join(dincoderPath, 'research.md');
+    const researchExists = await fs.access(researchPath).then(() => true).catch(() => false);
     
     return {
       success: true,
@@ -72,7 +84,13 @@ export async function artifactsRead(params: z.infer<typeof ArtifactsReadSchema>)
       artifacts,
       details: {
         artifactType,
-        location: specsDir,
+        location: dincoderPath,
+        filesFound: {
+          spec: !!artifacts.spec,
+          plan: !!artifacts.plan,
+          tasks: !!artifacts.tasks,
+          research: researchExists
+        }
       },
     };
   } catch (error) {
@@ -80,61 +98,6 @@ export async function artifactsRead(params: z.infer<typeof ArtifactsReadSchema>)
   }
 }
 
-/**
- * Find the latest artifact matching a pattern
- */
-async function findLatestArtifact(dir: string, pattern: string): Promise<string[]> {
-  try {
-    const files = await fs.readdir(dir);
-    const matchingFiles = files
-      .filter(f => {
-        const regex = new RegExp(pattern.replace('*', '.*'));
-        return regex.test(f);
-      })
-      .sort()
-      .reverse();
-    
-    return matchingFiles.map(f => path.join(dir, f));
-  } catch {
-    return [];
-  }
-}
-
-/**
- * Parse spec markdown content into structured format
- */
-function parseSpecContent(content: string): any {
-  const sections: any = {};
-  const lines = content.split('\n');
-  let currentSection = '';
-  let sectionContent: string[] = [];
-  
-  for (const line of lines) {
-    if (line.startsWith('## ')) {
-      if (currentSection && sectionContent.length > 0) {
-        sections[currentSection] = sectionContent.join('\n').trim();
-      }
-      currentSection = line.substring(3).toLowerCase().replace(/\s+/g, '_');
-      sectionContent = [];
-    } else {
-      sectionContent.push(line);
-    }
-  }
-  
-  if (currentSection && sectionContent.length > 0) {
-    sections[currentSection] = sectionContent.join('\n').trim();
-  }
-  
-  return sections;
-}
-
-/**
- * Parse plan markdown content into structured format
- */
-function parsePlanContent(content: string): any {
-  // Similar to parseSpecContent
-  return parseSpecContent(content);
-}
 
 /**
  * Validate workspace path for security

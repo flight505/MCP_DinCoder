@@ -33,36 +33,111 @@ export async function specifyStart(params: z.infer<typeof SpecifyStartSchema>) {
   await validateWorkspacePath(resolvedPath);
   
   try {
-    // Run specify init command
-    const command = `uvx specify init ${projectName} --ai ${agent}`;
-    const { stdout, stderr } = await execAsync(command, {
-      cwd: resolvedPath,
-      timeout: 30000, // 30 seconds timeout
-    });
+    // Create .dincoder directory
+    const dincoderPath = path.join(resolvedPath, '.dincoder');
+    await fs.mkdir(dincoderPath, { recursive: true });
     
-    if (stderr && !stderr.includes('warning')) {
-      throw new Error(`Specify init error: ${stderr}`);
-    }
+    // Create initial spec.json template
+    const specTemplate = {
+      projectName,
+      agent,
+      version: '1.0.0',
+      createdAt: new Date().toISOString(),
+      description: '',
+      goals: [],
+      requirements: {
+        functional: [],
+        nonFunctional: [],
+        technical: []
+      },
+      userJourneys: [],
+      acceptanceCriteria: [],
+      constraints: [],
+      assumptions: [],
+      risks: [],
+      outOfScope: []
+    };
     
-    // Check for created directories
-    const projectPath = path.join(resolvedPath, projectName);
-    const scriptsPath = path.join(projectPath, 'scripts');
-    const templatesPath = path.join(projectPath, 'templates');
+    const specPath = path.join(dincoderPath, 'spec.json');
+    await fs.writeFile(specPath, JSON.stringify(specTemplate, null, 2), 'utf-8');
     
-    const [scriptsExists, templatesExists] = await Promise.all([
-      fs.access(scriptsPath).then(() => true).catch(() => false),
-      fs.access(templatesPath).then(() => true).catch(() => false),
-    ]);
+    // Create empty plan.json template
+    const planTemplate = {
+      projectName,
+      createdAt: new Date().toISOString(),
+      architecture: {
+        overview: '',
+        components: [],
+        dataFlow: [],
+        technologies: []
+      },
+      implementation: {
+        phases: [],
+        milestones: [],
+        dependencies: []
+      },
+      dataModel: {},
+      apiContracts: {},
+      securityConsiderations: [],
+      performanceTargets: []
+    };
+    
+    const planPath = path.join(dincoderPath, 'plan.json');
+    await fs.writeFile(planPath, JSON.stringify(planTemplate, null, 2), 'utf-8');
+    
+    // Create empty tasks.json template
+    const tasksTemplate = {
+      projectName,
+      createdAt: new Date().toISOString(),
+      tasks: [],
+      nextTaskId: 1,
+      completedCount: 0,
+      totalCount: 0
+    };
+    
+    const tasksPath = path.join(dincoderPath, 'tasks.json');
+    await fs.writeFile(tasksPath, JSON.stringify(tasksTemplate, null, 2), 'utf-8');
+    
+    // Create initial research.md
+    const researchContent = `# Research Documentation
+
+## Project: ${projectName}
+
+**Created:** ${new Date().toISOString()}
+**AI Agent:** ${agent}
+
+---
+
+## Technical Decisions
+
+_Document architectural decisions, trade-offs, and research findings here._
+
+## References
+
+_Add links to relevant documentation, articles, and resources._
+
+`;
+    
+    const researchPath = path.join(dincoderPath, 'research.md');
+    await fs.writeFile(researchPath, researchContent, 'utf-8');
     
     return {
       success: true,
-      projectPath,
-      message: `Initialized spec-driven project: ${projectName}`,
+      projectPath: dincoderPath,
+      message: `Initialized DinCoder project: ${projectName}`,
       details: {
         agent,
-        scriptsCreated: scriptsExists,
-        templatesCreated: templatesExists,
-        output: stdout.trim(),
+        filesCreated: {
+          spec: specPath,
+          plan: planPath,
+          tasks: tasksPath,
+          research: researchPath
+        },
+        nextSteps: [
+          'Use specify_describe to add project details',
+          'Use plan_create to generate technical plan',
+          'Use tasks_generate to create actionable tasks'
+        ]
       },
     };
   } catch (error) {
@@ -71,7 +146,7 @@ export async function specifyStart(params: z.infer<typeof SpecifyStartSchema>) {
 }
 
 /**
- * Create project specification
+ * Create or update project specification
  */
 export async function specifyDescribe(params: z.infer<typeof SpecifyDescribeSchema>) {
   const { description, workspacePath = process.cwd() } = params;
@@ -81,51 +156,83 @@ export async function specifyDescribe(params: z.infer<typeof SpecifyDescribeSche
   await validateWorkspacePath(resolvedPath);
   
   try {
-    // Create specs directory if it doesn't exist
-    const specsDir = path.join(resolvedPath, 'specs');
-    await fs.mkdir(specsDir, { recursive: true });
+    // Check if .dincoder directory exists
+    const dincoderPath = path.join(resolvedPath, '.dincoder');
+    const dincoderExists = await fs.access(dincoderPath).then(() => true).catch(() => false);
     
-    // Generate spec filename with timestamp
-    const timestamp = new Date().toISOString().slice(0, 10);
-    const specName = `spec-${timestamp}.md`;
-    const specPath = path.join(specsDir, specName);
+    if (!dincoderExists) {
+      throw new Error('Project not initialized. Please run specify_start first.');
+    }
     
-    // Create spec content
-    const specContent = `# Specification
-
-## Description
-${description}
-
-## User Journeys
-<!-- Define user journeys here -->
-
-## Acceptance Scenarios
-<!-- Define acceptance criteria -->
-
-## Edge Cases
-<!-- List edge cases to consider -->
-
-## Needs Clarification
-<!-- Questions that need answers -->
-
----
-Generated: ${new Date().toISOString()}
-`;
+    // Read existing spec.json
+    const specPath = path.join(dincoderPath, 'spec.json');
+    const specExists = await fs.access(specPath).then(() => true).catch(() => false);
     
-    // Write spec file
-    await fs.writeFile(specPath, specContent, 'utf-8');
+    let spec: any = {};
+    if (specExists) {
+      const specContent = await fs.readFile(specPath, 'utf-8');
+      spec = JSON.parse(specContent);
+    }
+    
+    // Update spec with new description
+    spec.description = description;
+    spec.updatedAt = new Date().toISOString();
+    
+    // Parse description for common patterns
+    const lines = description.split('\n').filter(line => line.trim());
+    
+    // Look for goals (lines starting with "Goal:" or "- Goal")
+    const goals = lines.filter(line => 
+      line.match(/^(-\s*)?(goal|objective|aim)s?:?\s*/i)
+    ).map(line => line.replace(/^(-\s*)?(goal|objective|aim)s?:?\s*/i, '').trim());
+    
+    if (goals.length > 0) {
+      spec.goals = [...(spec.goals || []), ...goals];
+    }
+    
+    // Look for requirements (lines with "must", "should", "required")
+    const requirements = lines.filter(line => 
+      line.match(/\b(must|should|require[ds]?|need[s]?)\b/i)
+    ).map(line => line.trim());
+    
+    if (requirements.length > 0) {
+      spec.requirements = spec.requirements || {};
+      spec.requirements.functional = [...(spec.requirements.functional || []), ...requirements];
+    }
+    
+    // Look for constraints (lines with "constraint", "limitation", "restriction")
+    const constraints = lines.filter(line => 
+      line.match(/\b(constraint|limitation|restriction|cannot|must not)\b/i)
+    ).map(line => line.trim());
+    
+    if (constraints.length > 0) {
+      spec.constraints = [...(spec.constraints || []), ...constraints];
+    }
+    
+    // Write updated spec
+    await fs.writeFile(specPath, JSON.stringify(spec, null, 2), 'utf-8');
     
     return {
       success: true,
       specPath,
-      message: 'Created specification document',
+      message: 'Updated project specification',
       details: {
-        filename: specName,
-        location: specsDir,
+        location: dincoderPath,
+        updatedFields: {
+          description: true,
+          goals: goals.length > 0,
+          requirements: requirements.length > 0,
+          constraints: constraints.length > 0
+        },
+        nextSteps: [
+          'Review and edit spec.json directly for fine-tuning',
+          'Use plan_create to generate technical plan',
+          'Use artifacts_read to view current specification'
+        ]
       },
     };
   } catch (error) {
-    throw new Error(`Failed to create specification: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to update specification: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -156,11 +263,5 @@ async function validateWorkspacePath(workspacePath: string): Promise<void> {
     }
   }
   
-  // Check for .git directory to ensure it's a project
-  const gitPath = path.join(workspacePath, '.git');
-  const hasGit = await fs.access(gitPath).then(() => true).catch(() => false);
-  
-  if (!hasGit) {
-    console.error('Warning: No .git directory found in workspace');
-  }
+  // Note: Removed git check as it's too restrictive for new projects
 }

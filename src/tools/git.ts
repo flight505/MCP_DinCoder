@@ -36,7 +36,20 @@ export async function gitCreateBranch(params: z.infer<typeof GitCreateBranchSche
     try {
       await execAsync('git rev-parse --git-dir', { cwd: resolvedPath });
     } catch {
-      throw new Error('Not a git repository');
+      return {
+        success: false,
+        message: 'Not a git repository',
+        suggestion: 'Initialize a git repository first with: git init',
+        details: {
+          workspacePath: resolvedPath,
+          nextSteps: [
+            'Run: git init',
+            'Configure git user: git config user.email "you@example.com"',
+            'Configure git name: git config user.name "Your Name"',
+            'Make initial commit: git add . && git commit -m "Initial commit"'
+          ]
+        }
+      };
     }
     
     // Get current branch
@@ -50,12 +63,25 @@ export async function gitCreateBranch(params: z.infer<typeof GitCreateBranchSche
     });
     
     if (statusOutput.trim()) {
+      const files = statusOutput.trim().split('\n');
+      const modifiedCount = files.filter(f => f.startsWith(' M')).length;
+      const untrackedCount = files.filter(f => f.startsWith('??')).length;
+      const stagedCount = files.filter(f => f.match(/^[AM]/)).length;
+      
       return {
         success: false,
         message: 'Cannot create branch: uncommitted changes detected',
         details: {
-          uncommittedFiles: statusOutput.trim().split('\n').length,
-          suggestion: 'Commit or stash changes before creating a new branch',
+          uncommittedFiles: files.length,
+          modified: modifiedCount,
+          untracked: untrackedCount,
+          staged: stagedCount,
+          files: files.slice(0, 5).map(f => f.substring(3)), // Show first 5 files
+          nextSteps: [
+            'Option 1: Commit changes: git add . && git commit -m "Your message"',
+            'Option 2: Stash changes: git stash',
+            'Option 3: Discard changes: git reset --hard (WARNING: loses changes)'
+          ]
         },
       };
     }

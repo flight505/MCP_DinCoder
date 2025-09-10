@@ -7,7 +7,7 @@ import { McpHttpServer } from './http/server.js';
 import { TransportMode } from './http/transport.js';
 import { createServer } from './server/createServer.js';
 
-export const VERSION = '0.1.5';
+export const VERSION = '0.1.6';
 
 // Export for library usage
 export { McpHttpServer, createServer, TransportMode };

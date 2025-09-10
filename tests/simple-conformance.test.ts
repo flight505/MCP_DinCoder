@@ -55,13 +55,13 @@ describe('Simple MCP Conformance', () => {
   });
 
   describe('Stateless Mode Behavior', () => {
-    it('should return 405 for GET /mcp in stateless mode', async () => {
+    it('should return info page for browser GET requests in stateless mode', async () => {
       const response = await request(app)
         .get('/mcp');
       
-      expect(response.status).toBe(405);
-      expect(response.body).toHaveProperty('message');
-      expect(response.body.message).toContain('stateless');
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('name', 'MCP DinCoder Server');
+      expect(response.body).toHaveProperty('transport', 'stateless');
     });
 
     it('should return 405 for DELETE /mcp in stateless mode', async () => {
