@@ -2,6 +2,15 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.2] - 2025-01-10
+
+### Fixed
+- Lowered Node.js requirement from >=20 to >=18 for Claude Desktop compatibility
+- Resolved npm EBADENGINE warning when installing in Claude Desktop (Node v18.20.8)
+
+### Changed
+- Updated engines.node in package.json to support wider Node.js version range
+
 ## [0.1.1] - 2025-01-10
 
 ### Fixed
