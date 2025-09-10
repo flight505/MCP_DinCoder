@@ -2,6 +2,26 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.3] - 2025-01-10
+
+### Fixed
+- **CRITICAL**: Removed circular dependency (package was depending on itself)
+- Fixed server auto-start issue that caused Claude Code connection failures
+- Fixed session management issues in stateful mode
+- Fixed all ESLint errors (reduced from 13 to 0)
+- Fixed Smithery deployment configuration for TypeScript runtime
+
+### Changed
+- Server no longer auto-starts when imported as a module
+- Added proper default export for Smithery compatibility
+- Updated package.json exports field for proper module resolution
+- Cleaned up test files and removed duplicates
+
+### Removed
+- Removed 11 unnecessary test files from root directory
+- Removed backup Dockerfile.original
+- Removed self-referencing dependency from package.json
+
 ## [0.1.2] - 2025-01-10
 
 ### Fixed
