@@ -12,6 +12,7 @@ This is a **Spec-Driven MCP Orchestrator** that implements a Model Context Proto
 - **TypeScript SDK**: @modelcontextprotocol/sdk v1.17.5+ 
 - **Node.js**: >=20
 - **Transport**: HTTP only (STDIO deprecated Sept 7, 2025 on Smithery)
+  - Migration benefits: 20x higher concurrency, lower latency, better resource efficiency
 - **TypeScript Config**: MUST use module/moduleResolution: "NodeNext"
 
 ## Development Commands
@@ -103,11 +104,45 @@ const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
 
 ## Deployment
 
-### Smithery
-- Create `smithery.json` with registry metadata
-- Add `Dockerfile` for container deployment
-- Use GitHub integration for deployment
-- Test with Smithery client after deployment
+### Smithery (Recommended: ts-smithery-cli approach)
+
+#### Configuration Files
+1. **smithery.yaml** (not json):
+```yaml
+runtime: "typescript"
+```
+
+2. **package.json** updates:
+```json
+{
+  "scripts": {
+    "build": "npx @smithery/cli build",
+    "dev": "npx @smithery/cli dev"
+  }
+}
+```
+
+3. **Server Structure** (`src/index.ts`):
+```typescript
+export default function createServer({ config }) {
+  const server = new McpServer({ /* ... */ });
+  return server.server;
+}
+
+export const configSchema = z.object({
+  // Optional configuration schema
+});
+```
+
+#### Deployment Process
+- Push code to GitHub
+- Connect GitHub to Smithery
+- Navigate to Deployments tab
+- Click Deploy
+
+#### Migration Tools
+- Use @smithery-ai/migration-guide-mcp for guided migration
+- Tools available: validate_smithery_yaml, validate_package_json, create_migration_template
 
 ### NPM
 - Ensure proper package.json exports
@@ -125,6 +160,8 @@ Refer to `plan.md` for the complete 23-story implementation checklist. Each stor
 3. **Timeout Issues**: Send progress updates for long-running operations (>60s)
 4. **Browser Compatibility**: Test session management in both Node.js and browser
 5. **STDIO Logging**: Never log to stdout when STDIO transport is active
+6. **Migration Deadline**: STDIO transport will be discontinued on Smithery by September 7, 2025
+7. **Transport Choice**: Always use Streamable HTTP for remote deployments (not STDIO)
 
 ## Reference Implementations
 

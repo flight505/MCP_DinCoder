@@ -3,7 +3,7 @@ Below is a very, very, very detailed project plan rendered as a markdown checkli
 Key external facts used here (with sources):
 • Spec Kit provides /specify, /plan, /tasks commands and a standard gated flow (Specify → Plan → Tasks → Implement).  ￼  ￼
 • MCP "Streamable HTTP" (Protocol Revision 2025-03-26) requires a single MCP endpoint supporting POST for JSON‑RPC and optional SSE streams, and GET for server‑to‑client SSE; includes session management via the Mcp-Session-Id header and protocol version header (MCP-Protocol-Version).  ￼
-• Smithery is **deprecating STDIO support on September 7, 2025** - requires complete HTTP rewrite. Smithery uses WebSocket-based hosting and requires a /mcp endpoint that handles GET/POST/DELETE and optionally receives configuration via ?config=<base64>.  ￼
+• Smithery is **deprecating STDIO support on September 7, 2025** - requires complete HTTP rewrite. Smithery uses WebSocket-based hosting and requires a /mcp endpoint that handles GET/POST/DELETE and optionally receives configuration via ?config=<base64>. Migration offers 20x higher concurrency, lower latency, and better resource efficiency.  ￼
 • Official TypeScript SDK (@modelcontextprotocol/sdk v1.17.5+) supports Streamable HTTP since v1.10.0 (April 2025), with built-in StreamableHTTPServerTransport class.  ￼
 • Spec Kit works across GitHub Copilot, Claude Code, and Gemini CLI. Multiple MCP implementations exist for spec-driven development including spec-workflow-mcp.  ￼ ￼
 • **CRITICAL UPDATE**: For stateless deployments, create new server/transport instances per request to avoid request ID collisions. For stateful deployments, use session management with UUID-based session IDs.
@@ -229,12 +229,14 @@ Story 15 — Smithery integration & deployment
 
 Goal: Make it live on Smithery and compatible with the platform.
 
-	•	Create smithery.json with name, description, tags, tool examples, repository links per Smithery registry requirements.  ￼
-	•	Add Dockerfile with exact build instructions for consistent container image (required for GitHub integration deployment).
+	•	Create smithery.yaml (not json) with runtime: "typescript" configuration per Smithery TypeScript deployment guide.  ￼
+	•	Configure package.json with build/dev scripts using @smithery/cli.
+	•	Structure server with default export function createServer({ config }) returning McpServer instance.
+	•	Add optional configSchema export using Zod for configuration validation.
 	•	Ensure /mcp implements GET/POST/DELETE exactly per Smithery expectations.  ￼
 	•	Ensure support for ?config=<base64> query param decoded and validated.  ￼
 	•	**CRITICAL**: Ensure HTTP transport only - STDIO deprecated September 7, 2025.
-	•	Use `npm create smithery` for initial scaffold if starting fresh.
+	•	Consider using ts-smithery-cli approach for simplest migration path.
 	•	Add "Deploy on Smithery" instructions to README (GitHub integration method).  ￼
 	•	Post‑deploy smoke test using Smithery's recommended client flow (Streamable HTTP client).  ￼
 	•	Document API key usage where applicable (Smithery registry/SDK).  ￼
