@@ -94,55 +94,55 @@ Goal: Generate and curate the granular to‑do list used for implementation.
 
 ⸻
 
-Story 6 — Implement MCP server skeleton (Streamable HTTP)
+Story 6 — Implement MCP server skeleton (Streamable HTTP) ✅
 
 Goal: Build a minimal but spec‑compliant server exposing a /mcp endpoint with POST/GET/DELETE.
 
-	•	Create src/server/createServer.ts exporting a factory createServer() that wires tools/resources/prompts using the TS SDK.  ￼
-	•	Create src/http/app.ts with an Express app.
-	•	Add src/http/transport.ts that wraps StreamableHTTPServerTransport from the TS SDK.  ￼
-	•	**CRITICAL**: For stateless mode, create new server/transport instances per request. For stateful mode, implement session map with UUID-based session IDs.
-	•	Implement POST /mcp to accept one JSON‑RPC message per request and either SSE (for streamed responses) or JSON per MCP spec.  ￼
-	•	Implement GET /mcp to open an SSE stream for server‑initiated messages; return 405 if not supported.  ￼
-	•	Implement DELETE /mcp to end a session when Mcp-Session-Id header is provided (if server allows client‑initiated termination).  ￼
-	•	Add Mcp-Session-Id issuance on initialization (use crypto.randomUUID()) and enforce header presence on subsequent calls (400 if absent).  ￼
-	•	Return/accept MCP-Protocol-Version header; default to "2025-03-26" when absent (per spec guidance).  ￼
-	•	Implement Origin checking and optional auth (bearer/API key) middleware.  ￼
-	•	Add graceful shutdown (SIGINT/SIGTERM) to close transports. Use res.on('close') to cleanup per-request resources.
-	•	Write unit tests for POST/GET/DELETE happy paths and error paths using vitest + supertest.
-	•	Add SSE tests ensuring event framing (data: ...\n\n) correctness and stream close after response.  ￼
-	•	**Error Handling**: Wrap all handlers in try-catch, log to stderr, return valid JSON-RPC error responses.
-	•	Commit "feat(server): minimal MCP streamable HTTP endpoint".
+	• ✅	Create src/server/createServer.ts exporting a factory createServer() that wires tools/resources/prompts using the TS SDK.  ￼
+	• ✅	Create src/http/app.ts with an Express app.
+	• ✅	Add src/http/transport.ts that wraps StreamableHTTPServerTransport from the TS SDK.  ￼
+	• ✅	**CRITICAL**: For stateless mode, create new server/transport instances per request. For stateful mode, implement session map with UUID-based session IDs.
+	• ✅	Implement POST /mcp to accept one JSON‑RPC message per request and either SSE (for streamed responses) or JSON per MCP spec.  ￼
+	• ✅	Implement GET /mcp to open an SSE stream for server‑initiated messages; return 405 if not supported.  ￼
+	• ✅	Implement DELETE /mcp to end a session when Mcp-Session-Id header is provided (if server allows client‑initiated termination).  ￼
+	• ✅	Add Mcp-Session-Id issuance on initialization (use crypto.randomUUID()) and enforce header presence on subsequent calls (400 if absent).  ￼
+	• ✅	Return/accept MCP-Protocol-Version header; default to "2025-03-26" when absent (per spec guidance).  ￼
+	• ✅	Implement Origin checking and optional auth (bearer/API key) middleware.  ￼
+	• ✅	Add graceful shutdown (SIGINT/SIGTERM) to close transports. Use res.on('close') to cleanup per-request resources.
+	• ✅	Write unit tests for POST/GET/DELETE happy paths and error paths using vitest + supertest.
+	• ✅	Add SSE tests ensuring event framing (data: ...\n\n) correctness and stream close after response.  ￼
+	• ✅	**Error Handling**: Wrap all handlers in try-catch, log to stderr, return valid JSON-RPC error responses.
+	• ✅	Commit "feat(server): minimal MCP streamable HTTP endpoint".
 
 ⸻
 
-Story 7 — Implement Spec‑Driven tools inside the MCP server
+Story 7 — Implement Spec‑Driven tools inside the MCP server ✅
 
 Goal: Expose tools that run Spec Kit phases and parse artifacts so any AI coder can drive SDD through MCP.
 
-	•	Tool specify.start: inputs { projectName, agent }; runs specify init <projectName> --ai <agent>; returns path + summary.  ￼
-	•	Tool specify.describe: inputs { description }; posts /specify <description> into agent session or CLI wrapper; returns generated spec path.  ￼
-	•	Tool plan.create: inputs { constraintsText }; posts /plan ... to generate plan.md, data model, contracts; returns file paths.  ￼
-	•	Tool tasks.generate: inputs { scope }; posts /tasks to produce tasks.md; returns structured task objects (id, title, deps).  ￼
-	•	Tool tasks.tick: mark a task ID as done; persist in tasks.md (idempotent update).  ￼
-	•	Tool artifacts.read: return normalized JSON for spec/plan/tasks for downstream UIs.
-	•	Tool research.append: write to the Spec Kit research doc for decisions taken.  ￼
-	•	Tool git.create_branch: create a working branch for a feature (Spec Kit may do this on init; mirror behavior).  ￼
-	•	Add robust path sandboxing (only operate under a configured workspace directory).
-	•	Add timeouts and resource limits when running CLI commands.
+	• ✅	Tool specify.start: inputs { projectName, agent }; runs specify init <projectName> --ai <agent>; returns path + summary.  ￼
+	• ✅	Tool specify.describe: inputs { description }; posts /specify <description> into agent session or CLI wrapper; returns generated spec path.  ￼
+	• ✅	Tool plan.create: inputs { constraintsText }; posts /plan ... to generate plan.md, data model, contracts; returns file paths.  ￼
+	• ✅	Tool tasks.generate: inputs { scope }; posts /tasks to produce tasks.md; returns structured task objects (id, title, deps).  ￼
+	• ✅	Tool tasks.tick: mark a task ID as done; persist in tasks.md (idempotent update).  ￼
+	• ✅	Tool artifacts.read: return normalized JSON for spec/plan/tasks for downstream UIs.
+	• ✅	Tool research.append: write to the Spec Kit research doc for decisions taken.  ￼
+	• ✅	Tool git.create_branch: create a working branch for a feature (Spec Kit may do this on init; mirror behavior).  ￼
+	• ✅	Add robust path sandboxing (only operate under a configured workspace directory).
+	• ✅	Add timeouts and resource limits when running CLI commands.
 
 ⸻
 
-Story 8 — MCP tools for repo hygiene & quality
+Story 8 — MCP tools for repo hygiene & quality ✅
 
-Goal: Ensure autonomous agents don’t degrade the codebase.
+Goal: Ensure autonomous agents don't degrade the codebase.
 
-	•	Tool quality.format: run Prettier; return diff summary.
-	•	Tool quality.lint: run ESLint; return problem list JSON.
-	•	Tool quality.test: run vitest --run --coverage; return pass rate + coverage.
-	•	Tool quality.security_audit: run npm audit --json; summarize vulnerabilities.
-	•	Tool quality.deps_update: dry‑run minor updates (e.g., npm outdated summary).
-	•	Tool quality.license_check: scan dependencies for license compatibility.
+	• ✅	Tool quality.format: run Prettier; return diff summary.
+	• ✅	Tool quality.lint: run ESLint; return problem list JSON.
+	• ✅	Tool quality.test: run vitest --run --coverage; return pass rate + coverage.
+	• ✅	Tool quality.security_audit: run npm audit --json; summarize vulnerabilities.
+	• ✅	Tool quality.deps_update: dry‑run minor updates (e.g., npm outdated summary).
+	• ✅	Tool quality.license_check: scan dependencies for license compatibility.
 
 ⸻
 
@@ -175,14 +175,14 @@ Goal: Make it safe to run remotely.
 
 ⸻
 
-Story 11 — Developer ergonomics & examples
+Story 11 — Developer ergonomics & examples ✅
 
 Goal: Smooth adoption.
 
-	•	examples/local-client.ts: connect using SDK client to local /mcp (POST + SSE).  ￼
-	•	examples/smithery-client.ts: connect to https://server.smithery.ai/<pkg>/mcp via StreamableHTTPClientTransport (include config).  ￼
-	•	examples/spec-workflow.md: step‑by‑step “run Spec Kit through MCP tools” demo.  ￼
-	•	Update README with quick start (local and Smithery) and FAQ.
+	• ✅	examples/local-client.ts: connect using SDK client to local /mcp (POST + SSE).  ￼
+	• ✅	examples/smithery-client.ts: connect to https://server.smithery.ai/<pkg>/mcp via StreamableHTTPClientTransport (include config).  ￼
+	• ✅	examples/spec-workflow.md: step‑by‑step "run Spec Kit through MCP tools" demo.  ￼
+	• ✅	Update README with quick start (local and Smithery) and FAQ.
 
 ⸻
 
