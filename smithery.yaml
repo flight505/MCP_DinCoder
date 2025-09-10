@@ -1,48 +1,12 @@
-runtime: typescript
-
-# DinCoder - The Spec-Driven MCP Server
-# Driven Intent Negotiation — Contract-Oriented Deterministic Executable Runtime
-
-name: DinCoder
-description: |
-  Transform "prompt-then-code-dump" workflows into systematic, specification-driven development.
-  DinCoder packages GitHub's Spec-Driven Development methodology into an MCP server that ensures
-  AI builds exactly what you intend through intent negotiation, contract-oriented design, and
-  deterministic execution.
-
-# Build configuration for TypeScript runtime
-build:
-  script: npm run build
-
-# Development configuration
-dev:
-  script: npm run dev:http
-
-# Environment variables for Smithery deployment
-env:
-  PORT: "3000"
-  MODE: "stateless"
-  ALLOWED_ORIGINS: "https://*.smithery.ai,https://*.claude.ai"
-
-# MCP server configuration
-mcp:
-  # Protocol version support
-  protocolVersion: "2025-03-26"
-  
-  # Server capabilities
-  capabilities:
-    tools: true
-    resources: false
-    prompts: false
-    notifications: false
-  
-  # Transport configuration
-  transport:
-    type: "streamable-http"
-    endpoint: "/mcp"
-    
-# Tags for discoverability
-tags:
+# Smithery configuration file
+name: "mcp-dincoder"
+description: "DinCoder - Driven Intent Negotiation Contract-Oriented Deterministic Executable Runtime"
+version: "0.1.0"
+displayName: "DinCoder"
+summary: "The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution"
+homepage: "https://github.com/dincoder/mcp-server"
+repository: "https://github.com/dincoder/mcp-server"
+keywords:
   - spec-driven-development
   - sdd
   - ai-coding
@@ -54,8 +18,40 @@ tags:
   - copilot
   - mcp
 
-# Repository information
-repository: https://github.com/dincoder/mcp-server
+# Build configuration
+build:
+  dockerfile: Dockerfile
+  dockerBuildPath: .
 
-# License
-license: MIT
+# Server configuration for Smithery compatibility
+startCommand:
+  type: streamable-http
+  port: 3000
+  configSchema:
+    type: object
+    properties:
+      apiKey:
+        type: string
+        description: "Optional API key for authentication"
+      originWhitelist:
+        type: string
+        description: "Comma-separated list of allowed origins"
+      transportMode:
+        type: string
+        description: "Transport mode: stateless or stateful"
+        default: "stateless"
+        enum: ["stateless", "stateful"]
+    required: []
+  commandFunction: |-
+    config => ({
+      command: 'node',
+      args: ['dist/index.js'],
+      env: {
+        PORT: '3000',
+        TRANSPORT_MODE: config.transportMode || 'stateless',
+        API_KEY: config.apiKey || '',
+        ORIGIN_WHITELIST: config.originWhitelist || '',
+        NODE_ENV: 'production',
+        MCP_TRANSPORT: 'streamable-http'
+      }
+    })
