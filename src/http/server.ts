@@ -95,10 +95,29 @@ export class McpHttpServer {
       }
     });
 
-    // GET /mcp - SSE stream for server-initiated messages
+    // GET /mcp - SSE stream for server-initiated messages or browser info
     this.app.get('/mcp', async (req: Request, res: Response): Promise<void> => {
       try {
         const protocolVersion = getProtocolVersion(req);
+        const acceptHeader = req.headers.accept || '';
+        
+        // Check if this is a browser request (not SSE)
+        if (!acceptHeader.includes('text/event-stream')) {
+          // Return info page for browser access
+          res.status(200).json({
+            name: 'MCP DinCoder Server',
+            version: '0.1.4',
+            protocol: protocolVersion,
+            transport: this.config.transportMode,
+            status: 'running',
+            endpoints: {
+              mcp: '/mcp (POST for JSON-RPC, GET for SSE in stateful mode)',
+              health: '/healthz'
+            },
+            message: 'Use POST requests with JSON-RPC 2.0 format to interact with this server'
+          });
+          return;
+        }
         
         if (this.config.transportMode === TransportMode.STATELESS) {
           // Stateless mode doesn't support SSE
