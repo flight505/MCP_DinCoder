@@ -1,7 +1,7 @@
 # Smithery configuration file
 name: "mcp-dincoder"
 description: "DinCoder - Driven Intent Negotiation Contract-Oriented Deterministic Executable Runtime"
-version: "0.1.1"
+version: "0.1.2"
 displayName: "DinCoder"
 summary: "The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution"
 homepage: "https://github.com/dincoder/mcp-server"
@@ -23,35 +23,27 @@ build:
   dockerfile: Dockerfile
   dockerBuildPath: .
 
+# Runtime configuration
+runtime: "typescript"
+
 # Server configuration for Smithery compatibility
-startCommand:
-  type: streamable-http
-  port: 3000
-  configSchema:
-    type: object
-    properties:
-      apiKey:
-        type: string
-        description: "Optional API key for authentication"
-      originWhitelist:
-        type: string
-        description: "Comma-separated list of allowed origins"
-      transportMode:
-        type: string
-        description: "Transport mode: stateless or stateful"
-        default: "stateless"
-        enum: ["stateless", "stateful"]
-    required: []
-  commandFunction: |-
-    config => ({
-      command: 'node',
-      args: ['dist/index.js'],
-      env: {
-        PORT: '3000',
-        TRANSPORT_MODE: config.transportMode || 'stateless',
-        API_KEY: config.apiKey || '',
-        ORIGIN_WHITELIST: config.originWhitelist || '',
-        NODE_ENV: 'production',
-        MCP_TRANSPORT: 'streamable-http'
-      }
-    })
+configSchema:
+  type: object
+  properties:
+    apiKey:
+      type: string
+      description: "Optional API key for authentication"
+    originWhitelist:
+      type: string
+      description: "Comma-separated list of allowed origins"
+    transportMode:
+      type: string
+      description: "Transport mode: stateless or stateful"
+      default: "stateless"
+      enum: ["stateless", "stateful"]
+    logLevel:
+      type: string
+      description: "Logging level"
+      default: "info"
+      enum: ["debug", "info", "warn", "error"]
+  required: []

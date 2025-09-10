@@ -66,7 +66,7 @@ export async function gitCreateBranch(params: z.infer<typeof GitCreateBranchSche
       // First ensure we have the base branch
       try {
         await execAsync(`git checkout ${fromBranch}`, { cwd: resolvedPath });
-      } catch (error) {
+      } catch {
         throw new Error(`Base branch '${fromBranch}' not found`);
       }
       command = `git checkout -b ${branchName}`;
@@ -74,7 +74,7 @@ export async function gitCreateBranch(params: z.infer<typeof GitCreateBranchSche
       command = `git checkout -b ${branchName}`;
     }
     
-    const { stdout, stderr } = await execAsync(command, {
+    const { stdout } = await execAsync(command, {
       cwd: resolvedPath,
       timeout: 10000,
     });

@@ -9,4 +9,8 @@ eza . --tree --git-ignore
 > Read the files below to get the context of the project. 
 
 plan.md
+CLAUDE.md
+README.md
+docs/conformance.md
+docs/smithery-migration-guide.md    
 > Dont do anything else.

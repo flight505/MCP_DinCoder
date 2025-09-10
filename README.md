@@ -79,7 +79,7 @@ Or configure manually in your Claude Code config:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/mcp-dincoder.git
+git clone https://github.com/flight505/mcp-dincoder.git
 cd mcp-dincoder
 
 # Install dependencies

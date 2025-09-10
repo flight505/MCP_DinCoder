@@ -43,10 +43,11 @@ export async function tasksGenerate(params: z.infer<typeof TasksGenerateSchema>)
   
   try {
     // Read plan if provided
-    let planContent = '';
+    // let planContent = '';
     if (planPath) {
       const resolvedPlanPath = path.resolve(resolvedPath, planPath);
-      planContent = await fs.readFile(resolvedPlanPath, 'utf-8');
+      // planContent = await fs.readFile(resolvedPlanPath, 'utf-8');
+      await fs.readFile(resolvedPlanPath, 'utf-8');
     }
     
     // Create tasks directory

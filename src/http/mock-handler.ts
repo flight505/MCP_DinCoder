@@ -63,7 +63,7 @@ export async function handleMockRequest(req: Request, res: Response): Promise<vo
       });
       break;
       
-    case 'tools/call':
+    case 'tools/call': {
       const toolName = body.params?.name;
       if (toolName === 'test.echo') {
         res.status(200).json({
@@ -89,6 +89,7 @@ export async function handleMockRequest(req: Request, res: Response): Promise<vo
         });
       }
       break;
+    }
       
     default:
       // Unknown method

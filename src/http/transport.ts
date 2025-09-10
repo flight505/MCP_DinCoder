@@ -59,7 +59,7 @@ export class SessionManager {
       };
     }
 
-    // Create new session
+    // Create new session with a generated ID
     const newSessionId = randomUUID();
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => newSessionId,

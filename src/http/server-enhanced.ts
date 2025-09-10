@@ -11,7 +11,7 @@ import {
   loggingMiddleware,
 } from '../middleware/security.js';
 import {
-  TransportMode,
+  // TransportMode,
   SessionManager,
   createStatelessTransport,
   getSessionIdFromRequest,

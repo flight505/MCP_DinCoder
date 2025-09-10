@@ -53,7 +53,7 @@ export async function qualityFormat(params: z.infer<typeof QualityFormatSchema>)
       ? 'npm run format' 
       : 'npx prettier --check .';
     
-    const { stdout, stderr } = await execAsync(command, {
+    const { stdout } = await execAsync(command, {
       cwd: resolvedPath,
       timeout: 30000,
     });
@@ -98,7 +98,7 @@ export async function qualityLint(params: z.infer<typeof QualityLintSchema>) {
       ? 'npx eslint . --fix' 
       : 'npm run lint';
     
-    const { stdout, stderr } = await execAsync(command, {
+    const { stdout } = await execAsync(command, {
       cwd: resolvedPath,
       timeout: 30000,
     });
@@ -158,7 +158,7 @@ export async function qualityTest(params: z.infer<typeof QualityTestSchema>) {
       ? 'npm run test:coverage' 
       : 'npm test';
     
-    const { stdout, stderr } = await execAsync(command, {
+    const { stdout } = await execAsync(command, {
       cwd: resolvedPath,
       timeout: 60000, // 60 seconds for tests
       env: { ...process.env, CI: 'true' },
@@ -323,7 +323,7 @@ function parseTestOutput(output: string): {
   duration?: string;
 } {
   // Parse vitest output format
-  const totalMatch = output.match(/Tests\s+(\d+)\s+failed/);
+  // const totalMatch = output.match(/Tests\s+(\d+)\s+failed/);
   const passedMatch = output.match(/(\d+)\s+passed/);
   const failedMatch = output.match(/(\d+)\s+failed/);
   const durationMatch = output.match(/Duration\s+([\d.]+\w+)/);
@@ -468,7 +468,7 @@ export async function qualityLicenseCheck(params: z.infer<typeof QualityLicenseC
     }> = [];
     
     // Check each dependency
-    for (const [pkgName, pkgInfo] of Object.entries(dependencies)) {
+    for (const [pkgName] of Object.entries(dependencies)) {
       // Try to get license from package.json
       try {
         const pkgJsonPath = path.join(resolvedPath, 'node_modules', pkgName, 'package.json');

@@ -14,7 +14,7 @@ async function main() {
     // Create the MCP server
     const server = createServer({
       name: 'DinCoder',
-      version: '0.1.1',
+      version: '0.1.2',
       capabilities: {
         tools: true,
         resources: false,

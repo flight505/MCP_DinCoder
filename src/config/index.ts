@@ -118,12 +118,12 @@ export function getConfig(
  * Validate origin against allowed origins
  */
 export function isOriginAllowed(origin: string | undefined, allowedOrigins: string[]): boolean {
-  if (!origin) return true; // No origin header is allowed (same-origin)
-  if (allowedOrigins.includes('*')) return true; // Wildcard allows all
+  if (!origin) {return true;} // No origin header is allowed (same-origin)
+  if (allowedOrigins.includes('*')) {return true;} // Wildcard allows all
   
   // Check exact match or pattern match
   return allowedOrigins.some(allowed => {
-    if (allowed === origin) return true;
+    if (allowed === origin) {return true;}
     
     // Support wildcard patterns like http://localhost:*
     if (allowed.includes('*')) {
