@@ -112,8 +112,8 @@ jobs:
 
       - name: Start server and test health
         run: |
-          # Start HTTP server in background
-          npm run start:http &
+          # Start HTTP server in background on port 3000
+          PORT=3000 npm run start:http &
           SERVER_PID=$!
           
           # Wait for server to start
