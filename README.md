@@ -1,5 +1,7 @@
 # DinCoder 🚀
 
+[![Deploy on Smithery](https://smithery.ai/badge/deploy-on-smithery.svg)](https://smithery.ai/deploy?repository=https://github.com/dincoder/mcp-server)
+
 **D**riven **I**ntent **N**egotiation — **C**ontract-**O**riented **D**eterministic **E**xecutable **R**untime
 
 > *The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution*
@@ -28,6 +30,15 @@ Most AI coding workflows fail because they leave thousands of details implicit. 
 - 🔄 **Enabling iteration without rewrites** - Change the spec, regenerate the implementation
 
 ## Features
+
+### 🎯 Real Spec Kit Integration (v0.1.7+)
+- **Authentic Spec-Driven Development**: Generates real Spec Kit markdown documents (spec.md, plan.md, tasks.md)
+- **Template-Based Generation**: Uses official GitHub Spec Kit templates for consistency
+- **Dual Directory Support**: Works with both `.dincoder/` and `specs/` directory structures
+- **Backward Compatible**: Maintains JSON format compatibility while embracing markdown-first approach
+- **Cross-Agent Ready**: Spec Kit format works with Claude, Copilot, Gemini, and other AI agents
+
+## Core Features
 
 - **🎯 Spec-Driven Workflow**: Full Spec Kit integration (specify → plan → tasks → implement)
 - **🔌 MCP Protocol**: Streamable HTTP (Protocol Revision 2025-03-26) compliant
