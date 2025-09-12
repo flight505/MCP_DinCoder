@@ -153,15 +153,33 @@ export const configSchema = z.object({
 
 Refer to `plan.md` for the complete 23-story implementation checklist. Each story contains granular 1-point tasks that can be completed independently.
 
+## Lessons Learned from v0.1.6
+
+### Critical Fixes Applied
+- **Tool Naming**: All 15 tools renamed from periods to underscores (e.g., "specify.start" → "specify_start")
+- **Self-Contained Tools**: Removed external CLI dependencies, tools now use direct file operations
+- **Directory Structure**: Standardized on .dincoder/ directory for all artifacts
+- **Error Messages**: Enhanced with actionable next steps and better context
+
+### Key Achievements
+- Successfully published to NPM as @dincoder/mcp-server
+- 32/33 tests passing (2 SDK limitations)
+- Complete CI/CD pipeline with GitHub Actions
+- Comprehensive migration guide for STDIO → HTTP transition
+- Full integration with Claude Desktop confirmed
+
 ## Known Pitfalls to Avoid
 
-1. **Request ID Collisions**: Always create new transport instances in stateless mode
-2. **Session ID Format**: Must be visible ASCII (0x21-0x7E) only
-3. **Timeout Issues**: Send progress updates for long-running operations (>60s)
-4. **Browser Compatibility**: Test session management in both Node.js and browser
-5. **STDIO Logging**: Never log to stdout when STDIO transport is active
-6. **Migration Deadline**: STDIO transport will be discontinued on Smithery by September 7, 2025
-7. **Transport Choice**: Always use Streamable HTTP for remote deployments (not STDIO)
+1. **Tool Naming Validation** ⚠️ CRITICAL: Tool names must match pattern `^[a-zA-Z0-9_-]{1,64}$` - no periods allowed
+2. **External Dependencies**: MCP tools should be self-contained, not rely on external CLI tools
+3. **Request ID Collisions**: Always create new transport instances in stateless mode
+4. **Session ID Format**: Must be visible ASCII (0x21-0x7E) only
+5. **Timeout Issues**: Send progress updates for long-running operations (>60s)
+6. **Browser Compatibility**: Test session management in both Node.js and browser
+7. **STDIO Logging**: Never log to stdout when STDIO transport is active
+8. **Migration Deadline**: STDIO transport will be discontinued on Smithery by September 7, 2025
+9. **Transport Choice**: Always use Streamable HTTP for remote deployments (not STDIO)
+10. **Directory Structure**: Use consistent .dincoder/ directory for all generated artifacts
 
 ## Reference Implementations
 

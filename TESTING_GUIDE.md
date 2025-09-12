@@ -148,9 +148,100 @@ Expected output:
   - research: Contents of research.md
 ```
 
-### Phase 7: Git Integration Tests
+### Phase 7: Quality Assurance Tools Tests
 
-#### 9. Create Feature Branch (git_create_branch)
+#### 9. Format Code (quality_format)
+**Purpose**: Check and fix code formatting with Prettier
+```
+Test command: Use quality_format tool with:
+- fix: false (check only)
+
+Expected output:
+- Reports whether code is properly formatted
+- Lists files with formatting issues if any
+- Returns success status
+
+Then test with fix:
+- fix: true
+
+Expected behavior:
+- Automatically formats all code files
+- Returns summary of changes made
+```
+
+#### 10. Lint Code (quality_lint)
+**Purpose**: Check for code quality issues with ESLint
+```
+Test command: Use quality_lint tool with:
+- fix: false (check only)
+
+Expected output:
+- Lists all linting errors and warnings
+- Provides count of issues by severity
+- Shows specific file locations and rule violations
+
+Then test with fix:
+- fix: true
+
+Expected behavior:
+- Automatically fixes fixable issues
+- Returns updated problem count
+```
+
+#### 11. Run Tests (quality_test)
+**Purpose**: Execute test suite with optional coverage
+```
+Test command: Use quality_test tool with:
+- coverage: true
+
+Expected output:
+- Test execution results (passed/failed/skipped)
+- Code coverage percentage if requested
+- Test duration
+- Detailed failure messages if any tests fail
+```
+
+#### 12. Security Audit (quality_security_audit)
+**Purpose**: Check for known vulnerabilities in dependencies
+```
+Test command: Use quality_security_audit tool with:
+- fix: false (audit only)
+
+Expected output:
+- Vulnerability summary by severity (critical/high/moderate/low)
+- Total number of vulnerable dependencies
+- Specific vulnerability details
+
+Note: fix: true will attempt to auto-fix vulnerabilities where possible
+```
+
+#### 13. Check Dependency Updates (quality_deps_update)
+**Purpose**: Check for outdated dependencies
+```
+Test command: Use quality_deps_update tool with:
+- check: true
+
+Expected output:
+- List of outdated packages
+- Current vs. wanted vs. latest versions
+- Categorization by update type (major/minor/patch)
+```
+
+#### 14. License Compatibility Check (quality_license_check)
+**Purpose**: Verify dependency licenses are compatible
+```
+Test command: Use quality_license_check tool with:
+- allowedLicenses: ["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"]
+
+Expected output:
+- List of all dependency licenses
+- Identification of problematic licenses
+- Summary of license compatibility status
+```
+
+### Phase 8: Git Integration Tests
+
+#### 15. Create Feature Branch (git_create_branch)
 **Purpose**: Create and switch to a new git branch
 ```
 Test command: Use git_create_branch tool with:
@@ -163,7 +254,7 @@ Expected behavior:
 - Verify: git branch
 ```
 
-#### 10. Check Git Status (git_check_status)
+#### 16. Check Git Status (git_check_status)
 **Purpose**: Get current git repository status
 ```
 Test command: Use git_check_status tool
@@ -175,12 +266,12 @@ Expected output:
 - Staging status
 ```
 
-### Phase 8: Error Handling Tests
+### Phase 9: Error Handling Tests
 
-#### 11. Test Invalid Inputs
+#### 17. Test Invalid Inputs
 **Purpose**: Verify error handling
 
-##### Test 11a: Invalid Project Path
+##### Test 17a: Invalid Project Path
 ```
 Test command: Use specify_start with:
 - projectName: "test"
@@ -190,7 +281,7 @@ Test command: Use specify_start with:
 Expected: Error message about directory not existing
 ```
 
-##### Test 11b: Task Not Found
+##### Test 17b: Task Not Found
 ```
 Test command: Use tasks_tick with:
 - taskId: "invalid-uuid"
@@ -198,7 +289,7 @@ Test command: Use tasks_tick with:
 Expected: "Task not found" error message
 ```
 
-##### Test 11c: Git Branch Already Exists
+##### Test 17c: Git Branch Already Exists
 ```
 Test command: Use git_create_branch with:
 - branchName: "main"
@@ -237,7 +328,7 @@ After running all tests, verify:
 
 ## Expected Success Criteria
 
-✅ All 15 tools respond without errors
+✅ All 21 tools respond without errors (15 core + 6 quality)
 ✅ File system operations create expected structure
 ✅ JSON files are properly formatted
 ✅ Git operations work with clean repository
@@ -257,6 +348,7 @@ Environment: Claude Desktop [VERSION]
 
 | Tool | Status | Notes |
 |------|--------|-------|
+| **Core Tools** | | |
 | test_echo | ✅/❌ | |
 | specify_start | ✅/❌ | |
 | specify_describe | ✅/❌ | |
@@ -267,6 +359,13 @@ Environment: Claude Desktop [VERSION]
 | artifacts_read | ✅/❌ | |
 | git_create_branch | ✅/❌ | |
 | git_check_status | ✅/❌ | |
+| **Quality Tools** | | |
+| quality_format | ✅/❌ | |
+| quality_lint | ✅/❌ | |
+| quality_test | ✅/❌ | |
+| quality_security_audit | ✅/❌ | |
+| quality_deps_update | ✅/❌ | |
+| quality_license_check | ✅/❌ | |
 
 ### Issues Found
 1. [Issue description and steps to reproduce]
@@ -279,6 +378,7 @@ Environment: Claude Desktop [VERSION]
 
 For automated testing, you can use this sequence in Claude Desktop:
 
+**Core Tools:**
 1. "Use test_echo tool with message 'Testing v0.1.6'"
 2. "Use specify_start tool to initialize project 'test-app' with agent 'claude' in current directory"
 3. "Use specify_describe tool to describe project as 'A modern web application with authentication and real-time features'"
@@ -286,6 +386,14 @@ For automated testing, you can use this sequence in Claude Desktop:
 5. "Use tasks_generate tool with scope 'Setup development environment, create database schema, implement auth system'"
 6. "Use artifacts_read tool to show all project files"
 7. "Use git_check_status tool to check repository status"
+
+**Quality Tools:**
+8. "Use quality_format tool to check code formatting"
+9. "Use quality_lint tool to check for code issues"
+10. "Use quality_test tool with coverage to run tests"
+11. "Use quality_security_audit tool to check for vulnerabilities"
+12. "Use quality_deps_update tool to check for outdated dependencies"
+13. "Use quality_license_check tool to verify license compatibility"
 
 ## Support
 

@@ -53,7 +53,7 @@ export async function qualityFormat(params: z.infer<typeof QualityFormatSchema>)
       ? 'npm run format' 
       : 'npx prettier --check .';
     
-    const { stdout } = await execAsync(command, {
+    const { stdout, stderr } = await execAsync(command, {
       cwd: resolvedPath,
       timeout: 30000,
     });

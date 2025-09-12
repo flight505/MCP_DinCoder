@@ -1,7 +1,7 @@
 # Smithery configuration file
 name: "mcp-dincoder"
 description: "DinCoder - Driven Intent Negotiation Contract-Oriented Deterministic Executable Runtime"
-version: "0.1.3"
+version: "0.1.6"
 displayName: "DinCoder"
 summary: "The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution"
 homepage: "https://github.com/dincoder/mcp-server"
