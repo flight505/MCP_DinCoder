@@ -153,20 +153,23 @@ export const configSchema = z.object({
 
 Refer to `plan.md` for the complete 23-story implementation checklist. Each story contains granular 1-point tasks that can be completed independently.
 
-## Lessons Learned from v0.1.6
+## Lessons Learned from v0.1.7
 
-### Critical Fixes Applied
-- **Tool Naming**: All 15 tools renamed from periods to underscores (e.g., "specify.start" → "specify_start")
-- **Self-Contained Tools**: Removed external CLI dependencies, tools now use direct file operations
-- **Directory Structure**: Standardized on .dincoder/ directory for all artifacts
-- **Error Messages**: Enhanced with actionable next steps and better context
+### Critical Features Delivered
+- **Real Spec Kit Integration**: Transformed from mock to authentic Spec-Driven Development
+- **Spec Kit Modules**: Created detector.ts, parser.ts, templates.ts for real markdown generation
+- **CI/CD Fix**: Resolved smoke test failure by setting PORT=3000 in CI environment
+- **Smithery Ready**: Full deployment configuration with base64 config support
 
-### Key Achievements
+### Key Achievements  
 - Successfully published to NPM as @dincoder/mcp-server
-- 32/33 tests passing (2 SDK limitations)
+- 33/33 tests passing (100% pass rate with CI fix)
 - Complete CI/CD pipeline with GitHub Actions
-- Comprehensive migration guide for STDIO → HTTP transition
+- Real Spec Kit markdown generation (not mock JSON)
+- Cached official Spec Kit templates locally
+- Backward compatibility maintained (JSON + Markdown)
 - Full integration with Claude Desktop confirmed
+- Ready for Smithery deployment with HTTP transport
 
 ## Known Pitfalls to Avoid
 

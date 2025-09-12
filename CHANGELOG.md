@@ -2,6 +2,38 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.7] - 2025-01-12
+
+### Added
+- **Real Spec Kit Integration** - Transformed from mock implementation to authentic Spec-Driven Development
+  - Created `speckit/detector.ts` module for detecting Spec Kit document types
+  - Created `speckit/parser.ts` module for parsing Spec Kit markdown to structured JSON
+  - Created `speckit/templates.ts` module with official Spec Kit markdown templates
+  - Cached official Spec Kit templates locally in `templates/speckit/` directory
+
+### Changed
+- **All Spec Kit tools** now generate real markdown documents instead of mock JSON
+  - `specify_describe` generates authentic spec.md with GitHub SDD format
+  - `plan_create` generates real plan.md with research and architecture sections
+  - `tasks_generate` creates proper tasks.md with numbered task lists
+  - Maintains backward compatibility with JSON format for existing integrations
+
+### Fixed
+- **CI/CD Pipeline** - Resolved smoke test failure by setting PORT=3000 in CI environment
+  - All 33 tests now passing (100% pass rate)
+
+### Improved
+- **Smithery Deployment** - Full deployment configuration ready
+  - smithery.yaml with runtime: "typescript"
+  - Default export function for Smithery compatibility
+  - Base64 config parameter support implemented
+  - Added "Deploy on Smithery" button to README
+
+### Documentation
+- Updated CLAUDE.md with v0.1.7 achievements
+- Updated plan.md to reflect 74% project completion (17/23 stories)
+- Added comprehensive "Lessons Learned from v0.1.7" section
+
 ## [0.1.6] - 2025-01-10
 
 ### Fixed
