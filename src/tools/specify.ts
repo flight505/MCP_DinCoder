@@ -1,13 +1,8 @@
 import { z } from 'zod';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import * as fs from 'fs/promises';
-import * as path from 'path';
-
-const execAsync = promisify(exec);
 
 /**
- * Spec Kit specify tools
+ * Spec Kit specify tools - Real Spec Kit Integration
  */
 
 // Tool schemas
@@ -33,70 +28,29 @@ export async function specifyStart(params: z.infer<typeof SpecifyStartSchema>) {
   await validateWorkspacePath(resolvedPath);
   
   try {
-    // Create .dincoder directory
-    const dincoderPath = path.join(resolvedPath, '.dincoder');
-    await fs.mkdir(dincoderPath, { recursive: true });
+    // Check project type and prerequisites
+    const detection = await detectProjectType(resolvedPath);
+    const prerequisites = await checkSpecKitPrerequisites();
     
-    // Create initial spec.json template
-    const specTemplate = {
-      projectName,
-      agent,
-      version: '1.0.0',
-      createdAt: new Date().toISOString(),
-      description: '',
-      goals: [],
-      requirements: {
-        functional: [],
-        nonFunctional: [],
-        technical: []
-      },
-      userJourneys: [],
-      acceptanceCriteria: [],
-      constraints: [],
-      assumptions: [],
-      risks: [],
-      outOfScope: []
-    };
+    // Determine specs directory
+    const specsDir = await findSpecsDirectory(resolvedPath);
     
-    const specPath = path.join(dincoderPath, 'spec.json');
-    await fs.writeFile(specPath, JSON.stringify(specTemplate, null, 2), 'utf-8');
+    // Create feature directory
+    const featurePath = await createFeatureDirectory(specsDir, projectName);
     
-    // Create empty plan.json template
-    const planTemplate = {
-      projectName,
-      createdAt: new Date().toISOString(),
-      architecture: {
-        overview: '',
-        components: [],
-        dataFlow: [],
-        technologies: []
-      },
-      implementation: {
-        phases: [],
-        milestones: [],
-        dependencies: []
-      },
-      dataModel: {},
-      apiContracts: {},
-      securityConsiderations: [],
-      performanceTargets: []
-    };
+    // Generate initial spec from template
+    const specContent = await generateSpecFromTemplate(
+      `Initialize ${projectName} project with ${agent} agent`,
+      projectName
+    );
     
-    const planPath = path.join(dincoderPath, 'plan.json');
-    await fs.writeFile(planPath, JSON.stringify(planTemplate, null, 2), 'utf-8');
+    // Write spec.md
+    const specPath = path.join(featurePath, 'spec.md');
+    await fs.writeFile(specPath, specContent, 'utf-8');
     
-    // Create empty tasks.json template
-    const tasksTemplate = {
-      projectName,
-      createdAt: new Date().toISOString(),
-      tasks: [],
-      nextTaskId: 1,
-      completedCount: 0,
-      totalCount: 0
-    };
-    
-    const tasksPath = path.join(dincoderPath, 'tasks.json');
-    await fs.writeFile(tasksPath, JSON.stringify(tasksTemplate, null, 2), 'utf-8');
+    // Create contracts directory
+    const contractsPath = path.join(featurePath, 'contracts');
+    await fs.mkdir(contractsPath, { recursive: true });
     
     // Create initial research.md
     const researchContent = `# Research Documentation
@@ -118,20 +72,48 @@ _Add links to relevant documentation, articles, and resources._
 
 `;
     
-    const researchPath = path.join(dincoderPath, 'research.md');
+    const researchPath = path.join(featurePath, 'research.md');
     await fs.writeFile(researchPath, researchContent, 'utf-8');
+    
+    // Also maintain .dincoder compatibility for now
+    const dincoderPath = path.join(resolvedPath, '.dincoder');
+    await fs.mkdir(dincoderPath, { recursive: true });
+    
+    // Create compatibility JSON files in .dincoder
+    const specJson = {
+      projectName,
+      agent,
+      version: '1.0.0',
+      createdAt: new Date().toISOString(),
+      description: '',
+      specKitPath: specPath,
+      goals: [],
+      requirements: {
+        functional: [],
+        nonFunctional: [],
+        technical: []
+      }
+    };
+    
+    await fs.writeFile(
+      path.join(dincoderPath, 'spec.json'),
+      JSON.stringify(specJson, null, 2),
+      'utf-8'
+    );
     
     return {
       success: true,
-      projectPath: dincoderPath,
-      message: `Initialized DinCoder project: ${projectName}`,
+      projectPath: featurePath,
+      message: `Initialized Spec Kit project: ${projectName}`,
       details: {
         agent,
+        projectType: detection.type,
+        specKitAvailable: prerequisites.python && prerequisites.uv,
         filesCreated: {
           spec: specPath,
-          plan: planPath,
-          tasks: tasksPath,
-          research: researchPath
+          research: researchPath,
+          contracts: contractsPath,
+          compatibility: path.join(dincoderPath, 'spec.json')
         },
         nextSteps: [
           'Use specify_describe to add project details',
@@ -156,76 +138,134 @@ export async function specifyDescribe(params: z.infer<typeof SpecifyDescribeSche
   await validateWorkspacePath(resolvedPath);
   
   try {
-    // Check if .dincoder directory exists
+    // Check project type
+    const detection = await detectProjectType(resolvedPath);
+    
+    // Find the specs directory
+    const specsDir = await findSpecsDirectory(resolvedPath);
+    
+    // Find the most recent feature directory
+    let featurePath: string | null = null;
+    let specPath: string | null = null;
+    
+    try {
+      const entries = await fs.readdir(specsDir);
+      const featureDirs = entries
+        .filter(entry => /^\d{3}-/.test(entry))
+        .sort()
+        .reverse();
+      
+      if (featureDirs.length > 0) {
+        featurePath = path.join(specsDir, featureDirs[0]);
+        specPath = path.join(featurePath, 'spec.md');
+        
+        // Check if spec.md exists
+        const specExists = await fs.access(specPath).then(() => true).catch(() => false);
+        if (!specExists) {
+          specPath = null;
+        }
+      }
+    } catch {
+      // specs directory doesn't exist yet
+    }
+    
+    if (!specPath) {
+      // No existing spec, create a new feature
+      const projectName = description.split(' ')[0] || 'unnamed-feature';
+      featurePath = await createFeatureDirectory(specsDir, projectName);
+      
+      // Generate spec from template with description
+      const specContent = await generateSpecFromTemplate(description, projectName);
+      specPath = path.join(featurePath, 'spec.md');
+      await fs.writeFile(specPath, specContent, 'utf-8');
+    } else {
+      // Update existing spec with new description
+      let specContent = await fs.readFile(specPath, 'utf-8');
+      
+      // Update the user description in the spec
+      const inputPattern = /\*\*Input\*\*: User description: "[^"]*"/;
+      if (inputPattern.test(specContent)) {
+        specContent = specContent.replace(
+          inputPattern,
+          `**Input**: User description: "${description}"`
+        );
+      } else {
+        // Add user description if not present
+        const insertPoint = specContent.indexOf('## User Scenarios');
+        if (insertPoint > -1) {
+          const before = specContent.substring(0, insertPoint);
+          const after = specContent.substring(insertPoint);
+          specContent = `${before}\n**Input**: User description: "${description}"\n\n${after}`;
+        }
+      }
+      
+      // Mark as updated
+      const datePattern = /\*\*Created\*\*: [^\n]+/;
+      const today = new Date().toISOString().split('T')[0];
+      if (datePattern.test(specContent)) {
+        specContent = specContent.replace(datePattern, `**Created**: ${today} | **Updated**: ${new Date().toISOString()}`);
+      }
+      
+      await fs.writeFile(specPath, specContent, 'utf-8');
+    }
+    
+    // Also update .dincoder compatibility files
     const dincoderPath = path.join(resolvedPath, '.dincoder');
     const dincoderExists = await fs.access(dincoderPath).then(() => true).catch(() => false);
     
-    if (!dincoderExists) {
-      throw new Error('Project not initialized. Please run specify_start first.');
+    if (dincoderExists) {
+      const specJsonPath = path.join(dincoderPath, 'spec.json');
+      const specJsonExists = await fs.access(specJsonPath).then(() => true).catch(() => false);
+      
+      let specJson: any = {};
+      if (specJsonExists) {
+        const content = await fs.readFile(specJsonPath, 'utf-8');
+        specJson = JSON.parse(content);
+      }
+      
+      // Update with new description
+      specJson.description = description;
+      specJson.updatedAt = new Date().toISOString();
+      specJson.specKitPath = specPath;
+      
+      // Parse description for patterns
+      const lines = description.split('\n').filter(line => line.trim());
+      
+      // Extract goals
+      const goals = lines.filter(line => 
+        line.match(/^(-\s*)?(goal|objective|aim)s?:?\s*/i)
+      ).map(line => line.replace(/^(-\s*)?(goal|objective|aim)s?:?\s*/i, '').trim());
+      
+      if (goals.length > 0) {
+        specJson.goals = [...(specJson.goals || []), ...goals];
+      }
+      
+      // Extract requirements
+      const requirements = lines.filter(line => 
+        line.match(/\b(must|should|require[ds]?|need[s]?)\b/i)
+      ).map(line => line.trim());
+      
+      if (requirements.length > 0) {
+        specJson.requirements = specJson.requirements || {};
+        specJson.requirements.functional = [...(specJson.requirements.functional || []), ...requirements];
+      }
+      
+      await fs.writeFile(specJsonPath, JSON.stringify(specJson, null, 2), 'utf-8');
     }
-    
-    // Read existing spec.json
-    const specPath = path.join(dincoderPath, 'spec.json');
-    const specExists = await fs.access(specPath).then(() => true).catch(() => false);
-    
-    let spec: any = {};
-    if (specExists) {
-      const specContent = await fs.readFile(specPath, 'utf-8');
-      spec = JSON.parse(specContent);
-    }
-    
-    // Update spec with new description
-    spec.description = description;
-    spec.updatedAt = new Date().toISOString();
-    
-    // Parse description for common patterns
-    const lines = description.split('\n').filter(line => line.trim());
-    
-    // Look for goals (lines starting with "Goal:" or "- Goal")
-    const goals = lines.filter(line => 
-      line.match(/^(-\s*)?(goal|objective|aim)s?:?\s*/i)
-    ).map(line => line.replace(/^(-\s*)?(goal|objective|aim)s?:?\s*/i, '').trim());
-    
-    if (goals.length > 0) {
-      spec.goals = [...(spec.goals || []), ...goals];
-    }
-    
-    // Look for requirements (lines with "must", "should", "required")
-    const requirements = lines.filter(line => 
-      line.match(/\b(must|should|require[ds]?|need[s]?)\b/i)
-    ).map(line => line.trim());
-    
-    if (requirements.length > 0) {
-      spec.requirements = spec.requirements || {};
-      spec.requirements.functional = [...(spec.requirements.functional || []), ...requirements];
-    }
-    
-    // Look for constraints (lines with "constraint", "limitation", "restriction")
-    const constraints = lines.filter(line => 
-      line.match(/\b(constraint|limitation|restriction|cannot|must not)\b/i)
-    ).map(line => line.trim());
-    
-    if (constraints.length > 0) {
-      spec.constraints = [...(spec.constraints || []), ...constraints];
-    }
-    
-    // Write updated spec
-    await fs.writeFile(specPath, JSON.stringify(spec, null, 2), 'utf-8');
     
     return {
       success: true,
       specPath,
       message: 'Updated project specification',
       details: {
-        location: dincoderPath,
+        location: featurePath,
+        projectType: detection.type,
         updatedFields: {
           description: true,
-          goals: goals.length > 0,
-          requirements: requirements.length > 0,
-          constraints: constraints.length > 0
+          specKitFormat: true
         },
         nextSteps: [
-          'Review and edit spec.json directly for fine-tuning',
+          'Review and edit spec.md directly for fine-tuning',
           'Use plan_create to generate technical plan',
           'Use artifacts_read to view current specification'
         ]
