@@ -1,0 +1,14 @@
+{
+  "projectName": "test-project",
+  "agent": "claude",
+  "version": "1.0.0",
+  "createdAt": "2025-09-15T18:13:29.607Z",
+  "description": "",
+  "specKitPath": "/Users/jesper/Projects/Other_projects/MCP_servers/MCP_DinCoder/specs/001-test-project/spec.md",
+  "goals": [],
+  "requirements": {
+    "functional": [],
+    "nonFunctional": [],
+    "technical": []
+  }
+}

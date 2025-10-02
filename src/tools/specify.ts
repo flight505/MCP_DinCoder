@@ -1,5 +1,13 @@
 import { z } from 'zod';
 import * as fs from 'fs/promises';
+import * as path from 'path';
+import {
+  detectProjectType,
+  checkSpecKitPrerequisites,
+  findSpecsDirectory,
+  createFeatureDirectory
+} from '../speckit/detector.js';
+import { generateSpecFromTemplate } from '../speckit/templates.js';
 
 /**
  * Spec Kit specify tools - Real Spec Kit Integration

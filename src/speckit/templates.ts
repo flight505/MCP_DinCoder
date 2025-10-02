@@ -6,11 +6,6 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export type TemplateName = 'spec' | 'plan' | 'tasks';
 
@@ -22,10 +17,9 @@ export interface TemplateVariables {
  * Load a Spec Kit template
  */
 export async function loadTemplate(name: TemplateName): Promise<string> {
+  // Use relative path from project root
   const templatePath = path.join(
-    __dirname,
-    '..',
-    '..',
+    process.cwd(),
     'templates',
     'speckit',
     `${name}-template.md`
@@ -237,7 +231,7 @@ function replaceRequirements(spec: string, requirements: string[]): string {
     .join('\n');
   
   // Find and replace the requirements section
-  const pattern = /- \*\*FR-001\*\*: System MUST.*?(?=\n\n|\*Example of marking)/s;
+  const pattern = /- \*\*FR-001\*\*: System MUST[\s\S]*?(?=\n\n|\*Example of marking)/;
   return spec.replace(pattern, requirementSection + '\n');
 }
 
@@ -246,7 +240,7 @@ function replaceAcceptanceScenarios(spec: string, scenarios: string[]): string {
     .map((scenario, index) => `${index + 1}. **${scenario}`)
     .join('\n');
   
-  const pattern = /1\. \*\*Given\*\* \[initial state\].*?2\. \*\*Given\*\* \[initial state\].*?\n/s;
+  const pattern = /1\. \*\*Given\*\* \[initial state\][\s\S]*?2\. \*\*Given\*\* \[initial state\][\s\S]*?\n/;
   return spec.replace(pattern, scenarioSection + '\n');
 }
 
@@ -338,7 +332,7 @@ async function generateDataModel(specPath: string): Promise<string> {
     const specContent = await fs.readFile(specPath, 'utf-8');
     
     // Extract entities from spec
-    const entityMatch = specContent.match(/### Key Entities.*?\n(.*?)(?=\n---|\n##)/s);
+    const entityMatch = specContent.match(/### Key Entities[\s\S]*?\n([\s\S]*?)(?=\n---|\n##)/);
     const entities = entityMatch ? entityMatch[1] : '';
     
     return `# Data Model
