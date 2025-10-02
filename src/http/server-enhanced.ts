@@ -206,7 +206,7 @@ export class EnhancedMcpHttpServer {
         
         // Remove session
         if (this.sessionManager) {
-          this.sessionManager.removeSession(sessionId);
+          this.sessionManager.deleteSession(sessionId);
         }
         
         res.status(204).send();

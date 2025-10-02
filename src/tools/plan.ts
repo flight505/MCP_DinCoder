@@ -56,16 +56,16 @@ export async function planCreate(params: z.infer<typeof PlanCreateSchema>) {
           break;
         }
       }
-    } else {
+    } else if (specPath) {
       // Use provided spec path
       actualSpecPath = path.resolve(resolvedPath, specPath);
       featurePath = path.dirname(actualSpecPath);
     }
     
-    if (!actualSpecPath) {
+    if (!actualSpecPath || !featurePath) {
       throw new Error('No specification found. Please create a specification first using specify_describe.');
     }
-    
+
     // Generate plan from template
     const { plan, research, dataModel } = await generatePlanFromTemplate(
       actualSpecPath,
@@ -73,17 +73,17 @@ export async function planCreate(params: z.infer<typeof PlanCreateSchema>) {
     );
     
     // Write plan.md
-    const planPath = path.join(featurePath!, 'plan.md');
+    const planPath = path.join(featurePath, 'plan.md');
     await fs.writeFile(planPath, plan, 'utf-8');
-    
+
     // Write research.md (append if exists)
-    const researchPath = path.join(featurePath!, 'research.md');
+    const researchPath = path.join(featurePath, 'research.md');
     const existingResearch = await fs.readFile(researchPath, 'utf-8').catch(() => '');
     const updatedResearch = existingResearch + '\n\n' + research;
     await fs.writeFile(researchPath, updatedResearch, 'utf-8');
-    
+
     // Write data-model.md
-    const dataModelPath = path.join(featurePath!, 'data-model.md');
+    const dataModelPath = path.join(featurePath, 'data-model.md');
     await fs.writeFile(dataModelPath, dataModel, 'utf-8');
     
     // Also update .dincoder compatibility files
@@ -93,14 +93,14 @@ export async function planCreate(params: z.infer<typeof PlanCreateSchema>) {
     if (dincoderExists) {
       // Create compatibility plan.json
       const planJson = {
-        projectName: path.basename(featurePath!),
+        projectName: path.basename(featurePath),
         createdAt: new Date().toISOString(),
         specKitPath: planPath,
         architecture: {
           overview: 'See plan.md',
-          components: [],
-          dataFlow: [],
-          technologies: []
+          components: [] as string[],
+          dataFlow: [] as string[],
+          technologies: [] as string[]
         },
         implementation: {
           phases: [],

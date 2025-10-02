@@ -75,21 +75,21 @@ export async function tasksGenerate(params: z.infer<typeof TasksGenerateSchema>)
           break;
         }
       }
-    } else {
+    } else if (planPath) {
       // Use provided plan path
       actualPlanPath = path.resolve(resolvedPath, planPath);
       featurePath = path.dirname(actualPlanPath);
     }
     
-    if (!actualPlanPath) {
+    if (!actualPlanPath || !featurePath) {
       throw new Error('No plan found. Please create a plan first using plan_create.');
     }
-    
+
     // Generate tasks from template
     const tasksContent = await generateTasksFromTemplate(actualPlanPath, scope);
-    
+
     // Write tasks.md
-    const tasksPath = path.join(featurePath!, 'tasks.md');
+    const tasksPath = path.join(featurePath, 'tasks.md');
     await fs.writeFile(tasksPath, tasksContent, 'utf-8');
     
     // Parse the generated tasks to extract structured data
@@ -192,7 +192,7 @@ export async function tasksTick(params: z.infer<typeof TasksTickSchema>) {
           break;
         }
       }
-    } else {
+    } else if (tasksPath) {
       actualTasksPath = path.resolve(resolvedPath, tasksPath);
     }
     

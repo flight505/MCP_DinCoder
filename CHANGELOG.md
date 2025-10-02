@@ -2,6 +2,32 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.8] - 2025-10-03
+
+### Fixed
+- **TypeScript Compilation Errors** - Fixed all type errors preventing production builds
+  - Fixed `config/index.ts` rateLimit configuration type issues
+  - Fixed `plan.ts` and `tasks.ts` optional parameter handling
+  - Fixed `server-enhanced.ts` SessionManager method name (removeSession → deleteSession)
+  - All TypeScript strict mode checks now passing
+
+- **Build Configuration** - Improved bundling setup
+  - Added `tsup.config.ts` with proper Node.js externals configuration
+  - Ensures Node.js built-in modules (path, fs, etc.) are not bundled
+  - Fixed module resolution issues in production builds
+
+### Changed
+- **Dependency Management** - Updated build pipeline
+  - Better separation of bundled vs external dependencies
+  - Improved tree-shaking for smaller bundle sizes
+  - Node 20+ as minimum required version (target: node20)
+
+### Technical
+- 32/33 tests passing (1 skipped by design)
+- Zero TypeScript compilation errors
+- Clean build output with proper type definitions
+- Production-ready for NPM distribution
+
 ## [0.1.7] - 2025-01-12
 
 ### Added

@@ -48,22 +48,27 @@ export type Config = z.infer<typeof ConfigSchema>;
  * Parse configuration from environment variables
  */
 export function loadConfigFromEnv(): Partial<Config> {
-  return {
-    port: process.env.PORT ? parseInt(process.env.PORT, 10) : undefined,
-    host: process.env.HOST,
-    mode: process.env.MODE as 'stateless' | 'stateful' | undefined,
-    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',').map(s => s.trim()),
-    apiKey: process.env.API_KEY,
-    enableAuth: process.env.ENABLE_AUTH === 'true',
-    workspacePath: process.env.WORKSPACE_PATH,
-    sessionTimeout: process.env.SESSION_TIMEOUT ? parseInt(process.env.SESSION_TIMEOUT, 10) : undefined,
-    logLevel: process.env.LOG_LEVEL as 'debug' | 'info' | 'warn' | 'error' | undefined,
-    rateLimit: {
+  const config: Partial<Config> = {};
+
+  if (process.env.PORT) config.port = parseInt(process.env.PORT, 10);
+  if (process.env.HOST) config.host = process.env.HOST;
+  if (process.env.MODE) config.mode = process.env.MODE as 'stateless' | 'stateful';
+  if (process.env.ALLOWED_ORIGINS) config.allowedOrigins = process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim());
+  if (process.env.API_KEY) config.apiKey = process.env.API_KEY;
+  if (process.env.ENABLE_AUTH) config.enableAuth = process.env.ENABLE_AUTH === 'true';
+  if (process.env.WORKSPACE_PATH) config.workspacePath = process.env.WORKSPACE_PATH;
+  if (process.env.SESSION_TIMEOUT) config.sessionTimeout = parseInt(process.env.SESSION_TIMEOUT, 10);
+  if (process.env.LOG_LEVEL) config.logLevel = process.env.LOG_LEVEL as 'debug' | 'info' | 'warn' | 'error';
+
+  if (process.env.RATE_LIMIT_ENABLED) {
+    config.rateLimit = {
       enabled: process.env.RATE_LIMIT_ENABLED === 'true',
-      windowMs: process.env.RATE_LIMIT_WINDOW ? parseInt(process.env.RATE_LIMIT_WINDOW, 10) : undefined,
-      maxRequests: process.env.RATE_LIMIT_MAX ? parseInt(process.env.RATE_LIMIT_MAX, 10) : undefined,
-    },
-  };
+      windowMs: process.env.RATE_LIMIT_WINDOW ? parseInt(process.env.RATE_LIMIT_WINDOW, 10) : 60000,
+      maxRequests: process.env.RATE_LIMIT_MAX ? parseInt(process.env.RATE_LIMIT_MAX, 10) : 100,
+    };
+  }
+
+  return config;
 }
 
 /**
