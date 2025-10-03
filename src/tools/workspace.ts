@@ -3,6 +3,7 @@
  */
 
 import * as path from 'path';
+import * as fs from 'fs';
 
 /**
  * Resolve workspace path with safe fallbacks
@@ -51,7 +52,6 @@ export function findProjectRoot(startPath?: string): string {
     const specsPath = path.join(currentDir, 'specs');
 
     try {
-      const fs = require('fs');
       if (fs.existsSync(dincoderPath) || fs.existsSync(specsPath)) {
         return currentDir;
       }
