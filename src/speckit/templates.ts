@@ -1,11 +1,17 @@
 /**
  * Spec Kit template manager
- * 
+ *
  * Manages and processes Spec Kit markdown templates
  */
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// Get __dirname equivalent in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export type TemplateName = 'spec' | 'plan' | 'tasks';
 
@@ -17,18 +23,19 @@ export interface TemplateVariables {
  * Load a Spec Kit template
  */
 export async function loadTemplate(name: TemplateName): Promise<string> {
-  // Use relative path from project root
+  // Use path relative to the package installation directory
+  // When installed via npm, templates are in ../../templates/ relative to dist/speckit/
   const templatePath = path.join(
-    process.cwd(),
-    'templates',
+    __dirname,
+    '../../templates',
     'speckit',
     `${name}-template.md`
   );
-  
+
   try {
     return await fs.readFile(templatePath, 'utf-8');
   } catch (error) {
-    throw new Error(`Failed to load template ${name}: ${error}`);
+    throw new Error(`Failed to load template ${name} from ${templatePath}: ${error}`);
   }
 }
 

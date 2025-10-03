@@ -2,6 +2,37 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.9] - 2025-10-03
+
+### Fixed - CRITICAL BUGS
+- **Template Loading** - Fixed absolute path issue preventing template loading
+  - Changed from `process.cwd()` to `__dirname` resolution
+  - Templates now load correctly after npm install
+  - Added templates to package.json "files" array for distribution
+
+- **Workspace Path Resolution** - Fixed `/specs` absolute path error
+  - Created `workspace.ts` helper with `resolveWorkspacePath()`
+  - Handles empty strings, whitespace, and root path edge cases
+  - Prevents creating directories in filesystem root
+  - Falls back to `process.cwd()` when path is invalid
+
+- **Core Functionality Restored**
+  - `specify_start` now works correctly
+  - `specify_describe` now works correctly
+  - `tasks_tick` now works correctly
+  - Template files properly bundled in npm package
+
+### Technical
+- All 32/33 tests passing
+- Templates included in dist: `templates/speckit/*.md`
+- Workspace resolution with safety checks
+- Better error messages with actual paths in errors
+
+### Impact
+- Users can now initialize projects successfully
+- Core Spec-Driven workflow functional end-to-end
+- Production-ready for real use
+
 ## [0.1.8] - 2025-10-03
 
 ### Fixed

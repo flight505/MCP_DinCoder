@@ -8,6 +8,7 @@ import {
   createFeatureDirectory
 } from '../speckit/detector.js';
 import { generateSpecFromTemplate } from '../speckit/templates.js';
+import { resolveWorkspacePath } from './workspace.js';
 
 /**
  * Spec Kit specify tools - Real Spec Kit Integration
@@ -29,10 +30,12 @@ export const SpecifyDescribeSchema = z.object({
  * Initialize a new spec-driven project
  */
 export async function specifyStart(params: z.infer<typeof SpecifyStartSchema>) {
-  const { projectName, agent, workspacePath = process.cwd() } = params;
-  
+  const { projectName, agent, workspacePath } = params;
+
+  // Resolve workspace path with safe fallbacks
+  const resolvedPath = resolveWorkspacePath(workspacePath);
+
   // Validate workspace path
-  const resolvedPath = path.resolve(workspacePath);
   await validateWorkspacePath(resolvedPath);
   
   try {
@@ -139,10 +142,12 @@ _Add links to relevant documentation, articles, and resources._
  * Create or update project specification
  */
 export async function specifyDescribe(params: z.infer<typeof SpecifyDescribeSchema>) {
-  const { description, workspacePath = process.cwd() } = params;
-  
+  const { description, workspacePath } = params;
+
+  // Resolve workspace path with safe fallbacks
+  const resolvedPath = resolveWorkspacePath(workspacePath);
+
   // Validate workspace path
-  const resolvedPath = path.resolve(workspacePath);
   await validateWorkspacePath(resolvedPath);
   
   try {

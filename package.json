@@ -1,6 +1,6 @@
 {
   "name": "mcp-dincoder",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "DinCoder - Driven Intent Negotiation Contract-Oriented Deterministic Executable Runtime. The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution.",
   "type": "module",
   "main": "dist/index.js",
@@ -21,6 +21,7 @@
   },
   "files": [
     "dist",
+    "templates",
     "README.md",
     "LICENSE"
   ],
