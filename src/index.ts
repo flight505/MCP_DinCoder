@@ -8,7 +8,7 @@ import { TransportMode } from './http/transport.js';
 import { createServer } from './server/createServer.js';
 import { z } from 'zod';
 
-export const VERSION = '0.1.13';
+export const VERSION = '0.1.14';
 
 // Export for library usage
 export { McpHttpServer, createServer, TransportMode };

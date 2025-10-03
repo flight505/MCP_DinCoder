@@ -10,25 +10,17 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 // Get __dirname equivalent - works in both ESM and CJS (bundled)
-function getDirname(): string {
-  // In CommonJS bundle (like Smithery's .cjs output), import.meta.url is undefined
-  // Fall back to __dirname if available (CJS) or use a relative path approach
-  if (typeof __dirname !== 'undefined') {
-    // CJS context (bundled by Smithery CLI)
-    return __dirname;
-  }
+// In CJS (like Smithery's .cjs bundle), __dirname is a magic variable
+// In ESM (local dev), we derive it from import.meta.url
+declare const __dirname: string | undefined;
 
+const _dirname =
+  // CJS context (e.g., Smithery bundle)
+  (typeof __dirname !== 'undefined' && __dirname) ||
   // ESM context (local development)
-  if (import.meta.url) {
-    const __filename = fileURLToPath(import.meta.url);
-    return dirname(__filename);
-  }
-
-  // Fallback (shouldn't happen, but safe)
-  return process.cwd();
-}
-
-const _dirname = getDirname();
+  (import.meta.url ? dirname(fileURLToPath(import.meta.url)) : null) ||
+  // Fallback
+  process.cwd();
 
 export type TemplateName = 'spec' | 'plan' | 'tasks';
 

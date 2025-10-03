@@ -2,6 +2,36 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.14] - 2025-10-03
+
+### Fixed - SMITHERY RUNTIME ERROR (v2)
+- **Improved __dirname Detection** - Simplified CJS/ESM compatibility approach
+  - Removed function wrapper, using inline expression with fallback chain
+  - Uses `typeof __dirname !== 'undefined'` check for CJS detection
+  - Properly declares `__dirname` type for TypeScript in ESM mode
+  - More reliable than try-catch approach for bundled contexts
+
+### Technical Details
+- **Previous Issue (v0.1.13):** Function-based approach still had edge cases
+- **New Solution:** Direct expression with short-circuit evaluation
+  ```typescript
+  declare const __dirname: string | undefined;
+  const _dirname =
+    (typeof __dirname !== 'undefined' && __dirname) ||
+    (import.meta.url ? dirname(fileURLToPath(import.meta.url)) : null) ||
+    process.cwd();
+  ```
+- **Why This Works:**
+  - In CJS bundle: `__dirname` is defined, first condition succeeds
+  - In ESM: `import.meta.url` is available, second condition succeeds
+  - Fallback: `process.cwd()` for any other context
+
+### Impact
+- ✅ Cleaner, more maintainable code
+- ✅ Works in Smithery CJS bundle (`.smithery/index.cjs`)
+- ✅ Works in local ESM development
+- ✅ All 32 tests passing
+
 ## [0.1.13] - 2025-10-03
 
 ### Fixed - SMITHERY RUNTIME ERROR
