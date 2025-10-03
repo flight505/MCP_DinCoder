@@ -6,34 +6,52 @@
 import { McpHttpServer } from './http/server.js';
 import { TransportMode } from './http/transport.js';
 import { createServer } from './server/createServer.js';
+import { z } from 'zod';
 
-export const VERSION = '0.1.6';
+export const VERSION = '0.1.9';
 
 // Export for library usage
 export { McpHttpServer, createServer, TransportMode };
 
-// Default export for Smithery compatibility
-export default function createSmitheryServer(config?: any) {
-  const port = parseInt(config?.port || process.env.PORT || '8123', 10);
-  const mode = config?.transportMode === 'stateful' 
-    ? TransportMode.STATEFUL 
-    : TransportMode.STATELESS;
+/**
+ * Configuration schema for Smithery deployments
+ */
+export const configSchema = z.object({
+  apiKey: z.string().optional().describe('Optional API key for authentication'),
+  originWhitelist: z.string().optional().describe('Comma-separated list of allowed origins'),
+  transportMode: z.enum(['stateless', 'stateful']).default('stateless').describe('Transport mode'),
+  logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('info').describe('Logging level'),
+  workspacePath: z.string().optional().describe('Default workspace path for spec operations'),
+});
 
-  const server = new McpHttpServer({
-    port,
-    transportMode: mode,
-    logging: {
-      level: config?.logLevel || 'info',
-    },
-    security: {
-      apiKey: config?.apiKey || process.env.API_KEY,
-      originWhitelist: config?.originWhitelist?.split(',') || process.env.ORIGIN_WHITELIST?.split(','),
-    },
+/**
+ * Default export for Smithery TypeScript runtime
+ * Returns the MCP server instance (server.server property)
+ */
+export default function createSmitheryServer({ config }: { config?: z.infer<typeof configSchema> }) {
+  // Create the MCP server instance
+  const mcpServer = createServer({
+    name: 'mcp-dincoder',
+    version: VERSION,
   });
 
-  // Return the server instance without starting it
-  // Smithery will handle the startup
-  return server;
+  // Store config in environment for tools to access
+  if (config?.workspacePath) {
+    process.env.WORKSPACE_PATH = config.workspacePath;
+  }
+  if (config?.apiKey) {
+    process.env.API_KEY = config.apiKey;
+  }
+  if (config?.originWhitelist) {
+    process.env.ORIGIN_WHITELIST = config.originWhitelist;
+  }
+  if (config?.logLevel) {
+    process.env.LOG_LEVEL = config.logLevel;
+  }
+
+  // Return the McpServer instance (not the wrapper)
+  // Smithery will handle HTTP transport and port binding
+  return mcpServer;
 }
 
 // Only start server if this is the main module being run directly

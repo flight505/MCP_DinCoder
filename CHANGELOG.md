@@ -2,6 +2,32 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.10] - 2025-10-03
+
+### Fixed - SMITHERY DEPLOYMENT
+- **Smithery TypeScript Runtime Configuration** - Fixed deployment configuration
+  - Removed incorrect `build.dockerfile` from `smithery.yaml` (only needed for custom containers)
+  - Simplified to minimal `runtime: "typescript"` configuration
+  - Updated package.json scripts to use Smithery CLI (`build` and `dev`)
+  - Fixed default export to return McpServer instance (not wrapper)
+  - Added `configSchema` export for Smithery configuration validation
+
+- **Default Export Structure** - Aligned with Smithery requirements
+  - Changed from returning McpHttpServer wrapper to McpServer instance
+  - Smithery CLI now handles HTTP transport and port binding
+  - Configuration passed via `{ config }` parameter
+  - Environment variables set from config for tool access
+
+### Changed
+- Package.json scripts: `build` and `dev` now use `@smithery/cli`
+- Local development scripts renamed to `build:local` and `dev:local`
+- Version bumped to 0.1.10 in src/index.ts
+
+### Impact
+- Server can now deploy correctly on Smithery platform
+- TypeScript runtime approach (simpler than custom Docker)
+- Automatic containerization and scaling by Smithery
+
 ## [0.1.9] - 2025-10-03
 
 ### Fixed - CRITICAL BUGS

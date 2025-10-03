@@ -1,6 +1,6 @@
 {
   "name": "mcp-dincoder",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "DinCoder - Driven Intent Negotiation Contract-Oriented Deterministic Executable Runtime. The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution.",
   "type": "module",
   "main": "dist/index.js",
@@ -26,9 +26,11 @@
     "LICENSE"
   ],
   "scripts": {
-    "dev": "tsx watch src/index-stdio.ts",
+    "build": "npx @smithery/cli build",
+    "dev": "npx @smithery/cli dev",
+    "dev:local": "tsx watch src/index-stdio.ts",
     "dev:http": "tsx watch src/index.ts",
-    "build": "tsup src/index-stdio.ts src/index.ts --format esm --dts --clean",
+    "build:local": "tsup src/index-stdio.ts src/index.ts --format esm --dts --clean",
     "start": "node dist/index-stdio.js",
     "start:http": "node dist/index.js",
     "lint": "eslint .",
