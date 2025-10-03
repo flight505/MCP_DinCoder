@@ -1,4 +1,5 @@
-# DinCoder 🚀
+<img width="512" height="512" alt="Image@0 5x" src="https://github.com/user-attachments/assets/cbc095ba-6a70-4fd5-93ff-ec1c20dd8335" />
+
 
 [![smithery badge](https://smithery.ai/badge/@flight505/mcp_dincoder)](https://smithery.ai/server/@flight505/mcp_dincoder)
 
