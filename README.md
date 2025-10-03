@@ -517,10 +517,58 @@ WORKSPACE_PATH=/path/to/workspace  # Default workspace directory
 
 ### Smithery Deployment
 
-The server supports configuration via base64-encoded query parameter:
+**Quick Deploy**: Click the "Deploy on Smithery" badge at the top of this README.
 
-```
-https://server.smithery.ai/mcp-dincoder/mcp?config=<base64>
+#### Deployment Steps
+
+1. **Connect GitHub Repository**
+   - Go to [Smithery](https://smithery.ai)
+   - Connect your GitHub account
+   - Select the `mcp-dincoder` repository
+
+2. **Deploy**
+   - Click "Deploy" in the Smithery dashboard
+   - Smithery automatically builds using TypeScript runtime
+   - Server becomes available at `https://server.smithery.ai/mcp-dincoder`
+
+3. **Configuration** (Optional)
+   - Add configuration in Smithery UI
+   - Available options:
+     - `apiKey`: API key for authentication
+     - `originWhitelist`: Comma-separated allowed origins
+     - `transportMode`: "stateless" (default) or "stateful"
+     - `logLevel`: "info" (default), "debug", "warn", or "error"
+     - `workspacePath`: Default workspace for spec operations
+
+#### How It Works
+
+- **TypeScript Runtime**: Smithery CLI handles build and containerization
+- **Automatic Scaling**: Infrastructure managed by Smithery
+- **HTTP Transport**: Server uses `/mcp` endpoint with Streamable HTTP
+- **Configuration**: Passed via `?config=<base64>` query parameter or UI
+
+#### Testing Your Deployment
+
+```typescript
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/transport/streamable-http.js';
+
+const transport = new StreamableHTTPClientTransport({
+  url: new URL('https://server.smithery.ai/mcp-dincoder/mcp'),
+});
+
+const client = new Client({
+  name: 'test-client',
+  version: '1.0.0',
+});
+
+await client.connect(transport);
+
+// Test a tool
+const result = await client.callTool('specify_start', {
+  projectName: 'test-project',
+  agent: 'claude',
+});
 ```
 
 ## Architecture
