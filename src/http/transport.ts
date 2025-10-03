@@ -148,6 +148,13 @@ export class SessionManager {
   }
 
   /**
+   * Get count of active sessions
+   */
+  getSessionCount(): number {
+    return this.sessions.size;
+  }
+
+  /**
    * Close all sessions
    */
   closeAll(): void {

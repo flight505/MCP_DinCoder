@@ -10,6 +10,7 @@ import {
   isInitRequest,
   getProtocolVersion,
 } from './transport.js';
+import { recordRequest, setActiveSessions } from '../metrics/index.js';
 
 /**
  * Server configuration
@@ -55,13 +56,18 @@ export class McpHttpServer {
   private setupEndpoints(): void {
     // POST /mcp - Handle JSON-RPC requests
     this.app.post('/mcp', async (req: Request, res: Response) => {
+      const startTime = Date.now();
+
       try {
         const protocolVersion = getProtocolVersion(req);
         res.setHeader('MCP-Protocol-Version', protocolVersion);
-        
+
         // Ensure body is parsed
         if (!req.body || typeof req.body !== 'object') {
           console.error('Invalid body:', req.body);
+          const duration = Date.now() - startTime;
+          recordRequest('POST /mcp', 400, duration);
+
           res.status(400).json({
             jsonrpc: '2.0',
             error: {
@@ -72,15 +78,21 @@ export class McpHttpServer {
           });
           return;
         }
-        
+
         if (this.config.transportMode === TransportMode.STATELESS) {
           await this.handleStatelessRequest(req, res);
         } else {
           await this.handleStatefulRequest(req, res);
         }
+
+        // Record successful request
+        const duration = Date.now() - startTime;
+        recordRequest('POST /mcp', res.statusCode, duration);
       } catch (error) {
         console.error('Error handling MCP POST request:', error);
-        
+        const duration = Date.now() - startTime;
+        recordRequest('POST /mcp', 500, duration);
+
         if (!res.headersSent) {
           res.status(500).json({
             jsonrpc: '2.0',
@@ -264,7 +276,7 @@ export class McpHttpServer {
   private async handleStatefulRequest(req: Request, res: Response): Promise<void> {
     const isInit = isInitRequest(req.body);
     const requestSessionId = getSessionIdFromRequest(req);
-    
+
     // Non-init requests must have session ID
     if (!isInit && !requestSessionId) {
       res.status(400).json({
@@ -277,17 +289,20 @@ export class McpHttpServer {
       });
       return;
     }
-    
+
     try {
       const { transport, server: existingServer, sessionId, isNew } = this.sessionManager!.getSession(
         isInit ? undefined : requestSessionId
       );
-      
+
+      // Update active sessions metric
+      setActiveSessions(this.sessionManager!.getSessionCount());
+
       // Set session ID header on all initialization requests
       if (isInit) {
         res.setHeader('Mcp-Session-Id', sessionId);
       }
-      
+
       // Connect server if new session
       let server = existingServer;
       if (isNew) {
@@ -296,7 +311,7 @@ export class McpHttpServer {
         // Store the server in the session
         this.sessionManager!.setSessionServer(sessionId, server);
       }
-      
+
       await transport.handleRequest(req as any, res as any, req.body);
     } catch (error) {
       console.error('Stateful request handling error:', error);

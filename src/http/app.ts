@@ -1,5 +1,6 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
+import { metrics } from '../metrics/index.js';
 
 /**
  * App configuration schema
@@ -113,6 +114,12 @@ export function createApp(config: Partial<AppConfig> = {}): Express {
       version: process.env.npm_package_version || '0.0.1',
       timestamp: new Date().toISOString(),
     });
+  });
+
+  // Metrics endpoint (Prometheus format)
+  app.get('/metrics', (_req: Request, res: Response) => {
+    res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+    res.send(metrics.export());
   });
 
   return app;
