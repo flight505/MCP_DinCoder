@@ -264,13 +264,13 @@ Submit issues and PRs to [github/spec-kit](https://github.com/github/spec-kit) f
 Install the server globally via npm:
 
 ```bash
-npm install -g @dincoder/mcp-server
+npm install -g mcp-dincoder
 ```
 
 Then add it to Claude Code:
 
 ```bash
-claude mcp add dincoder -- npx -y @dincoder/mcp-server
+claude mcp add dincoder -- npx -y mcp-dincoder
 ```
 
 Or configure manually in your Claude Code config:
@@ -283,7 +283,7 @@ Or configure manually in your Claude Code config:
   "mcpServers": {
     "dincoder": {
       "command": "npx",
-      "args": ["-y", "@dincoder/mcp-server"]
+      "args": ["-y", "mcp-dincoder"]
     }
   }
 }
