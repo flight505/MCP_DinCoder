@@ -577,14 +577,14 @@ const result = await client.callTool('specify_start', {
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   AI Assistant  │────▶│   MCP Server    │────▶│   Spec Kit     │
-│  (Claude/Copilot)│     │  (Express+MCP)  │     │    Tools       │
+│   AI Assistant  │────▶│   MCP Server    │────▶│   Spec Kit      │
+│  (Claude/Copilot)│    │  (Express+MCP)  │     │    Tools        │
 └─────────────────┘     └─────────────────┘     └─────────────────┘
-         │                       │                        │
-         │                       ▼                        │
+         │                       │                       │
+         │                       ▼                       │
          │              ┌─────────────────┐              │
          └─────────────▶│  HTTP/SSE       │◀─────────────┘
-                        │  Transport       │
+                        │  Transport      │
                         └─────────────────┘
 ```
 
