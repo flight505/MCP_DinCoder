@@ -1,6 +1,6 @@
 # DinCoder 🚀
 
-[![Deploy on Smithery](https://smithery.ai/badge/deploy-on-smithery.svg)](https://smithery.ai/deploy?repository=https://github.com/dincoder/mcp-server)
+[![smithery badge](https://smithery.ai/badge/@flight505/mcp_dincoder)](https://smithery.ai/server/@flight505/mcp_dincoder)
 
 **D**riven **I**ntent **N**egotiation — **C**ontract-**O**riented **D**eterministic **E**xecutable **R**untime
 
