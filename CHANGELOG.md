@@ -2,6 +2,34 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.13] - 2025-10-03
+
+### Fixed - SMITHERY RUNTIME ERROR
+- **CommonJS/ESM Compatibility** - Fixed `fileURLToPath` crash in Smithery deployment
+  - Created `getDirname()` function in `src/speckit/templates.ts`
+  - Detects runtime context: checks for `__dirname` (CJS) before `import.meta.url` (ESM)
+  - Replaced `__dirname` with `_dirname` variable throughout templates.ts
+  - Resolves "path argument must be of type string" error during Smithery inspect
+
+### Technical Details
+- **Root Cause:** Smithery CLI bundles to CommonJS (`.smithery/index.cjs`)
+  - In CJS context, `import.meta.url` is `undefined`
+  - `fileURLToPath(undefined)` threw TypeError at runtime
+- **Solution:** Runtime detection with graceful fallback
+  ```typescript
+  function getDirname(): string {
+    if (typeof __dirname !== 'undefined') return __dirname;  // CJS
+    if (import.meta.url) return dirname(fileURLToPath(import.meta.url));  // ESM
+    return process.cwd();  // Fallback
+  }
+  ```
+
+### Impact
+- ✅ Works in local ESM development (`npm run dev:local`)
+- ✅ Works in Smithery CJS bundle (`.smithery/index.cjs`)
+- ✅ All 32 tests passing
+- ✅ Ready for Smithery runtime verification
+
 ## [0.1.12] - 2025-10-03
 
 ### Fixed - SMITHERY DEPLOYMENT (FINAL)

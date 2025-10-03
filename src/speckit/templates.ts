@@ -9,9 +9,26 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-// Get __dirname equivalent in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// Get __dirname equivalent - works in both ESM and CJS (bundled)
+function getDirname(): string {
+  // In CommonJS bundle (like Smithery's .cjs output), import.meta.url is undefined
+  // Fall back to __dirname if available (CJS) or use a relative path approach
+  if (typeof __dirname !== 'undefined') {
+    // CJS context (bundled by Smithery CLI)
+    return __dirname;
+  }
+
+  // ESM context (local development)
+  if (import.meta.url) {
+    const __filename = fileURLToPath(import.meta.url);
+    return dirname(__filename);
+  }
+
+  // Fallback (shouldn't happen, but safe)
+  return process.cwd();
+}
+
+const _dirname = getDirname();
 
 export type TemplateName = 'spec' | 'plan' | 'tasks';
 
@@ -26,7 +43,7 @@ export async function loadTemplate(name: TemplateName): Promise<string> {
   // Use path relative to the package installation directory
   // When installed via npm, templates are in ../../templates/ relative to dist/speckit/
   const templatePath = path.join(
-    __dirname,
+    _dirname,
     '../../templates',
     'speckit',
     `${name}-template.md`
