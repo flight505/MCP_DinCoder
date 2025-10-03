@@ -740,16 +740,3 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - [Smithery](https://smithery.ai) for MCP hosting platform
 
 ---
-
-Built with ❤️ for the AI-assisted development community the source that produces implementation
-- **Executable Specifications**: Precise, complete specs that eliminate the gap between intent and implementation  
-- **Code as Expression**: Code becomes the specification's expression in a particular language/framework
-- **Living Documentation**: Maintain software by evolving specifications, not manually updating code
-
-This transformation is possible because AI can understand complex specifications and implement them systematically. But raw AI generation without structure produces chaos. DinCoder provides that structure through GitHub's proven Spec Kit methodology.
-
-## 🎯 What is DinCoder?
-
-DinCoder is an MCP server that implements GitHub's Spec-Driven Development methodology, providing:
-
-- **Driven Intent Negotiation**: Collaborative specification refinement through structured dialogue
