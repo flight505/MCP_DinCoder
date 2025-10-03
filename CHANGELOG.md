@@ -2,6 +2,30 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.11] - 2025-10-03
+
+### Fixed - SMITHERY BUILD
+- **Added @smithery/sdk Dependency** - Required for Smithery CLI builds
+  - Installed `@smithery/sdk` as runtime dependency
+  - Created `smithery.config.js` with external package configuration
+  - Marked `@smithery/sdk`, `@modelcontextprotocol/sdk`, and other deps as external
+  - Build now completes successfully with `@smithery/cli build`
+
+- **Build Configuration** - Optimized for Smithery deployment
+  - esbuild configured for Node.js 20 target
+  - ESM output format
+  - Sourcemaps enabled for debugging
+  - Minification enabled for production
+
+### Added
+- `smithery.config.js` - Smithery build configuration
+- `.smithery/` added to `.gitignore` (build output directory)
+
+### Impact
+- Smithery deployment now works correctly
+- Build output: `.smithery/index.cjs` (102KB)
+- Ready for deployment on Smithery platform
+
 ## [0.1.10] - 2025-10-03
 
 ### Fixed - SMITHERY DEPLOYMENT

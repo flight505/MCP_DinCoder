@@ -1,6 +1,6 @@
 {
   "name": "mcp-dincoder",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "DinCoder - Driven Intent Negotiation Contract-Oriented Deterministic Executable Runtime. The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution.",
   "type": "module",
   "main": "dist/index.js",
@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.5",
+    "@smithery/sdk": "^1.6.8",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "zod": "^3.25.76"
