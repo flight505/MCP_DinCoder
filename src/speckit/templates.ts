@@ -14,13 +14,20 @@ import { dirname } from 'path';
 // In ESM (local dev), we derive it from import.meta.url
 declare const __dirname: string | undefined;
 
-const _dirname =
-  // CJS context (e.g., Smithery bundle)
-  (typeof __dirname !== 'undefined' && __dirname) ||
-  // ESM context (local development)
-  (import.meta.url ? dirname(fileURLToPath(import.meta.url)) : null) ||
+function getDirname(): string {
+  // CJS context - __dirname is available
+  if (typeof __dirname !== 'undefined') {
+    return __dirname;
+  }
+  // ESM context - use import.meta.url (but only call fileURLToPath if it exists!)
+  if (import.meta.url) {
+    return dirname(fileURLToPath(import.meta.url));
+  }
   // Fallback
-  process.cwd();
+  return process.cwd();
+}
+
+const _dirname = getDirname();
 
 export type TemplateName = 'spec' | 'plan' | 'tasks';
 

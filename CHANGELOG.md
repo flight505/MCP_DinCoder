@@ -2,6 +2,38 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.15] - 2025-10-03
+
+### Fixed - SMITHERY RUNTIME ERROR (v3) ✅
+- **Prevent fileURLToPath() from being called with undefined** - THE FIX
+  - Reverted to function-based approach (getDirname())
+  - Key insight: JavaScript evaluates BOTH sides of ternary even if condition is false
+  - fileURLToPath() was being called at module load time with undefined
+  - Solution: Only call fileURLToPath() inside `if (import.meta.url)` block
+
+### Technical Details
+- **Root Cause of v0.1.14 failure:**
+  ```typescript
+  // ❌ This ALWAYS calls fileURLToPath, even when import.meta.url is undefined!
+  (import.meta.url ? dirname(fileURLToPath(import.meta.url)) : null)
+  ```
+- **Working Solution:**
+  ```typescript
+  function getDirname(): string {
+    if (typeof __dirname !== 'undefined') return __dirname;  // CJS
+    if (import.meta.url) {  // ESM - only enters this block if truthy!
+      return dirname(fileURLToPath(import.meta.url));
+    }
+    return process.cwd();  // Fallback
+  }
+  ```
+- **Why It Works:** The function wrapper ensures `fileURLToPath()` is never called when `import.meta.url` is undefined/falsy
+
+### Impact
+- ✅ Build succeeds with Smithery CLI
+- ✅ All 32 tests passing
+- ✅ Should work in Smithery runtime (fileURLToPath not called at load time)
+
 ## [0.1.14] - 2025-10-03
 
 ### Fixed - SMITHERY RUNTIME ERROR (v2)
