@@ -2,6 +2,41 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.12] - 2025-10-03
+
+### Fixed - SMITHERY DEPLOYMENT (FINAL)
+- **Correct Module Entry Point** - Fixed critical configuration error
+  - Changed `"module": "dist/index.js"` to `"module": "src/index.ts"`
+  - Smithery TypeScript runtime requires SOURCE file, not built output
+  - This was the root cause of Docker build failures
+
+- **Removed Conflicting Files** - Cleaned up deployment configuration
+  - Deleted `Dockerfile` (not used in TypeScript runtime)
+  - Deleted `smithery.config.js` (using Smithery CLI defaults)
+  - TypeScript runtime = Smithery CLI builds and containerizes automatically
+
+- **Simplified Configuration** - Minimal smithery.yaml
+  - Only `runtime: "typescript"` needed
+  - Smithery handles HTTP transport, containerization, and deployment
+  - No Docker management required
+
+### Technical Details
+- Build command: `npm run build` → `@smithery/cli build`
+- Build output: `.smithery/index.cjs` (1.69MB)
+- Build time: ~60ms
+- Warnings about import.meta in CJS output (non-blocking)
+
+### Impact
+- ✅ Smithery CLI build succeeds locally
+- ✅ Ready for Smithery platform deployment
+- ✅ All local tests still passing
+
+### Key Learning
+**TypeScript Runtime vs Container Runtime:**
+- TypeScript runtime (`runtime: "typescript"`) = Smithery CLI builds from SOURCE
+- Container runtime (`runtime: "container"`) = You provide Dockerfile
+- We were mixing both approaches, causing build failures
+
 ## [0.1.11] - 2025-10-03
 
 ### Fixed - SMITHERY BUILD
