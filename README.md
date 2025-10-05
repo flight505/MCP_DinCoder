@@ -288,6 +288,191 @@ Or configure manually in your Claude Code config:
 }
 ```
 
+## 🚦 Complete Workflow Guide
+
+This is your end-to-end guide for using DinCoder with any AI agent (Claude, Copilot, Gemini, Cursor).
+
+### Step-by-Step: From Idea to Implementation
+
+#### 1️⃣ **Start a New Project** (1 minute)
+
+```typescript
+// In your AI agent's chat:
+"Use specify_start to initialize a new project called 'task-manager' with claude agent"
+
+// What happens:
+// ✓ Creates specs/001-task-manager/ directory
+// ✓ Generates spec.md template
+// ✓ Creates contracts/ folder
+// ✓ Initializes research.md
+```
+
+**When to use**: First step for any new feature or project.
+
+#### 2️⃣ **Describe What You Want** (2-5 minutes)
+
+```typescript
+"Use specify_describe with this description:
+Build a task management system where users can:
+- Create tasks with titles, descriptions, and due dates
+- Organize tasks into projects
+- Mark tasks as complete
+- Filter by status and project
+- Get daily summary emails"
+
+// What happens:
+// ✓ Updates spec.md with user stories
+// ✓ Adds acceptance criteria
+// ✓ Marks uncertainties with [NEEDS CLARIFICATION]
+// ✓ Separates WHAT from HOW
+```
+
+**Pro tip**: Be specific about user needs, not implementation. Focus on **what users want** and **why they need it**.
+
+#### 3️⃣ **Refine the Specification** (Optional, 5-10 minutes)
+
+```typescript
+// Read the generated spec
+"Use artifacts_read with artifactType 'spec'"
+
+// Add research findings
+"Use research_append to document:
+Reviewed task management UX patterns. Best practices suggest:
+- Keyboard shortcuts for power users
+- Drag-and-drop for task reordering
+- Smart filters (Today, Upcoming, Overdue)"
+```
+
+**When to use**: When you need to document technical research or clarify ambiguities.
+
+#### 4️⃣ **Generate Technical Plan** (2-5 minutes)
+
+```typescript
+"Use plan_create with these constraints:
+- Next.js 14 with App Router
+- PostgreSQL with Prisma ORM
+- tRPC for type-safe APIs
+- Tailwind CSS for styling
+- NextAuth for authentication"
+
+// What happens:
+// ✓ Creates plan.md with phased approach
+// ✓ Generates data-model.md (Task, Project, User schemas)
+// ✓ Updates research.md with architecture decisions
+// ✓ Enforces constitutional compliance (simplicity, no over-engineering)
+```
+
+**Pro tip**: State your tech stack preferences, but let the plan enforce good practices.
+
+#### 5️⃣ **Create Implementation Tasks** (2-5 minutes)
+
+```typescript
+"Use tasks_generate with scope 'MVP - core task management'"
+
+// What happens:
+// ✓ Creates tasks.md with numbered, ordered tasks
+// ✓ Marks parallelizable tasks with [P]
+// ✓ Orders by dependency (contracts → tests → implementation)
+// ✓ Estimates story points
+
+// Example output:
+// 1. [P] T001 - Create Prisma schema for Task model
+// 2. [P] T002 - Create API contract tests for tasks endpoints
+// 3. T003 - Implement task creation endpoint (depends on T001, T002)
+// 4. T004 - Add task completion logic (depends on T003)
+```
+
+**Pro tip**: Start with "MVP" scope, add features incrementally.
+
+#### 6️⃣ **Implement Systematically** (Variable time)
+
+```typescript
+// Start with first task
+"Let's implement T001 - Create Prisma schema for Task model"
+
+// After completing a task
+"Use tasks_tick with taskId 'T001'"
+
+// Check progress
+"Use artifacts_read with artifactType 'tasks'"
+
+// See what's next
+// The tool shows: "Next tasks: T002, T003 (blocked by T001)"
+```
+
+**Pro tip**: Follow the task order. Tests before implementation. Contracts before integration.
+
+#### 7️⃣ **Track Quality Throughout** (Continuous)
+
+```typescript
+// Before committing
+"Use quality_format to format the code"
+"Use quality_lint to check for issues"
+
+// Before deploying
+"Use quality_test to run the test suite"
+"Use quality_security_audit to check for vulnerabilities"
+```
+
+**Pro tip**: Run quality tools frequently. Fix issues early when they're cheap.
+
+### 🔄 **Iterating on Features**
+
+Adding a new feature to an existing project:
+
+```typescript
+// 1. Describe the new feature
+"Use specify_describe with:
+Add task reminders - users should get notifications 1 hour before due date"
+
+// 2. Generate updated plan
+"Use plan_create with constraints:
+- Use existing Next.js setup
+- Add push notifications via web Push API
+- Store notification preferences in User model"
+
+// 3. Generate incremental tasks
+"Use tasks_generate with scope 'Task Reminders feature'"
+
+// 4. Implement and track
+// Follow steps 6-7 above
+```
+
+### 🎯 **Best Practices**
+
+1. **Start Small**: Begin with MVP scope, add features iteratively
+2. **Follow the Order**: Specify → Plan → Tasks → Implement
+3. **Review Specs**: Always read the generated spec.md and refine it
+4. **Track Progress**: Use tasks_tick consistently to maintain momentum
+5. **Document Decisions**: Use research_append for architecture choices
+6. **Quality First**: Run quality tools before commits and deploys
+
+### ⚠️ **Common Pitfalls**
+
+1. **Skipping Specification**: Don't jump straight to plan_create
+2. **Vague Descriptions**: Be specific about user needs in specify_describe
+3. **Ignoring [NEEDS CLARIFICATION]**: Address uncertainties before planning
+4. **Not Following Task Order**: Dependencies exist for a reason
+5. **Mixing WHAT and HOW**: Keep implementation details out of spec.md
+
+### 📊 **Project Structure**
+
+After running the workflow, your project looks like:
+
+```
+your-project/
+├── specs/
+│   └── 001-task-manager/
+│       ├── spec.md           # WHAT users need and WHY
+│       ├── plan.md           # HOW to implement (architecture)
+│       ├── tasks.md          # Ordered implementation steps
+│       ├── data-model.md     # Database schemas
+│       ├── research.md       # Technical decisions
+│       └── contracts/        # API contracts, schemas
+├── src/                      # Your implementation
+├── tests/                    # Your tests
+└── .dincoder/               # Compatibility JSON files
+```
 
 ## Available Tools
 
@@ -443,6 +628,111 @@ const result = await client.callTool('specify.describe', {
 See [examples/](examples/) for complete examples:
 - `local-client.ts` - Connect to local server
 - `spec-workflow.md` - Complete spec-driven workflow
+
+## 💡 Future Features & Roadmap
+
+DinCoder is actively evolving! Here are features we're considering and would love your input on.
+
+### 🗳️ **Vote on Features You Want**
+
+Help us prioritize by voting on [GitHub Discussions](https://github.com/flight505/mcp-dincoder/discussions) or opening an issue with the `feature-request` label.
+
+### 🚀 **Proposed Features**
+
+#### High Priority
+
+1. **Contract Generation Tool** (`contracts_create`)
+   - Auto-generate API contracts from spec.md
+   - Support OpenAPI, GraphQL schemas, Protobuf
+   - Validate contracts against implementation
+   - **Vote**: [Issue #TBD]
+
+2. **Spec Validation** (`spec_validate`)
+   - Check specification completeness
+   - Detect missing acceptance criteria
+   - Flag unanswered [NEEDS CLARIFICATION] markers
+   - Ensure WHAT/WHY separation (no premature HOW)
+   - **Vote**: [Issue #TBD]
+
+3. **Dependency Visualization** (`tasks_visualize`)
+   - Generate task dependency graphs (Mermaid, DOT)
+   - Show critical path and parallelizable work
+   - Identify blockers and bottlenecks
+   - **Vote**: [Issue #TBD]
+
+4. **Template Customization** (`templates_customize`)
+   - Allow projects to override default templates
+   - Support custom sections and gates
+   - Share templates across teams
+   - **Vote**: [Issue #TBD]
+
+#### Medium Priority
+
+5. **Workspace Auto-Detection**
+   - Automatically find project root
+   - Detect existing specs/ directories
+   - Infer project type (web, mobile, backend, etc.)
+
+6. **Metrics & Analytics** (`metrics_report`)
+   - Track specification → implementation velocity
+   - Measure task estimation accuracy
+   - Identify frequently clarified requirements
+   - Generate sprint/cycle reports
+
+7. **Collaboration Features**
+   - Add comments to specs/plans/tasks
+   - Review and approval workflows
+   - Change tracking and diffs
+   - @mention notifications
+
+8. **External Integration** (`integrate_*`)
+   - Sync with Jira, Linear, GitHub Issues
+   - Import existing tickets as specs
+   - Export tasks to project management tools
+   - Bi-directional sync
+
+#### Exploratory
+
+9. **AI-Assisted Spec Refinement**
+   - Suggest missing user stories
+   - Propose edge cases based on domain
+   - Auto-detect specification inconsistencies
+   - Generate test scenarios from acceptance criteria
+
+10. **Multi-Spec Projects**
+    - Handle multiple features in parallel
+    - Cross-feature dependency tracking
+    - Spec merging and conflict resolution
+
+11. **Specification Linting**
+    - Style guide enforcement (tone, structure)
+    - Consistency checking across specs
+    - Readability scoring
+
+12. **Time Estimation**
+    - ML-based task duration prediction
+    - Historical velocity analysis
+    - Confidence intervals for deadlines
+
+### 🎯 **Feature Request Guidelines**
+
+When proposing a feature, please include:
+
+1. **Problem Statement**: What pain point does this solve?
+2. **Use Case**: Real-world scenario where you'd use it
+3. **Proposed Solution**: How it should work (user perspective)
+4. **Alternatives Considered**: Other approaches you thought about
+5. **Priority**: How critical is this to your workflow?
+
+**Open a feature request**: [New Issue](https://github.com/flight505/mcp-dincoder/issues/new?labels=feature-request&template=feature_request.md)
+
+### 🏆 **Community Champions**
+
+We recognize contributors who:
+- Propose high-impact features
+- Provide detailed use cases
+- Help refine feature designs
+- Implement requested features
 
 ## Contributing
 

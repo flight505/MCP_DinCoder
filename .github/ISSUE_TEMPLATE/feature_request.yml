@@ -1,0 +1,135 @@
+name: Feature Request
+description: Propose a new feature for DinCoder
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a feature for DinCoder!
+
+        Before submitting, please check if a similar feature request already exists.
+
+  - type: input
+    id: feature-name
+    attributes:
+      label: Feature Name
+      description: What would you call this feature?
+      placeholder: e.g., "Clarification Tracking", "Task Visualization"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Which category does this feature belong to?
+      options:
+        - Workflow (constitution, specify, clarify, plan, tasks)
+        - Validation (quality gates, spec checking)
+        - Visualization (diagrams, graphs)
+        - Quality Tools (lint, test, format)
+        - Templates & Customization
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Suggested Priority
+      description: How important is this feature to you?
+      options:
+        - Critical (blocks my workflow)
+        - High (would significantly improve workflow)
+        - Medium (nice to have)
+        - Low (future enhancement)
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: |
+        Example: "When working with AI coding assistants, I often have ambiguous requirements in my specs. There's no structured way to track which questions need clarification and when they've been resolved."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How should this feature work?
+      placeholder: |
+        Example: "Add two new tools:
+        - clarify_add: Flag ambiguous sections in specs
+        - clarify_resolve: Mark clarifications as resolved with answers
+
+        Clarifications should be tracked in .dincoder/clarifications.json"
+    validations:
+      required: true
+
+  - type: textarea
+    id: mcp-fit
+    attributes:
+      label: MCP Appropriateness
+      description: Why is this appropriate for an MCP server (not better as IDE feature or external tool)?
+      placeholder: |
+        Example: "This fits MCP because:
+        - It operates on files (spec.md)
+        - It enhances AI workflow (helps AI understand specs)
+        - It's stateless (uses filesystem)
+        - It doesn't require UI (just structured data)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case Example
+      description: Provide a concrete example of how you would use this feature
+      placeholder: |
+        Example:
+        1. AI generates spec.md
+        2. I notice section "Authentication" is unclear
+        3. I run: clarify_add "Should we support OAuth or just API keys?"
+        4. Team discusses, decides on OAuth
+        5. I run: clarify_resolve CLARIFY-001 "Use OAuth 2.0"
+        6. spec.md updates automatically with resolution
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered other approaches?
+      placeholder: |
+        Example: "Could use comments in spec.md, but those aren't structured or trackable"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you be willing to help implement this feature?
+      options:
+        - label: I can help implement this feature
+          required: false
+        - label: I can help test this feature
+          required: false
+        - label: I can help document this feature
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Community Voting
+
+        If you support this feature, please react with 👍 to the issue after it's created.
+
+        Features with the most votes will be prioritized for implementation!

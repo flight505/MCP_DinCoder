@@ -42,6 +42,10 @@ import {
   GitCreateBranchSchema,
   gitCreateBranch,
 } from '../tools/git.js';
+import {
+  ConstitutionCreateSchema,
+  constitutionCreate,
+} from '../tools/constitution.js';
 
 /**
  * Server configuration schema
@@ -90,6 +94,17 @@ export function createServer(config: Partial<ServerConfig> = {}): McpServer {
  */
 function registerTools(server: McpServer): void {
   // Spec Kit tools
+
+  // Constitution tool - define project principles
+  server.tool(
+    'constitution_create',
+    'Define project principles, constraints, and preferences that guide all AI-generated artifacts. Use this before specify_start to establish project guardrails.',
+    ConstitutionCreateSchema.shape,
+    async (params) => {
+      return await constitutionCreate(ConstitutionCreateSchema.parse(params));
+    }
+  );
+
   server.tool(
     'specify_start',
     'Initialize a new spec-driven project. Creates .dincoder directory with spec.json template. Use this as the first step when starting a new project.',

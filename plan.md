@@ -490,3 +490,372 @@ Sources consulted (key, authoritative)
 	•	Example implementations: invariantlabs-ai/mcp-streamable-http, ferrants/mcp-streamable-http-typescript-server.
 
 If you want me to generate the repo scaffolding (files + boilerplate code + example tests) directly from this checklist, say the word and I’ll output a ready‑to‑download project skeleton next.
+⸻
+
+## 🎯 PHASE 1: CORE COMPLETENESS (v0.2.0)
+
+**Goal:** Achieve feature parity with essential Spec Kit workflow for AI coding assistants
+**Timeline:** 2 weeks (~1 sprint)
+**New Tools:** 7 (constitution_create, clarify_add, clarify_resolve, spec_validate, artifacts_analyze, spec_refine, prereqs_check)
+**Total Tools After Phase 1:** 21
+
+⸻
+
+Story 24 — Constitution/Principles Tool ⭐ CRITICAL
+
+Goal: Enable projects to define principles and constraints that guide all AI-generated artifacts.
+
+Rationale: Without a constitution, specs can drift from project values. Constitution provides guardrails for AI when generating specs, plans, and tasks. Similar to GitHub Spec Kit's `/constitution` command but adapted for MCP context.
+
+Tools to Implement:
+	•	constitution_create - Define project principles, constraints, and preferences
+
+Tasks:
+	•	Create src/tools/constitution.ts module
+	•	Define ConstitutionCreateSchema with Zod:
+		○	projectName: string (name of project)
+		○	principles: string[] (e.g., "Prefer functional patterns", "Avoid premature optimization")
+		○	constraints: string[] (e.g., "Max bundle size: 500KB", "Support Node 20+")
+		○	preferences: object with optional fields:
+			§	libraries?: string[] (e.g., ["React Query over Redux"])
+			§	patterns?: string[] (e.g., ["Repository pattern for data access"])
+			§	style?: string (e.g., "Functional > OOP")
+		○	workspacePath?: string (optional workspace directory)
+	•	Create src/speckit/constitution-template.ts:
+		○	Define markdown template for constitution.md
+		○	Sections: Project Principles, Technical Constraints, Library Preferences, Code Style
+		○	Include examples and reasoning fields
+	•	Implement constitutionCreate() function:
+		○	Resolve workspace path using resolveWorkspacePath()
+		○	Find/create specs directory using findSpecsDirectory()
+		○	Create feature directory using createFeatureDirectory()
+		○	Generate constitution.md from template with user-provided values
+		○	Write to {project}/constitution.md
+		○	Return success message with file path
+	•	Add tool registration in src/server/createServer.ts:
+		○	Register constitution_create tool with schema
+		○	Add to tool list
+	•	Write unit tests in tests/tools/constitution.test.ts:
+		○	Test schema validation
+		○	Test constitution generation with various inputs
+		○	Test file writing to correct location
+		○	Test error handling (invalid workspace, etc.)
+	•	Write integration test in tests/integration/constitution-workflow.test.ts:
+		○	Test constitution → specify → plan workflow
+		○	Verify constitution influences spec generation
+	•	Update README.md:
+		○	Add constitution_create to tool list
+		○	Add usage example showing how to define project principles
+		○	Add to workflow guide (Step 0: Define Constitution)
+	•	Add constitution.md to .gitignore template (optional, user choice to commit)
+
+Acceptance Criteria:
+	•	✅ Can create constitution.md with structured principles, constraints, and preferences
+	•	✅ Constitution file validates against schema
+	•	✅ File is written to correct specs directory structure
+	•	✅ AI agents can reference constitution when generating specs/plans
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation updated with examples
+
+⸻
+
+Story 25 — Clarification Tracking ⭐ CRITICAL
+
+Goal: Provide structured Q&A process for resolving spec ambiguities.
+
+Rationale: Specs often have [NEEDS CLARIFICATION] markers indicating unknowns. Without structured tracking, clarifications get lost in comments or never resolved. This implements GitHub Spec Kit's `/clarify` command for MCP.
+
+Tools to Implement:
+	•	clarify_add - Flag ambiguities in specifications
+	•	clarify_resolve - Resolve clarifications with structured answers
+
+Tasks:
+	•	Create src/tools/clarify.ts module
+	•	Define ClarifyAddSchema with Zod:
+		○	question: string (the clarification question)
+		○	context: string (section of spec that's ambiguous)
+		○	options?: string[] (possible resolutions)
+		○	specPath?: string (path to spec.md, auto-detected if not provided)
+		○	workspacePath?: string
+	•	Define ClarifyResolveSchema with Zod:
+		○	clarificationId: string (unique ID like CLARIFY-001)
+		○	resolution: string (the answer/decision)
+		○	rationale?: string (why this resolution was chosen)
+		○	workspacePath?: string
+	•	Implement clarification storage:
+		○	Create .dincoder/clarifications.json for tracking
+		○	Schema: { id, question, context, options, status, resolution?, resolvedAt?, addedAt }
+		○	Use JSON for structured querying
+	•	Implement clarifyAdd():
+		○	Generate unique clarification ID (CLARIFY-001, CLARIFY-002, etc.)
+		○	Parse spec.md to find existing [NEEDS CLARIFICATION] markers
+		○	Store clarification in clarifications.json with status: "pending"
+		○	Optionally update spec.md with ID marker: [NEEDS CLARIFICATION: CLARIFY-001]
+		○	Return clarification ID and summary
+	•	Implement clarifyResolve():
+		○	Load clarifications.json
+		○	Find clarification by ID
+		○	Mark as status: "resolved" with resolution and timestamp
+		○	Update spec.md: replace [NEEDS CLARIFICATION: ID] with resolution text
+		○	Append resolution to research.md under "Clarifications" section
+		○	Git commit with message: "Resolve CLARIFY-001: [question]"
+		○	Return success with resolution summary
+	•	Add list functionality (optional helper):
+		○	clarifyList() to show all pending clarifications
+	•	Add tool registration in src/server/createServer.ts
+	•	Write unit tests in tests/tools/clarify.test.ts:
+		○	Test adding clarifications
+		○	Test resolving clarifications
+		○	Test ID generation uniqueness
+		○	Test spec.md marker insertion/replacement
+		○	Test clarifications.json persistence
+	•	Write integration test in tests/integration/clarify-workflow.test.ts:
+		○	Test full workflow: add → list → resolve
+		○	Test spec.md updates
+		○	Test research.md logging
+	•	Update README.md:
+		○	Add clarify_add and clarify_resolve to tool list
+		○	Add clarification workflow example
+		○	Update workflow guide with clarification step
+
+Acceptance Criteria:
+	•	✅ Can flag ambiguities in specs with structured questions
+	•	✅ Clarifications tracked in version-controlled JSON file
+	•	✅ Can resolve with structured answers
+	•	✅ Resolutions automatically update spec.md and research.md
+	•	✅ Unique ID generation prevents collisions
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation includes workflow examples
+
+⸻
+
+Story 26 — Spec Validation & Quality Gates ⭐ CRITICAL
+
+Goal: Automated quality checks for specifications before moving to plan/tasks phases.
+
+Rationale: Incomplete or ambiguous specs lead to wasted implementation effort. Quality gates catch issues early. Implements GitHub Spec Kit's `/analyze` command with focus on spec validation for AI workflows.
+
+Tools to Implement:
+	•	spec_validate - Check specification quality
+	•	artifacts_analyze - Verify spec/plan/tasks consistency
+
+Tasks:
+	•	Create src/tools/validate.ts module
+	•	Define SpecValidateSchema with Zod:
+		○	checks: object with boolean flags:
+			§	completeness?: boolean (all required sections present)
+			§	acceptanceCriteria?: boolean (every feature has testable criteria)
+			§	clarifications?: boolean (no unresolved [NEEDS CLARIFICATION])
+			§	prematureImplementation?: boolean (no HOW in WHAT sections)
+		○	specPath?: string (auto-detect if not provided)
+		○	workspacePath?: string
+	•	Define ArtifactsAnalyzeSchema with Zod:
+		○	artifacts?: ('spec' | 'plan' | 'tasks')[] (which to analyze, default: all)
+		○	workspacePath?: string
+	•	Implement validation rules in src/speckit/validators.ts:
+		○	checkCompleteness(spec): Verify required sections (Goals, Acceptance, Edge Cases, Research)
+		○	checkAcceptanceCriteria(spec): Ensure every feature has "when/then" testable criteria
+		○	checkClarifications(spec): Find unresolved [NEEDS CLARIFICATION] markers
+		○	checkPrematureImplementation(spec): Detect HOW details in WHAT sections (flag code blocks, library names in goals)
+	•	Implement specValidate():
+		○	Load and parse spec.md
+		○	Run selected validation checks
+		○	Generate validation report with warnings and errors:
+			§	errors: array of { rule, message, location }
+			§	warnings: array of { rule, message, suggestion }
+			§	passed: boolean (no errors)
+		○	Return structured report
+	•	Implement artifactsAnalyze():
+		○	Load spec.md, plan.md, tasks.md
+		○	Check spec vs plan consistency:
+			§	All spec goals covered in plan
+			§	No plan components not in spec
+		○	Check plan vs tasks consistency:
+			§	All plan components have tasks
+			§	No orphaned tasks (not in plan)
+		○	Detect missing tasks for planned features
+		○	Return consistency report with issues
+	•	Add tool registration in src/server/createServer.ts
+	•	Write unit tests in tests/tools/validate.test.ts:
+		○	Test each validation rule independently
+		○	Test completeness check with missing sections
+		○	Test clarification detection
+		○	Test premature implementation detection
+		○	Test artifacts consistency checking
+	•	Write integration test in tests/integration/validation-workflow.test.ts:
+		○	Test validation with problematic spec
+		○	Test validation pass with good spec
+		○	Test artifacts analysis with mismatched plan/tasks
+	•	Update README.md:
+		○	Add spec_validate and artifacts_analyze to tool list
+		○	Add validation examples showing error detection
+		○	Update workflow guide with validation gates
+
+Acceptance Criteria:
+	•	✅ Detects missing sections in specs
+	•	✅ Flags unresolved clarifications
+	•	✅ Catches premature implementation details (HOW in WHAT)
+	•	✅ Validates cross-artifact consistency (spec ↔ plan ↔ tasks)
+	•	✅ Provides actionable error messages with suggestions
+	•	✅ Returns structured reports (JSON) for AI parsing
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation includes validation workflow
+
+⸻
+
+Story 27 — Spec Refinement/Evolution
+
+Goal: Enable iterative improvement of specifications without losing history.
+
+Rationale: Specs are living documents that evolve as understanding deepens. Need structured way to update without corrupting structure or losing decision context. Git commits track changes.
+
+Tools to Implement:
+	•	spec_refine - Update existing specs with tracked changes
+
+Tasks:
+	•	Create src/tools/refine.ts module
+	•	Define SpecRefineSchema with Zod:
+		○	section: enum ('goals' | 'acceptance' | 'edge-cases' | 'research' | 'full')
+		○	changes: string (markdown describing updates)
+		○	reason: string (why this refinement is needed)
+		○	specPath?: string (auto-detect if not provided)
+		○	workspacePath?: string
+	•	Implement markdown section parser in src/speckit/parser.ts:
+		○	parseSpecSections(spec): Extract section boundaries (line ranges)
+		○	getSectionContent(spec, section): Get specific section text
+		○	setSectionContent(spec, section, newContent): Replace section
+	•	Implement specRefine():
+		○	Load existing spec.md
+		○	Parse to identify section boundaries
+		○	Apply changes to specified section (or full spec if section='full')
+		○	Validate updated spec structure (ensure headers intact)
+		○	Append changelog entry to research.md:
+			§	"## Spec Refinement: [date]"
+			§	"**Section:** [section]"
+			§	"**Reason:** [reason]"
+			§	"**Changes:** [changes]"
+		○	Write updated spec.md
+		○	Git commit with message: "refine: [section] - [reason]"
+		○	Return success with change summary
+	•	Add versioning support (optional):
+		○	Before refining, create snapshot: spec.v1.md, spec.v2.md
+		○	Maintain spec.md as latest version
+		○	Store version metadata in .dincoder/spec-versions.json
+	•	Add tool registration in src/server/createServer.ts
+	•	Write unit tests in tests/tools/refine.test.ts:
+		○	Test section parsing
+		○	Test section updates
+		○	Test full spec updates
+		○	Test research.md logging
+		○	Test git commit creation
+	•	Write integration test in tests/integration/refine-workflow.test.ts:
+		○	Test iterative refinement (multiple refines)
+		○	Test version history preservation
+		○	Test spec structure integrity after refinement
+	•	Update README.md:
+		○	Add spec_refine to tool list
+		○	Add refinement workflow example
+		○	Show how to iterate on specs
+
+Acceptance Criteria:
+	•	✅ Can update specific spec sections without affecting others
+	•	✅ Preserves git history of all changes
+	•	✅ Logs refinement reasons in research.md
+	•	✅ Doesn't corrupt spec structure (headers, sections)
+	•	✅ Optional versioning creates snapshots
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation shows refinement workflow
+
+⸻
+
+Story 28 — Prerequisites Check
+
+Goal: Verify development environment has required tools and versions.
+
+Rationale: Prevents "works on my machine" issues. Validates environment before spec execution. Similar to GitHub Spec Kit's `specify check` command but extensible for custom prerequisites.
+
+Tools to Implement:
+	•	prereqs_check - Verify system requirements
+
+Tasks:
+	•	Create src/tools/prereqs.ts module
+	•	Define PrereqsCheckSchema with Zod:
+		○	checkFor: object with optional fields:
+			§	node?: string (version requirement, e.g., ">=20")
+			§	npm?: boolean (check availability)
+			§	git?: boolean (check availability)
+			§	docker?: boolean (check availability)
+			§	customCommands?: string[] (e.g., ["kubectl", "terraform"])
+		○	fix?: boolean (attempt auto-fix if possible, default: false)
+		○	workspacePath?: string
+	•	Implement version checkers in src/tools/prereqs.ts:
+		○	checkNodeVersion(requirement): Run `node --version`, parse and compare
+		○	checkCommandAvailable(command): Run `which [command]` or `command -v`
+		○	parseVersionRequirement(req): Parse ">=20", "^18.0.0", etc.
+		○	compareVersions(actual, required): Semantic version comparison
+	•	Implement prereqsCheck():
+		○	Run checks for specified prerequisites
+		○	Collect results: { tool, required, actual, passed }
+		○	Generate report:
+			§	passed: boolean (all checks passed)
+			§	results: array of check results
+			§	suggestions: array of fix suggestions for failures
+		○	If fix=true, attempt auto-fixes:
+			§	Suggest nvm/fnm for Node version issues
+			§	Suggest brew/apt for missing tools (platform-specific)
+		○	Return structured report
+	•	Add common prerequisite templates:
+		○	webAppPrereqs: Node, npm, git
+		○	dockerizedAppPrereqs: Node, npm, git, docker
+		○	kubernetesAppPrereqs: Node, npm, git, docker, kubectl
+	•	Add tool registration in src/server/createServer.ts
+	•	Write unit tests in tests/tools/prereqs.test.ts:
+		○	Test version parsing and comparison
+		○	Test command availability checking
+		○	Test report generation
+		○	Test suggestion generation for failures
+	•	Write integration test in tests/integration/prereqs-workflow.test.ts:
+		○	Test prerequisite check with current environment
+		○	Test handling of missing prerequisites
+	•	Update README.md:
+		○	Add prereqs_check to tool list
+		○	Add prerequisite checking examples
+		○	Add to workflow guide (Step 0: Verify Prerequisites)
+
+Acceptance Criteria:
+	•	✅ Detects missing or outdated tools
+	•	✅ Supports version requirement syntax (>=, ^, ~)
+	•	✅ Provides clear error messages for failures
+	•	✅ Suggests fixes when possible (install commands)
+	•	✅ Supports custom prerequisite checks
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation includes prerequisite examples
+
+⸻
+
+## Phase 1 Summary
+
+**Stories Completed:** 5 new stories (24-28)
+**Tools Added:** 7 new tools
+**Total Tools:** 21 (14 existing + 7 new)
+**Estimated Effort:** ~35-40 tasks
+**Timeline:** 2 weeks (1 sprint)
+
+**Tools by Category After Phase 1:**
+- **Workflow Setup (3):** constitution_create, prereqs_check, specify_start
+- **Specification (3):** specify_describe, clarify_add, clarify_resolve
+- **Validation (3):** spec_validate, artifacts_analyze, spec_refine
+- **Planning (1):** plan_create
+- **Tasks (2):** tasks_generate, tasks_tick
+- **Supporting (3):** artifacts_read, research_append, git_create_branch
+- **Quality (6):** quality_format, quality_lint, quality_test, quality_security_audit, quality_deps_update, quality_license_check
+
+**Key Achievements:**
+- ✅ Complete Spec Kit workflow parity (constitution, clarify, validate)
+- ✅ Quality gates prevent incomplete specs from progressing
+- ✅ Iterative refinement supports living documents
+- ✅ Environment validation prevents setup issues
+- ✅ All critical gaps from analysis addressed
+
+**Next Phase:** Phase 2 - Workflow Enhancement (tasks visualization, filtering, diagrams)
+
