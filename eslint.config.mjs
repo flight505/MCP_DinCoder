@@ -3,7 +3,7 @@ import tsPlugin from 'typescript-eslint';
 
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.config.js', '*.config.mjs']
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.config.js', '*.config.mjs', '.smithery/**']
   },
   js.configs.recommended,
   ...tsPlugin.configs.recommended,
