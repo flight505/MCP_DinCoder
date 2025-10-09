@@ -51,9 +51,7 @@ async function main() {
   }
 }
 
-// Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(console.error);
-}
+// Always run when this file is executed (needed for npx compatibility)
+main().catch(console.error);
 
 export { main };
