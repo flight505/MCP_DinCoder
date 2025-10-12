@@ -10,6 +10,23 @@
 
 DinCoder brings the power of [GitHub Spec Kit](https://github.com/github/spec-kit) to any AI coding agent through the Model Context Protocol. It transforms the traditional "prompt-then-code-dump" workflow into a systematic, specification-driven process where **specifications don't serve code—code serves specifications**.
 
+## ✨ What's New in v0.1.17 (Phase 1: 40% Complete)
+
+### 🧬 **Constitution Tool** - Define Your Project's DNA
+- **New command:** `constitution_create`
+- Set project-wide principles, constraints, and preferences
+- Ensures consistency across all AI-generated code
+- Think of it as your project's "constitution" that guides all future work
+
+### ❓ **Clarification Tracking** - Systematic Q&A Management
+- **New commands:** `clarify_add`, `clarify_resolve`, `clarify_list`
+- Track ambiguities with unique IDs (CLARIFY-001, CLARIFY-002, etc.)
+- Resolve uncertainties with rationale and audit trail
+- Perfect for async collaboration and spec refinement
+- Automatic logging to research.md
+
+**👉 See [Complete Workflow Guide](#-complete-workflow-guide) for usage examples**
+
 ## 🌟 The Power Inversion: A New Development Paradigm
 
 For decades, code has been king. Specifications were scaffolding—built, used, then discarded once "real work" began. PRDs guided development, design docs informed implementation, but these were always subordinate to code. Code was truth. Everything else was, at best, good intentions.
@@ -255,44 +272,105 @@ Submit issues and PRs to [github/spec-kit](https://github.com/github/spec-kit) f
 
 - Node.js >= 20.0.0
 - npm or pnpm
+- An MCP-compatible AI agent (Claude Desktop, Claude Code, Cursor, etc.)
 
 ### Installation
 
-#### For Claude Code / VS Code Users
+#### For Claude Desktop Users (Recommended)
 
-Install the server globally via npm:
+Add to your Claude Desktop config file:
 
-```bash
-npm install -g mcp-dincoder
-```
-
-Then add it to Claude Code:
-
-```bash
-claude mcp add dincoder -- npx -y mcp-dincoder
-```
-
-Or configure manually in your Claude Code config:
+**Config file location:**
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 - Linux: `~/.config/Claude/claude_desktop_config.json`
 
+**Add this configuration:**
 ```json
 {
   "mcpServers": {
     "dincoder": {
       "command": "npx",
-      "args": ["-y", "mcp-dincoder"]
+      "args": ["-y", "mcp-dincoder@latest"]
     }
   }
 }
 ```
+
+**Restart Claude Desktop** to load the server.
+
+#### For Claude Code / VS Code Users
+
+```bash
+claude mcp add dincoder -- npx -y mcp-dincoder@latest
+```
+
+#### For Other MCP Clients
+
+Install globally:
+```bash
+npm install -g mcp-dincoder@latest
+```
+
+### 📁 Where Files Are Created
+
+**Important:** DinCoder creates all files in your **current working directory** (where you run your AI agent from).
+
+```bash
+your-project/
+├── specs/                    # Created automatically
+│   ├── 001-feature-name/    # Feature directory (auto-numbered)
+│   │   ├── constitution.md  # Project principles (optional, recommended first step)
+│   │   ├── spec.md          # Requirements & user stories
+│   │   ├── plan.md          # Technical implementation plan
+│   │   ├── tasks.md         # Executable task list
+│   │   ├── research.md      # Technical decisions & research
+│   │   ├── clarifications.json  # Q&A tracking
+│   │   └── contracts/       # API contracts, data models
+│   └── 002-next-feature/
+└── .dincoder/               # Backward compatibility (legacy)
+```
+
+**Tip:** Start Claude Desktop in your project root directory to ensure files are created in the right place.
 
 ## 🚦 Complete Workflow Guide
 
 This is your end-to-end guide for using DinCoder with any AI agent (Claude, Copilot, Gemini, Cursor).
 
 ### Step-by-Step: From Idea to Implementation
+
+#### 0️⃣ **Define Project Constitution** (Optional but Recommended, 2-3 minutes)
+
+**New in v0.1.17** ✨
+
+```typescript
+// In your AI agent's chat:
+"Use constitution_create to define principles for 'task-manager' with these details:
+
+Principles:
+- Prefer functional programming over OOP
+- Write tests before implementation (TDD)
+- Keep bundle size under 500KB
+
+Constraints:
+- Node.js >= 20.0.0 required
+- Maximum 3 external dependencies for core functionality
+- Must support TypeScript strict mode
+
+Preferences:
+- Libraries: React Query over Redux, Zod for validation
+- Patterns: Repository pattern for data access
+- Style: Functional > OOP"
+
+// What happens:
+// ✓ Creates specs/001-task-manager/ directory
+// ✓ Generates constitution.md with structured principles
+// ✓ All future specs/plans will respect these constraints
+```
+
+**Why use this:** Constitution ensures consistency across your entire project. AI agents will reference these principles when generating specs and plans.
+
+**When to use**: At the very start, before specify_start. Think of it as your project's "DNA."
 
 #### 1️⃣ **Start a New Project** (1 minute)
 
@@ -301,13 +379,13 @@ This is your end-to-end guide for using DinCoder with any AI agent (Claude, Copi
 "Use specify_start to initialize a new project called 'task-manager' with claude agent"
 
 // What happens:
-// ✓ Creates specs/001-task-manager/ directory
+// ✓ Creates specs/001-task-manager/ directory (or reuses existing from constitution)
 // ✓ Generates spec.md template
 // ✓ Creates contracts/ folder
 // ✓ Initializes research.md
 ```
 
-**When to use**: First step for any new feature or project.
+**When to use**: First step for any new feature, or second step if you created a constitution first.
 
 #### 2️⃣ **Describe What You Want** (2-5 minutes)
 
@@ -328,6 +406,44 @@ Build a task management system where users can:
 ```
 
 **Pro tip**: Be specific about user needs, not implementation. Focus on **what users want** and **why they need it**.
+
+#### 2.5️⃣ **Track Clarifications** (New in v0.1.17, Optional but Useful)
+
+**New in v0.1.17** ✨
+
+```typescript
+// If you notice ambiguities while writing specs:
+"Use clarify_add with this question:
+'Should task due dates support time zones or just dates?'
+with context 'Task scheduling requirements'
+and options:
+- Store timestamps with UTC + user timezone
+- Store dates only (YYYY-MM-DD)
+- Let users choose their preference"
+
+// What happens:
+// ✓ Creates clarifications.json with unique ID (CLARIFY-001)
+// ✓ Logs to research.md for audit trail
+// ✓ Marks spec.md with [NEEDS CLARIFICATION: CLARIFY-001]
+// ✓ Status: pending
+
+// Later, when you have an answer:
+"Use clarify_resolve for CLARIFY-001 with resolution:
+'Use UTC timestamps with user timezone preference. Rationale: Enables international teams and recurring tasks across time zones.'"
+
+// What happens:
+// ✓ Updates clarifications.json status to 'resolved'
+// ✓ Logs resolution to research.md
+// ✓ Updates spec.md marker to [CLARIFICATION RESOLVED: CLARIFY-001]
+
+// Check all clarifications:
+"Use clarify_list to see all pending clarifications"
+// Returns: pending count, resolved count, full list
+```
+
+**Why use this:** Specs often have ambiguities. Tracking them systematically ensures nothing falls through the cracks. Perfect for async team collaboration.
+
+**When to use**: Anytime during spec/plan creation when you encounter uncertainty.
 
 #### 3️⃣ **Refine the Specification** (Optional, 5-10 minutes)
 
