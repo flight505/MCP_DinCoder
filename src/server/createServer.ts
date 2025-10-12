@@ -46,6 +46,14 @@ import {
   ConstitutionCreateSchema,
   constitutionCreate,
 } from '../tools/constitution.js';
+import {
+  ClarifyAddSchema,
+  ClarifyResolveSchema,
+  ClarifyListSchema,
+  clarifyAdd,
+  clarifyResolve,
+  clarifyList,
+} from '../tools/clarify.js';
 
 /**
  * Server configuration schema
@@ -102,6 +110,34 @@ function registerTools(server: McpServer): void {
     ConstitutionCreateSchema.shape,
     async (params) => {
       return await constitutionCreate(ConstitutionCreateSchema.parse(params));
+    }
+  );
+
+  // Clarification tools - track and resolve ambiguities
+  server.tool(
+    'clarify_add',
+    'Flag ambiguities or questions in specifications that need clarification. Creates a tracked clarification with unique ID.',
+    ClarifyAddSchema.shape,
+    async (params) => {
+      return await clarifyAdd(ClarifyAddSchema.parse(params));
+    }
+  );
+
+  server.tool(
+    'clarify_resolve',
+    'Resolve a pending clarification with an answer. Updates spec.md and logs resolution in research.md.',
+    ClarifyResolveSchema.shape,
+    async (params) => {
+      return await clarifyResolve(ClarifyResolveSchema.parse(params));
+    }
+  );
+
+  server.tool(
+    'clarify_list',
+    'List all clarifications with optional status filter (pending/resolved/all). Useful for tracking progress.',
+    ClarifyListSchema.shape,
+    async (params) => {
+      return await clarifyList(ClarifyListSchema.parse(params));
     }
   );
 
