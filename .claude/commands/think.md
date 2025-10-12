@@ -1,3 +1,8 @@
+---
+description: Structured multi-angle reasoning framework
+argument-hint: "[topic or problem]"
+---
+
 # /think
 
 Engage in structured, multi-angle reasoning about a topic, problem, or decision to generate deep insights and novel perspectives through systematic contemplation.

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { tmpdir } from 'os';
 import { 
   detectProjectType, 
   findSpecsDirectory 
@@ -171,12 +172,15 @@ async function validateWorkspacePath(workspacePath: string): Promise<void> {
     throw error;
   }
   
-  // Prevent access to system directories
-  const restrictedPaths = ['/etc', '/usr', '/bin', '/sbin', '/var', '/tmp'];
+  // Prevent access to system directories (but allow temp dirs like /var/folders on macOS)
+  const restrictedPaths = ['/etc', '/usr', '/bin', '/sbin'];
   const normalizedPath = path.normalize(workspacePath).toLowerCase();
-  
+
+  // Check for exact matches or subdirectories (but not /var/folders or Node tmpdir)
+  const tmpDir = tmpdir().toLowerCase();
   for (const restricted of restrictedPaths) {
-    if (normalizedPath.startsWith(restricted)) {
+    if (normalizedPath === restricted ||
+        (normalizedPath.startsWith(restricted + '/') && !normalizedPath.startsWith(tmpDir))) {
       throw new Error(`Access to system directory ${restricted} is not allowed`);
     }
   }
