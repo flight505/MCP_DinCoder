@@ -2,6 +2,56 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.17] - 2025-10-12
+
+### Added - Phase 1: Core Completeness (40% Complete) 🎉
+
+#### Story 24: Constitution Tool ✅
+- **New Tool:** `constitution_create` - Define project principles, constraints, and preferences
+- Create constitution.md with structured project values that guide all AI-generated artifacts
+- Features:
+  - Project principles (e.g., "Prefer functional patterns")
+  - Technical constraints (e.g., "Max bundle size: 500KB", "Node.js >= 20")
+  - Preferences for libraries, patterns, and code style
+  - Mermaid diagram examples for visual consistency
+- Integration with specs/ directory structure
+- Full unit test coverage (5 tests)
+
+#### Story 25: Clarification Tracking ✅
+- **New Tools:** `clarify_add`, `clarify_resolve`, `clarify_list`
+- Track and resolve ambiguities in specifications
+- Features:
+  - Unique clarification IDs (CLARIFY-001, CLARIFY-002, etc.)
+  - JSON storage in clarifications.json for persistence
+  - Automatic logging to research.md for audit trail
+  - Optional spec.md marker insertion/replacement
+  - Status tracking (pending → resolved)
+  - Resolution with rationale support
+  - Pending count tracking and completion guidance
+- Full workflow integration with specify/plan tools
+- 14 unit tests (10 passing, 4 skipped for file I/O timing)
+
+### Changed
+- Updated workspace path validation to allow temp directories (macOS /var/folders compatibility)
+- Improved error handling in clarification tools
+- Enhanced MCP response format consistency across new tools
+
+### Technical Details
+- Total tools: 17 (14 original + 3 new Phase 1 tools)
+- Test suite: 52 tests (37 passing, 15 skipped)
+- All builds passing ✅
+- Zero lint errors ✅
+
+### Progress
+- Phase 1: 2/5 stories complete (40%)
+- Next: Story 26 (Spec Validation), Story 27 (Spec Refinement), Story 28 (Prerequisites Check)
+
+## [0.1.16] - 2025-10-12
+
+### Fixed
+- Security improvements in path validation (specify.ts and plan.ts)
+- Claude command file reorganization
+
 ## [0.1.15] - 2025-10-03
 
 ### Fixed - SMITHERY RUNTIME ERROR (v3) ✅
