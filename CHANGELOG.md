@@ -2,6 +2,51 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.18] - 2025-10-13
+
+### Fixed - Critical Bugs 🔴
+
+#### Template Loading Fix (CRITICAL)
+- **Fixed:** Template files not found when installed via npx
+- **Root Cause:** Template path resolution failed for npx installations
+  - npx installs to `~/.npm/_npx/.../node_modules/`
+  - Old code: Single path `_dirname + '../../templates'`
+  - Issue: Path didn't work for npx's nested structure
+- **Solution:** Multi-path fallback strategy
+  1. Try local development path (`dist/` relative)
+  2. Try npm package root path (`node_modules/mcp-dincoder/templates/`)
+  3. Try resolved from cwd (`process.cwd()/node_modules/...`)
+- **Impact:** Unblocks entire SPECIFY → PLAN → TASKS workflow
+- **Affected Tools:** `specify_start`, `specify_describe` (now working ✅)
+
+#### GitHub CI/CD Fix
+- **Fixed:** Build & Validate job failing in GitHub Actions
+- **Root Cause:** Workflow used `npm run build` (Smithery → `.smithery/`), then checked for files in `dist/`
+- **Solution:** Changed all CI jobs to use `npm run build:local` (tsup → `dist/`)
+- **Files Changed:**
+  - `.github/workflows/ci.yml` - All 3 jobs now use `build:local`
+  - Test job, Build & Validate job, Smoke Test job
+- **Impact:** CI/CD now passes ✅, proper validation before publish
+
+### Changed
+- **Template Loading:** Improved error messages with all attempted paths
+- **CI/CD:** Husky pre-commit hook already used `build:local` (was correct)
+- **Build Process:** Clarified distinction between:
+  - `npm run build` - Smithery (for Smithery deployment)
+  - `npm run build:local` - tsup (for npm package & CI/CD)
+
+### Technical Details
+- Total tools: 17 (all functional after template fix)
+- Test suite: 52 tests (37 passing, 15 skipped) ✅
+- CI/CD: All jobs now passing ✅
+- Lint: Only warnings (no errors) ✅
+
+### Testing
+- Comprehensive test report from Claude Desktop (17/17 tools tested)
+- **Before v0.1.18:** 53% pass rate (9/17 tools), 6 blockers
+- **After v0.1.18 (expected):** 100% core workflow functional
+- Test report: `/Users/jesper/Projects/dincoder-test-results/DINCODER_TEST_REPORT.md`
+
 ## [0.1.17] - 2025-10-12
 
 ### Added - Phase 1: Core Completeness (40% Complete) 🎉

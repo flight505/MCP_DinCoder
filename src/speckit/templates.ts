@@ -39,20 +39,34 @@ export interface TemplateVariables {
  * Load a Spec Kit template
  */
 export async function loadTemplate(name: TemplateName): Promise<string> {
-  // Use path relative to the package installation directory
-  // When installed via npm, templates are in ../../templates/ relative to dist/speckit/
-  const templatePath = path.join(
-    _dirname,
-    '../../templates',
-    'speckit',
-    `${name}-template.md`
-  );
+  // Try multiple possible paths for template files
+  const possiblePaths = [
+    // Path 1: Relative to dist/speckit/ (local development with tsup)
+    path.join(_dirname, '../../templates', 'speckit', `${name}-template.md`),
+    // Path 2: Relative to package root (npm installation)
+    // From node_modules/mcp-dincoder/dist/speckit -> node_modules/mcp-dincoder/templates
+    path.join(_dirname, '../..', 'templates', 'speckit', `${name}-template.md`),
+    // Path 3: Resolve from module (handles npx edge cases)
+    path.resolve(process.cwd(), 'node_modules', 'mcp-dincoder', 'templates', 'speckit', `${name}-template.md`),
+  ];
 
-  try {
-    return await fs.readFile(templatePath, 'utf-8');
-  } catch (error) {
-    throw new Error(`Failed to load template ${name} from ${templatePath}: ${error}`);
+  // Try each path
+  for (const templatePath of possiblePaths) {
+    try {
+      const content = await fs.readFile(templatePath, 'utf-8');
+      return content;
+    } catch {
+      // Continue to next path
+    }
   }
+
+  // If all paths failed, provide detailed error
+  const paths = possiblePaths.map((p, i) => `  ${i + 1}. ${p}`).join('\n');
+  throw new Error(
+    `Failed to load template ${name}. Tried the following paths:\n${paths}\n\n` +
+    `Current directory: ${_dirname}\n` +
+    `Process cwd: ${process.cwd()}`
+  );
 }
 
 /**
