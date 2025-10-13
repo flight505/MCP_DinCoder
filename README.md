@@ -2,6 +2,8 @@
   <img width="320" alt="Image@0 5x" src="https://github.com/user-attachments/assets/defd2ef0-5804-431c-8549-618eb3434aee" />
 </div>
 
+[![smithery badge](https://smithery.ai/badge/@flight505/mcp_dincoder)](https://smithery.ai/server/@flight505/mcp_dincoder)
+
 **D**riven **I**ntent **N**egotiation — **C**ontract-**O**riented **D**eterministic **E**xecutable **R**untime
 
 > *The MCP implementation of GitHub's Spec Kit methodology — transforming specifications into executable artifacts*
@@ -275,6 +277,15 @@ Submit issues and PRs to [github/spec-kit](https://github.com/github/spec-kit) f
 - An MCP-compatible AI agent (Claude Desktop, Claude Code, Cursor, etc.)
 
 ### Installation
+
+### Installing via Smithery
+
+To install DinCoder automatically via [Smithery](https://smithery.ai/server/@flight505/mcp_dincoder):
+
+```bash
+npx -y @smithery/cli install @flight505/mcp_dincoder
+```
+
 
 #### For Claude Desktop Users (Recommended)
 
