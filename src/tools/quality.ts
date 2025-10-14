@@ -102,9 +102,19 @@ export async function qualityFormat(params: z.infer<typeof QualityFormatSchema>)
   }
 
   try {
+    const prettierTargets = [
+      '"src/**/*.{ts,tsx,js,jsx,cjs,mjs,json}"',
+      '"tests/**/*.{ts,tsx,js,jsx,cjs,mjs,json}"',
+      '"scripts/**/*.{ts,tsx,js,jsx,cjs,mjs}"',
+      '"docs/**/*.{md,mdx}"',
+      '"templates/**/*.{md,mdx,json}"',
+      '"examples/**/*.{ts,tsx,js,jsx,md}"',
+      '"*.{js,ts,tsx,cjs,mjs,json,md,mdx,yaml,yml}"',
+    ];
+
     const command = fix
       ? 'npm run format'
-      : 'npx prettier --check .';
+      : `npx prettier --check --no-error-on-unmatched-pattern ${prettierTargets.join(' ')}`;
 
     const { stdout, stderr } = await execAsync(command, {
       cwd: resolvedPath,
@@ -116,8 +126,7 @@ export async function qualityFormat(params: z.infer<typeof QualityFormatSchema>)
     }
 
     const output = stdout.trim();
-    const hasIssues = output.includes('Code style issues found') ||
-                     output.includes('Checking formatting');
+    const hasIssues = output.includes('Code style issues found');
 
     const result = {
       success: true,

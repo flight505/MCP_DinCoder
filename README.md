@@ -274,7 +274,7 @@ Submit issues and PRs to [github/spec-kit](https://github.com/github/spec-kit) f
 
 - Node.js >= 20.0.0
 - npm or pnpm
-- An MCP-compatible AI agent (Claude Desktop, Claude Code, Cursor, etc.)
+- An MCP-compatible coding assistant with automatic workspace binding (Cursor, Claude Code, Codex, etc.)
 
 ### Installation
 
@@ -287,41 +287,26 @@ npx -y @smithery/cli install @flight505/mcp_dincoder
 ```
 
 
-#### For Claude Desktop Users (Recommended)
+> **Recommended clients:** DinCoder expects the MCP client to bind the active project directory automatically so generated specs, plans, and tasks land in the repo you are working on. Cursor, Claude Code, and Codex do this for every request. Claude Desktop’s chat UI does not, so commands default to the server’s own install directory; only use Claude Desktop if you plan to pass `workspacePath` manually on each call and verify outputs with `artifacts_read`.
 
-Add to your Claude Desktop config file:
-
-**Config file location:**
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-- Linux: `~/.config/Claude/claude_desktop_config.json`
-
-**Add this configuration:**
-```json
-{
-  "mcpServers": {
-    "dincoder": {
-      "command": "npx",
-      "args": ["-y", "mcp-dincoder@latest"]
-    }
-  }
-}
-```
-
-**Restart Claude Desktop** to load the server.
-
-#### For Claude Code / VS Code Users
+#### Claude Code / VS Code Users
 
 ```bash
 claude mcp add dincoder -- npx -y mcp-dincoder@latest
 ```
 
-#### For Other MCP Clients
+#### Cursor
+
+Configure the MCP server inside Cursor’s MCP settings; once you select a project, Cursor injects the workspace path automatically so no extra arguments are required.
+
+#### Other MCP Clients
 
 Install globally:
 ```bash
 npm install -g mcp-dincoder@latest
 ```
+
+Ensure your client either supports automatic workspace binding or that you supply `workspacePath` explicitly when invoking DinCoder tools.
 
 ### 📁 Where Files Are Created
 
@@ -342,7 +327,7 @@ your-project/
 └── .dincoder/               # Backward compatibility (legacy)
 ```
 
-**Tip:** Start Claude Desktop in your project root directory to ensure files are created in the right place.
+**Tip:** Launch your MCP client from the project root (or rely on automatic workspace binding) so every tool writes into the correct repo. If you must use Claude Desktop, start it from the desired directory and include `workspacePath` in each command.
 
 ## 🚦 Complete Workflow Guide
 

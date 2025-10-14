@@ -1,6 +1,6 @@
 {
   "name": "mcp-dincoder",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "description": "DinCoder - Driven Intent Negotiation Contract-Oriented Deterministic Executable Runtime. The Spec-Driven MCP server for Intent → Contracts → Deterministic Execution.",
   "type": "module",
   "main": "dist/index.js",
@@ -34,7 +34,7 @@
     "start": "node dist/index-stdio.js",
     "start:http": "node dist/index.js",
     "lint": "eslint .",
-    "format": "prettier --write .",
+    "format": "prettier --write --no-error-on-unmatched-pattern \"src/**/*.{ts,tsx,js,jsx,cjs,mjs,json}\" \"tests/**/*.{ts,tsx,js,jsx,cjs,mjs,json}\" \"scripts/**/*.{ts,tsx,js,jsx,cjs,mjs}\" \"docs/**/*.{md,mdx}\" \"templates/**/*.{md,mdx,json}\" \"examples/**/*.{ts,tsx,js,jsx,md}\" \"*.{js,ts,tsx,cjs,mjs,json,md,mdx,yaml,yml}\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

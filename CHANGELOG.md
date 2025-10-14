@@ -2,6 +2,24 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.1.20] - 2025-10-15
+
+### Improved - Faster Prettier Checks & Prompt Test Coverage ⚙️
+
+#### Smarter Formatting Targets
+- **Added:** `.prettierignore` so generated artifacts (e.g., `.dincoder`, `dist`) are never swept up by `quality_format`
+- **Updated:** Both the MCP `quality_format` tool and `npm run format` now point Prettier at focused globs (source/docs/templates/examples only)
+- **Result:** Format checks complete faster and avoid spurious diffs from generated content
+
+#### Prompt Test Harness Upgrades
+- **New:** `scripts/run-prompt-test.ts` now auto-creates a minimal Node workspace (package.json + Prettier config) before exercising tools
+- **Benefit:** All six quality tools run successfully during the end-to-end prompt test instead of skipping due to missing package metadata
+- **Extra:** Workspace bootstrap writes a matching `.prettierignore`, keeping the prompt test environment aligned with the server defaults
+
+#### Documentation Touch-up
+- **README:** Clarified that MCP-compatible assistants with automatic workspace binding (Cursor, Claude Code, Codex, etc.) provide the best experience
+
+
 ## [0.1.19] - 2025-10-13
 
 ### Fixed - Quality Tools Error Handling 🟢

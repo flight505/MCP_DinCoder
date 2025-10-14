@@ -1,0 +1,7 @@
+.dincoder/
+.smithery/
+dist/
+coverage/
+node_modules/
+logs/
+tmp/
