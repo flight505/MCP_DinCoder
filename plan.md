@@ -1,32 +1,60 @@
-## Project Status Summary (Last Updated: 2025-01-12)
+# DinCoder Project Plan & Roadmap
 
-**Progress: 17/23 Stories Complete (74%)**
+## Roadmap Snapshot
+- **Roadmap Version:** 2.0 (published 2025-10-04)
+- **Document Last Updated:** 2025-10-14
+- **Current Package Version:** 0.1.20 (published to npm)
+- **Stories Complete:** 17 / 23 (74%)
+- **Latest Release Highlights:** Scoped Prettier-based formatting to source assets and automated the end-to-end prompt test with a self-bootstrapping workspace.
 
-✅ **Completed**: Stories 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 (partial), 16 (partial)
-📋 **Next Priority**: Stories 17 (Cross-agent), 18 (Observability), 21-23 (Advanced features)
+## Vision Statement
+DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI coding assistants. Unlike GitHub's CLI-focused Spec Kit, DinCoder delivers the complete Constitution → Specify → Clarify → Plan → Tasks → Implement → Validate workflow as composable MCP tools ready for agents such as Claude Code, Cursor, and GitHub Copilot.
 
-**Key Achievements**:
-- Real Spec Kit integration with authentic markdown generation
-- Dual transport support (STDIO + HTTP)
-- All Spec Kit tools implemented with real templates
-- Security & configuration complete
-- CI/CD pipeline fully operational
-- Smithery deployment ready
-- 33/33 tests passing (100% pass rate with CI fix)
+## Current State vs Target State
+
+### Current State (v0.1.20)
+- ✅ Core workflow tools (specify, plan, tasks) are live with authentic Spec Kit markdown generation.
+- ✅ Quality tools (format, lint, test, security, deps, license) keep repositories healthy.
+- ✅ Supporting tools (artifacts, research, git) enable research trails and branch management.
+- ✅ Dual transport support: STDIO and Streamable HTTP with Smithery deployment.
+- ✅ CI/CD pipeline publishes to npm and Smithery; automated prompt validation exists.
+- ⚠️ Five advanced Spec Kit-style commands (validation, visualization, templates, etc.) are still planned.
+
+### Target State (v1.0.0)
+- ✅ Full Spec Kit parity for AI agents (validation, refinement, visualization, contracts).
+- ✅ Quality gates and analytics to block incomplete specs and surface trends.
+- ✅ Visual diagrams and contract generation directly from artifacts.
+- ✅ Template customization, task filtering, and dependency graphs for large projects.
+- ✅ Production-grade observability, error recovery, and best-practice guidance.
+
+## Roadmap Phases Overview
+
+| Phase | Version | Goal | Incremental Tools | Timeline | Status |
+|-------|---------|------|-------------------|----------|--------|
+| Current | v0.1.x | Smithery deployment & quality tooling foundation | 14 | Complete | ✅ |
+| Phase 1 | v0.2.0 | Core Spec Kit parity (constitution, clarify, validation) | +6 → 20 | ~2 weeks | 📋 Planned / In progress |
+| Phase 2 | v0.3.0 | Workflow enhancement (visualize, filter, batch tasks) | +5 → 25 | ~2 weeks | 📋 Planned |
+| Phase 3 | v0.4.0 | Advanced features (contracts, templates, metrics, lint) | +6 → 31 | ~3 weeks | 📋 Planned |
+| Phase 4 | v1.0.0 | Production polish & examples | +≥3 → 34+ | ~3 weeks | 📋 Planned |
+
+## Project Status Summary (Last Updated: 2025-10-14)
+
+**Progress:** 17/23 stories complete (74%)
+
+- ✅ **Completed:** Stories 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 (partial), 16 (partial)
+- 📋 **Next Priority:** Stories 17 (Cross-agent validation), 18 (Observability), 21-23 (Advanced features)
+
+**Recent Achievements:**
+- Real Spec Kit integration with authentic markdown generation.
+- Dual transport support (STDIO + Streamable HTTP) plus Smithery deployment readiness.
+- Quality tools hardened with targeted Prettier scopes and workspace-aware prompt validation.
+- CI/CD pipeline publishes builds and runs the full automated test suite (52 tests across unit, integration, and conformance; 37 passing, 15 skipped).
 
 ---
 
+## Detailed Story Backlog
+
 Below is a very, very, very detailed project plan rendered as a markdown checklist. It is organized into "stories," each broken down into one‑story‑point tasks (every checkbox is small and independently completable by an autonomous coding agent). Where a task's rationale depends on external knowledge, I've cited the official MCP spec, Smithery docs, and GitHub Spec Kit materials; where a task is grounded in the uploaded YouTube transcript, I've cited the transcript.
-
-Key external facts used here (with sources):
-• Spec Kit provides /specify, /plan, /tasks commands and a standard gated flow (Specify → Plan → Tasks → Implement).  ￼  ￼
-• MCP "Streamable HTTP" (Protocol Revision 2025-03-26) requires a single MCP endpoint supporting POST for JSON‑RPC and optional SSE streams, and GET for server‑to‑client SSE; includes session management via the Mcp-Session-Id header and protocol version header (MCP-Protocol-Version).  ￼
-• Smithery is **deprecating STDIO support on September 7, 2025** - requires complete HTTP rewrite. Smithery uses WebSocket-based hosting and requires a /mcp endpoint that handles GET/POST/DELETE and optionally receives configuration via ?config=<base64>. Migration offers 20x higher concurrency, lower latency, and better resource efficiency.  ￼
-• Official TypeScript SDK (@modelcontextprotocol/sdk v1.17.5+) supports Streamable HTTP since v1.10.0 (April 2025), with built-in StreamableHTTPServerTransport class.  ￼
-• Spec Kit works across GitHub Copilot, Claude Code, and Gemini CLI. Multiple MCP implementations exist for spec-driven development including spec-workflow-mcp.  ￼ ￼
-• **CRITICAL UPDATE**: For stateless deployments, create new server/transport instances per request to avoid request ID collisions. For stateful deployments, use session management with UUID-based session IDs.
-
-⸻
 
 ✅ Project: Spec‑Driven MCP Orchestrator (Streamable HTTP, NPM + Smithery)
 
@@ -859,3 +887,18 @@ Acceptance Criteria:
 
 **Next Phase:** Phase 2 - Workflow Enhancement (tasks visualization, filtering, diagrams)
 
+---
+
+## Appendix A: Deferred or Removed Roadmap Items
+
+- **diagram_generate** — Removed after Spec Kit research confirmed there is no dedicated diagram command. AI assistants already embed Mermaid/PlantUML directly in markdown, so we now include diagram examples in the constitution template instead of adding a tool.
+- **idea_capture** — Dropped because `specify_describe` accepts both terse prompts and detailed briefs, matching Spec Kit’s workflow. A separate idea-capture tool would duplicate existing functionality.
+- **project_bootstrap** — Removed since orchestration belongs to the AI assistant. MCP tools remain atomic (constitution → specify → plan → tasks) just like Spec Kit; wrapping them in a single bootstrap tool would reduce flexibility.
+
+## Appendix B: Research References
+
+- `docs/SPEC_KIT_RESEARCH.md` — Consolidated findings from GitHub Spec Kit, MCP protocol updates, and Smithery requirements.
+- MCP Streamable HTTP (Protocol Revision 2025-03-26) — single `/mcp` endpoint with POST/GET/DELETE, session headers, and protocol negotiation.
+- Smithery deployment guidance — STDIO deprecation (September 7, 2025), Streamable HTTP hosting, `?config=<base64>` support.
+- Spec Kit workflow — `/specify`, `/plan`, `/tasks` gated flow; clarifications via `[NEEDS CLARIFICATION]`.
+- SDK support — `@modelcontextprotocol/sdk` ≥ 1.17.5 provides Streamable HTTP client/server transports for Node.js.

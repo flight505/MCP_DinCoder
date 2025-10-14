@@ -209,6 +209,8 @@ These constraints transform LLMs from creative writers into disciplined specific
 - **✨ Quality Tools**: Formatting, linting, testing, security audits
 - **🔄 Flexible Modes**: Stateless and stateful operation
 
+> **Planning Note:** `plan.md` is the canonical roadmap and implementation plan. Historical roadmap documents (`docs/ROADMAP_UPDATED.md`, `docs/ROADMAP_CHANGES.md`) were merged into that single source to keep future updates in sync.
+
 ## 🤝 For Spec Kit Developers
 
 DinCoder is a complete MCP implementation of the Spec Kit methodology, making it available to any MCP-compatible AI agent. Here's how we've implemented your vision:
