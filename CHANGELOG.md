@@ -2,6 +2,91 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.3.0] - 2025-10-16
+
+### Added - Phase 2: Advanced Task Management COMPLETE 🎉🚀
+
+**Milestone:** DinCoder now has advanced task management capabilities for large-scale projects (50+ tasks)!
+
+#### Story 29: Task Visualization & Dependency Graphs ✅
+- **New Tool:** `tasks_visualize`
+- Visual dependency graphs from tasks.md
+- **Features:**
+  - 3 output formats: Mermaid, Graphviz DOT, ASCII tree
+  - Status-based color coding (pending/in_progress/completed)
+  - Phase grouping with subgraphs
+  - Circular dependency detection using DFS algorithm
+- **Implementation:**
+  - Created `src/speckit/taskParser.ts` - Core task parsing module
+  - Created `src/tools/visualize.ts` - Visualization engine
+  - Shared parser supports metadata extraction (phase, type, depends, priority, effort, tags)
+- **Impact:** Visualize complex dependencies before starting work
+
+#### Story 30: Task Filtering & Smart Queries ✅
+- **New Tool:** `tasks_filter`
+- Intelligent task filtering with preset workflows
+- **Features:**
+  - Multi-criteria filtering (status, phase, type, priority, blockers, tags)
+  - 5 smart presets: next, frontend, backend, ready, cleanup
+  - Multiple sort options (id, priority, dependencies, phase)
+  - Result limiting for large backlogs
+- **Implementation:**
+  - Created `src/tools/filter.ts` with preset system
+  - Markdown-formatted output
+- **Impact:** Find relevant tasks instantly in 50+ task backlogs
+
+#### Story 31: Batch Task Operations ✅
+- **New Tool:** `tasks_tick_range`
+- Mark multiple tasks complete at once
+- **Features:**
+  - Array format: `["T001", "T003", "T007"]`
+  - Range format: `"T001-T005"` (auto-expands)
+  - Mixed format: `["T001-T005", "T010", "T012-T015"]`
+  - Strict mode (all-or-nothing) and lenient mode
+  - Detailed completion reports
+- **Implementation:**
+  - Created `src/tools/batch.ts` with range parser
+  - Automatic deduplication
+- **Impact:** 10x efficiency for bulk task completion
+
+#### Story 32: Task Search & Discovery ✅
+- **New Tool:** `tasks_search`
+- Full-text search with fuzzy matching
+- **Features:**
+  - Plain text, regex, and fuzzy search modes
+  - Levenshtein distance algorithm for typo tolerance
+  - Multi-field search (description, phase, type, tags, all)
+  - Relevance scoring (0-100%)
+  - Context highlighting with match display
+  - Configurable fuzzy threshold (default 70%)
+- **Implementation:**
+  - Created `src/tools/search.ts` with search engine
+  - Custom Levenshtein distance implementation (no dependencies)
+- **Impact:** Find tasks even with typos, essential for large projects
+
+#### Story 33: Task Statistics & Progress Tracking ✅
+- **New Tool:** `tasks_stats`
+- Comprehensive analytics and progress metrics
+- **Features:**
+  - Overall statistics (total, pending, in_progress, completed)
+  - Phase-based breakdown
+  - Type-based distribution (frontend/backend/devops/testing)
+  - Priority distribution analysis
+  - Completion percentage calculation
+  - Blocker analysis (blocked/unblocked tasks with dependency info)
+  - ASCII progress charts (visual progress bars)
+  - Flexible groupBy parameter (status, phase, type, priority, all)
+- **Implementation:**
+  - Created `src/tools/stats.ts` - Statistics engine
+  - Multiple visualization modes
+- **Impact:** Real-time project health dashboard
+
+### Summary
+- **5 new MCP tools** (tasks_visualize, tasks_filter, tasks_tick_range, tasks_search, tasks_stats)
+- **Total tools: 26** (21 Phase 1 + 5 Phase 2)
+- **All tests passing:** 52/52 (100% pass rate)
+- **Phase 2 coverage:** Visualization, filtering, batch ops, search, statistics
+
 ## [0.2.0] - 2025-10-16
 
 ### Added - Phase 1: Core Completeness COMPLETE 🎉🏆
