@@ -1,10 +1,12 @@
 # DinCoder Project Plan & Roadmap
 
 ## Roadmap Snapshot
-- **Roadmap Version:** 2.0 (published 2025-10-04)
+- **Roadmap Version:** 2.1 (Phase 2 planning added 2025-10-16)
 - **Document Last Updated:** 2025-10-16
-- **Current Package Version:** 0.2.0 (published to npm)
-- **Stories Complete:** 22 / 23 (96%) - Phase 1 COMPLETE! 🎉
+- **Current Package Version:** 0.2.0 (Phase 1 complete, published to npm)
+- **Next Target Version:** 0.3.0 (Phase 2 - Workflow Enhancement)
+- **Stories Complete:** 22 / 28 (79%) - Phase 1 COMPLETE, Phase 2 PLANNED 📋
+- **Stories in Phase 2:** 5 new stories (29-33) adding 5 advanced task management tools
 - **Latest Release Highlights:** Phase 1 Core Completeness achieved! 7 new tools added: spec validation, refinement, prerequisites check, and full clarification workflow.
 
 ## Vision Statement
@@ -39,10 +41,11 @@ DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI 
 
 ## Project Status Summary (Last Updated: 2025-10-16)
 
-**Progress:** 22/23 stories complete (96%)
+**Progress:** 22/28 stories complete (79%)
 
 - ✅ **Completed:** Stories 2, 3, 6-16, 24-28 (Phase 1 COMPLETE!)
-- 📋 **Next Priority:** Phase 2 Stories 29-31 (Task visualization, filtering, batch operations)
+- 📋 **Planned:** Stories 29-33 (Phase 2 - Workflow Enhancement)
+- 📋 **Next Priority:** Story 29 - Task Visualization & Dependency Graphs
 
 **Phase 1 Achievements (v0.2.0):**
 - ✅ Story 24: Constitution Tool (`constitution_create`)
@@ -888,7 +891,393 @@ Acceptance Criteria:
 - ✅ Environment validation prevents setup issues
 - ✅ All critical gaps from analysis addressed
 
-**Next Phase:** Phase 2 - Workflow Enhancement (tasks visualization, filtering, diagrams)
+**Next Phase:** Phase 2 - Workflow Enhancement (tasks visualization, filtering, batch operations, search, statistics)
+
+---
+
+## Phase 2: Workflow Enhancement (v0.3.0) 🚀
+
+**Goal:** Improve AI workflow efficiency with advanced task management capabilities
+
+**Stories:** 29-33 (5 new stories)
+**Tools Added:** 5 new tools (+5 → 26 total)
+**Estimated Effort:** ~50 tasks
+**Timeline:** ~2 weeks (1 sprint)
+
+**Value Proposition:**
+- Phase 1 gave us **spec quality** (validation, refinement, clarification)
+- Phase 2 gives us **task efficiency** (visualization, filtering, batch operations)
+- AI agents can work 5x faster on large projects (50+ tasks)
+
+---
+
+Story 29 — Task Visualization & Dependency Graphs 🔄
+
+Goal: Enable AI to understand task relationships and execution order through visual dependency graphs.
+
+Why it matters:
+- AI agents can identify which tasks are blocked by dependencies
+- Prevents implementing tasks out of order (e.g., tests before implementation)
+- Visualizes project structure at a glance using Mermaid diagrams
+- Essential for complex projects with 20+ interdependent tasks
+
+Tasks:
+	•	Create src/speckit/taskParser.ts module:
+		○	Parse tasks.md into structured task objects
+		○	Extract task metadata (ID, status, description, dependencies)
+		○	Support optional metadata format: `(phase: setup, type: backend, depends: T001)`
+		○	Handle legacy tasks.md without metadata gracefully
+	•	Implement dependency detection:
+		○	Parse "depends on T001" or "depends: T001" syntax
+		○	Support multiple dependencies: "depends: T001, T002"
+		○	Build dependency graph data structure (adjacency list)
+		○	Detect circular dependencies and raise errors
+	•	Create src/tools/visualize.ts with tasks_visualize tool:
+		○	Define Zod schema (workspacePath, format, includeCompleted)
+		○	Implement tool handler calling visualization logic
+		○	Return Mermaid diagram as markdown code block
+	•	Implement Mermaid graph generation:
+		○	Generate flowchart LR (left-to-right) syntax
+		○	Create task boxes with IDs and descriptions
+		○	Add dependency arrows between tasks
+		○	Apply status-based styling (pending=gray, in-progress=yellow, completed=green)
+	•	Add advanced visualization features:
+		○	Support filtering (hide completed tasks)
+		○	Add phase grouping (subgraphs for setup/core/polish)
+		○	Calculate critical path highlighting
+		○	Add estimated completion time based on dependencies
+	•	Support multiple output formats:
+		○	mermaid (default - renders in markdown)
+		○	graphviz (DOT format for advanced tools)
+		○	ascii-tree (terminal-friendly text output)
+	•	Write comprehensive tests:
+		○	Test dependency parsing edge cases
+		○	Test circular dependency detection
+		○	Test Mermaid syntax generation
+		○	Test format conversion (mermaid, graphviz, ascii)
+	•	Update documentation:
+		○	Add tasks_visualize to README tool list
+		○	Add visualization workflow examples
+		○	Include sample Mermaid diagrams
+
+Acceptance Criteria:
+	•	✅ Parses tasks.md with and without metadata
+	•	✅ Detects circular dependencies and fails gracefully
+	•	✅ Generates valid Mermaid flowchart syntax
+	•	✅ Supports 3 output formats (mermaid, graphviz, ascii)
+	•	✅ Colors tasks by status (pending/in-progress/completed)
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation includes visualization examples
+
+⸻
+
+Story 30 — Task Filtering & Smart Queries 🔍
+
+Goal: Help AI find relevant tasks quickly in large backlogs through intelligent filtering.
+
+Why it matters:
+- Large projects accumulate 100+ tasks across multiple phases
+- AI needs to answer "what can I do NOW" without reading entire backlog
+- Reduces cognitive load and improves task selection accuracy
+- Essential for parallel development (frontend/backend team members)
+
+Tasks:
+	•	Extend src/speckit/taskParser.ts:
+		○	Extract phase metadata ("phase: setup" → setup)
+		○	Extract type metadata ("type: frontend" → frontend)
+		○	Extract tags metadata ("tags: auth, api" → ["auth", "api"])
+		○	Support comma-separated and space-separated formats
+	•	Create src/tools/filter.ts with tasks_filter tool:
+		○	Define Zod schema with filter parameters
+		○	Support status filter (pending, in_progress, completed, all)
+		○	Support phase filter (setup, core, polish, custom)
+		○	Support type filter (frontend, backend, test, docs, custom)
+		○	Support blocker filter (blocked, unblocked, all)
+		○	Support tag filter (array of tags, AND/OR logic)
+	•	Implement filter logic:
+		○	Parse tasks.md into structured objects
+		○	Apply status filtering
+		○	Apply phase filtering with wildcard support
+		○	Apply type filtering with wildcard support
+		○	Calculate blocked status from dependencies
+		○	Apply tag filtering with AND/OR logic
+	•	Add sorting options:
+		○	Sort by priority (metadata: priority: high/medium/low)
+		○	Sort by dependencies (topological sort - unblocked first)
+		○	Sort by created date (if available in metadata)
+		○	Sort by estimated effort (metadata: effort: 1-5)
+	•	Implement smart presets:
+		○	"next" preset: unblocked, pending tasks sorted by priority
+		○	"frontend" preset: type=frontend, unblocked
+		○	"ready" preset: unblocked, pending, high priority
+		○	"cleanup" preset: low priority, polish phase
+	•	Return filtered results:
+		○	Format as markdown task list (copy-paste ready)
+		○	Include summary header (X tasks found, Y blocked)
+		○	Show metadata for each task
+		○	Optionally include reasons why tasks were excluded
+	•	Write comprehensive tests:
+		○	Test each filter type independently
+		○	Test filter combinations (status + phase + type)
+		○	Test smart presets
+		○	Test sorting algorithms
+		○	Test edge cases (empty results, all tasks filtered)
+	•	Update documentation:
+		○	Add tasks_filter to README tool list
+		○	Add filtering workflow examples
+		○	Document metadata format for tasks
+		○	Show smart preset usage
+
+Acceptance Criteria:
+	•	✅ Filters by status, phase, type, blockers, tags
+	•	✅ Supports AND/OR logic for complex queries
+	•	✅ Includes 4+ smart presets for common workflows
+	•	✅ Returns markdown-formatted results
+	•	✅ Handles empty results gracefully
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation includes filter query examples
+
+⸻
+
+Story 31 — Batch Task Operations ⚡
+
+Goal: Reduce tool call overhead for AI agents through batch task completion.
+
+Why it matters:
+- Completing 10 related tasks currently requires 10 separate tasks_tick calls
+- Batch operations save time and reduce error surface area
+- Natural workflow when implementing multiple related tasks together
+- Improves AI agent efficiency by 10x for bulk operations
+
+Tasks:
+	•	Create src/tools/batch.ts with tasks_tick_range tool:
+		○	Define Zod schema accepting task ID array or range
+		○	Support array format: ["T001", "T003", "T007"]
+		○	Support range format: "T001-T005" (inclusive)
+		○	Support mixed format: ["T001-T005", "T010", "T012-T015"]
+		○	Add optional completion notes (per-task or shared)
+	•	Implement batch validation:
+		○	Verify all task IDs exist in tasks.md
+		○	Check tasks are in pending status (can't complete already-done tasks)
+		○	Validate range syntax (T001-T005 format)
+		○	Expand ranges to individual task IDs
+	•	Implement atomic batch completion:
+		○	Mark all specified tasks as completed ([x])
+		○	Update tasks.md file with all changes
+		○	Add completion timestamp if metadata is present
+		○	Preserve task order and formatting
+	•	Handle partial failures gracefully:
+		○	If task T003 doesn't exist, complete T001, T002, skip T003, continue
+		○	Return detailed report: X succeeded, Y failed, Z skipped
+		○	Include failure reasons (not found, already completed, invalid status)
+		○	Optionally support strict mode (fail all if any task invalid)
+	•	Add rollback on validation errors:
+		○	If range syntax is invalid, fail immediately without changes
+		○	If file write fails, revert any in-memory changes
+		○	Return clear error message with suggested fixes
+	•	Generate summary report:
+		○	List completed task IDs with descriptions
+		○	Show statistics (X completed, Y failed, Z skipped)
+		○	Include completion percentage (overall progress)
+		○	Return updated tasks.md content or path
+	•	Write comprehensive tests:
+		○	Test array format batch completion
+		○	Test range format batch completion
+		○	Test mixed format batch completion
+		○	Test partial failure handling
+		○	Test rollback on validation errors
+		○	Test strict vs lenient mode
+	•	Update documentation:
+		○	Add tasks_tick_range to README tool list
+		○	Add batch operation workflow examples
+		○	Show range syntax and array syntax
+		○	Document error handling behavior
+
+Acceptance Criteria:
+	•	✅ Supports array, range, and mixed formats
+	•	✅ Handles partial failures gracefully (lenient mode)
+	•	✅ Supports strict mode (all-or-nothing)
+	•	✅ Returns detailed completion report
+	•	✅ Rolls back on validation errors
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation includes batch operation examples
+
+⸻
+
+Story 32 — Task Search & Discovery 🔎
+
+Goal: Enable keyword-based task discovery in large projects through full-text search.
+
+Why it matters:
+- Projects with 50+ tasks need search functionality
+- AI needs to find "authentication tasks" or "database migration tasks" quickly
+- Grep-style search through task descriptions and metadata
+- Essential for understanding existing work and avoiding duplicates
+
+Tasks:
+	•	Create src/tools/search.ts with tasks_search tool:
+		○	Define Zod schema (query, searchFields, caseSensitive, fuzzy)
+		○	Support regex patterns for advanced queries
+		○	Support plain text for simple searches
+		○	Add optional result limit (default: 10, max: 100)
+	•	Implement full-text search:
+		○	Search task descriptions by default
+		○	Optionally search metadata (phase, type, tags)
+		○	Support case-sensitive and case-insensitive modes
+		○	Use JavaScript regex for pattern matching
+	•	Add fuzzy matching:
+		○	Implement Levenshtein distance for typo tolerance
+		○	Support fuzzy threshold (0-100% similarity)
+		○	Rank results by similarity score
+		○	Highlight approximate matches
+	•	Search across multiple fields:
+		○	searchFields: ['description'] (default)
+		○	searchFields: ['description', 'phase', 'type', 'tags']
+		○	searchFields: ['all'] (search everything)
+		○	Combine results from multiple fields
+	•	Highlight matching text:
+		○	Wrap matches in markdown bold: **match**
+		○	Show context (20 chars before/after match)
+		○	Truncate long descriptions with ellipsis
+		○	Support multiple matches per task
+	•	Return results with context:
+		○	Include task ID, status, description
+		○	Show surrounding tasks (previous/next task)
+		○	Include relevance score (0-100%)
+		○	Add metadata if available
+	•	Add relevance scoring:
+		○	Exact matches: 100%
+		○	Starts with query: 90%
+		○	Contains query: 70%
+		○	Fuzzy match: 50-70% (based on similarity)
+		○	Sort results by relevance
+	•	Write comprehensive tests:
+		○	Test exact match search
+		○	Test regex pattern search
+		○	Test fuzzy matching with typos
+		○	Test multi-field search
+		○	Test result limiting
+		○	Test edge cases (no matches, special characters)
+	•	Update documentation:
+		○	Add tasks_search to README tool list
+		○	Add search workflow examples
+		○	Show regex pattern examples
+		○	Document fuzzy matching behavior
+
+Acceptance Criteria:
+	•	✅ Supports plain text and regex queries
+	•	✅ Implements fuzzy matching for typo tolerance
+	•	✅ Searches across task descriptions and metadata
+	•	✅ Highlights matching text in results
+	•	✅ Ranks results by relevance score
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation includes search query examples
+
+⸻
+
+Story 33 — Task Statistics & Progress Tracking 📊
+
+Goal: Give AI agents quick project overview without parsing full tasks.md file.
+
+Why it matters:
+- "How many tasks are left?" is a frequent question from users
+- AI can report progress without manual counting
+- Helps with estimation and timeline planning
+- Provides metrics for team velocity tracking
+
+Tasks:
+	•	Create src/tools/stats.ts with tasks_stats tool:
+		○	Define Zod schema (workspacePath, groupBy, timeRange)
+		○	Support grouping by status, phase, type, priority
+		○	Support time range filtering (last 7 days, last 30 days, all)
+		○	Return structured statistics object
+	•	Calculate basic statistics:
+		○	Total tasks count
+		○	Pending tasks count
+		○	In-progress tasks count
+		○	Completed tasks count
+		○	Completion percentage (completed / total * 100)
+	•	Break down by phase:
+		○	Count tasks per phase (setup, core, polish, custom)
+		○	Calculate completion % per phase
+		○	Identify bottleneck phases (low completion %)
+		○	Return sorted by phase order
+	•	Break down by type:
+		○	Count tasks per type (frontend, backend, test, docs, custom)
+		○	Calculate completion % per type
+		○	Identify work distribution (frontend: 50%, backend: 30%)
+		○	Return sorted by task count
+	•	Calculate velocity metrics:
+		○	Parse completion timestamps from metadata
+		○	Calculate tasks completed per day (average)
+		○	Calculate tasks completed in last 7 days
+		○	Calculate tasks completed in last 30 days
+	•	Estimate completion date:
+		○	Based on average velocity (tasks/day)
+		○	Remaining tasks / velocity = days until completion
+		○	Return estimated completion date (YYYY-MM-DD)
+		○	Add confidence interval (±X days)
+	•	Support time range filtering:
+		○	Filter by creation date (if available in metadata)
+		○	Filter by completion date (if available in metadata)
+		○	Calculate statistics for specific time windows
+		○	Compare current vs previous period
+	•	Format statistics report:
+		○	Return as JSON object (machine-readable)
+		○	Optionally format as markdown table (human-readable)
+		○	Include visual progress bars (█████░░░░░ 50%)
+		○	Add trend indicators (↑ velocity increasing)
+	•	Write comprehensive tests:
+		○	Test basic statistics calculations
+		○	Test grouping by phase, type, priority
+		○	Test velocity calculations
+		○	Test completion date estimation
+		○	Test time range filtering
+		○	Test edge cases (no tasks, all completed)
+	•	Update documentation:
+		○	Add tasks_stats to README tool list
+		○	Add statistics workflow examples
+		○	Show interpretation of metrics
+		○	Document velocity calculation methodology
+
+Acceptance Criteria:
+	•	✅ Calculates total, pending, in-progress, completed counts
+	•	✅ Breaks down statistics by phase and type
+	•	✅ Calculates velocity (tasks/day) from timestamps
+	•	✅ Estimates completion date based on velocity
+	•	✅ Supports time range filtering
+	•	✅ Returns JSON and markdown formatted results
+	•	✅ All tests pass with 90%+ coverage
+	•	✅ Documentation includes statistics interpretation guide
+
+⸻
+
+## Phase 2 Summary
+
+**Stories Completed:** 5 new stories (29-33)
+**Tools Added:** 5 new tools
+**Total Tools:** 26 (21 existing + 5 new)
+**Estimated Effort:** ~50 tasks
+**Timeline:** 2 weeks (1 sprint)
+
+**Tools by Category After Phase 2:**
+- **Workflow Setup (3):** constitution_create, prereqs_check, specify_start
+- **Specification (3):** specify_describe, clarify_add, clarify_resolve
+- **Validation (3):** spec_validate, artifacts_analyze, spec_refine
+- **Planning (1):** plan_create
+- **Tasks (7):** tasks_generate, tasks_tick, tasks_visualize, tasks_filter, tasks_tick_range, tasks_search, tasks_stats
+- **Supporting (3):** artifacts_read, research_append, git_create_branch
+- **Quality (6):** quality_format, quality_lint, quality_test, quality_security_audit, quality_deps_update, quality_license_check
+
+**Key Achievements:**
+- ✅ Task dependency visualization with Mermaid diagrams
+- ✅ Intelligent task filtering for large projects (50+ tasks)
+- ✅ Batch task completion (10x efficiency improvement)
+- ✅ Full-text task search with fuzzy matching
+- ✅ Comprehensive progress statistics and velocity tracking
+- ✅ AI agents can navigate large task backlogs 5x faster
+
+**Next Phase:** Phase 3 - Advanced Features (contracts, templates, metrics, lint)
 
 ---
 
