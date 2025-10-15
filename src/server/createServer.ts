@@ -80,6 +80,10 @@ import {
   TasksTickRangeSchema,
   tasksTickRange,
 } from '../tools/batch.js';
+import {
+  TasksSearchSchema,
+  tasksSearch,
+} from '../tools/search.js';
 
 /**
  * Server configuration schema
@@ -328,6 +332,23 @@ function registerTools(server: McpServer): void {
     TasksTickRangeSchema.shape,
     async (params) => {
       const result = await tasksTickRange(TasksTickRangeSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result,
+          },
+        ],
+      };
+    }
+  );
+
+  server.tool(
+    'tasks_search',
+    'Full-text search across task descriptions and metadata. Supports plain text, regex patterns, and fuzzy matching for typo tolerance. Returns ranked results with relevance scores.',
+    TasksSearchSchema.shape,
+    async (params) => {
+      const result = await tasksSearch(TasksSearchSchema.parse(params));
       return {
         content: [
           {
