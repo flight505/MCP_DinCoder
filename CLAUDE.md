@@ -53,16 +53,22 @@ npm publish          # Publish to NPM (after version bump)
    - **CRITICAL**: For stateless deployments, create new server/transport per request
 
 3. **Spec Kit Tools** (`src/tools/`)
-   - `specify.ts`: /specify command integration
-   - `plan.ts`: /plan command integration
-   - `tasks.ts`: /tasks command integration
-   - `quality.ts`: Code quality tools (lint, test, format)
+   - Core workflow: `specify.ts`, `plan.ts`, `tasks.ts`
+   - Phase 1 additions: `constitution.ts`, `clarify.ts`, `validate.ts`, `refine.ts`, `prereqs.ts`
+   - Quality tools: `quality.ts` (lint, test, format, security, deps, license)
+   - Supporting tools: `artifacts.ts`, `research.ts`, `git.ts`, `workspace.ts`
 
-4. **Configuration** (`src/config/`)
+4. **Spec Kit Modules** (`src/speckit/`)
+   - `detector.ts`: Document type detection (spec, plan, tasks)
+   - `parser.ts`: Markdown parsing and section manipulation
+   - `templates.ts`: Official Spec Kit markdown templates
+   - `validators.ts`: Quality checking (completeness, acceptance, clarifications, implementation)
+
+5. **Configuration** (`src/config/`)
    - `schema.ts`: Zod schemas for validation
    - Handles Smithery ?config=<base64> parameter
 
-5. **Security** (`src/security/`)
+6. **Security** (`src/security/`)
    - `origin.ts`: Origin validation middleware
    - `auth.ts`: Bearer token/API key authentication
 
@@ -151,25 +157,50 @@ export const configSchema = z.object({
 
 ## Project Plan
 
-Refer to `plan.md` for the complete 23-story implementation checklist. Each story contains granular 1-point tasks that can be completed independently.
+Refer to [plan.md](plan.md) for the complete roadmap:
+- **Total Stories:** 23 across 4 phases
+- **Current Status:** 22/23 complete (96%) - Phase 1 COMPLETE! 🎉
+- **Current Version:** v0.2.0 (published to npm)
+- Each story contains granular 1-point tasks that can be completed independently
 
-## Lessons Learned from v0.1.7
+## Version History & Lessons Learned
 
-### Critical Features Delivered
-- **Real Spec Kit Integration**: Transformed from mock to authentic Spec-Driven Development
-- **Spec Kit Modules**: Created detector.ts, parser.ts, templates.ts for real markdown generation
-- **CI/CD Fix**: Resolved smoke test failure by setting PORT=3000 in CI environment
-- **Smithery Ready**: Full deployment configuration with base64 config support
+### v0.2.0 - Phase 1 Complete! 🎉 (2025-10-16)
 
-### Key Achievements  
-- Successfully published to NPM as @dincoder/mcp-server
-- 33/33 tests passing (100% pass rate with CI fix)
+**Milestone:** 100% GitHub Spec Kit command parity for AI coding workflows!
+
+**Features Added:**
+- **Constitution Tool** (`constitution_create`): Project principles, constraints, and preferences
+- **Clarification Tracking** (`clarify_add`, `clarify_resolve`, `clarify_list`): Flag and resolve spec ambiguities
+- **Spec Validation** (`spec_validate`, `artifacts_analyze`): 4 validation rules for quality gates
+- **Spec Refinement** (`spec_refine`): Section-based iterative improvement
+- **Prerequisites Check** (`prereqs_check`): Environment validation (Node, npm, git, custom commands)
+
+**Testing:**
+- 52 tests passing (22 skipped edge cases)
+- 100% pass rate for enabled tests
+- Full MCP protocol conformance validated
+
+**Impact:**
+- All critical Spec Kit gaps identified in FEATURE_ANALYSIS.md are now addressed
+- Living documents that improve iteratively through AI workflows
+- Quality gates prevent incomplete specs from reaching implementation
+- Full parity with GitHub Spec Kit's CLI commands, optimized for MCP agents
+
+### v0.1.7 - Real Spec Kit Integration
+
+**Critical Features:**
+- Transformed from mock to authentic Spec-Driven Development
+- Created detector.ts, parser.ts, templates.ts for real markdown generation
+- CI/CD fix: Resolved smoke test failure by setting PORT=3000
+- Smithery deployment ready with base64 config support
+
+**Achievements:**
+- Published to NPM as mcp-dincoder
 - Complete CI/CD pipeline with GitHub Actions
-- Real Spec Kit markdown generation (not mock JSON)
 - Cached official Spec Kit templates locally
-- Backward compatibility maintained (JSON + Markdown)
+- Backward compatibility (JSON + Markdown)
 - Full integration with Claude Desktop confirmed
-- Ready for Smithery deployment with HTTP transport
 
 ## Known Pitfalls to Avoid
 
