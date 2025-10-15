@@ -76,6 +76,10 @@ import {
   TasksFilterSchema,
   tasksFilter,
 } from '../tools/filter.js';
+import {
+  TasksTickRangeSchema,
+  tasksTickRange,
+} from '../tools/batch.js';
 
 /**
  * Server configuration schema
@@ -307,6 +311,23 @@ function registerTools(server: McpServer): void {
     TasksFilterSchema.shape,
     async (params) => {
       const result = await tasksFilter(TasksFilterSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result,
+          },
+        ],
+      };
+    }
+  );
+
+  server.tool(
+    'tasks_tick_range',
+    'Mark multiple tasks as complete at once. Supports array format ["T001", "T003"], range format "T001-T005", or mixed format. Includes strict mode for all-or-nothing completion.',
+    TasksTickRangeSchema.shape,
+    async (params) => {
+      const result = await tasksTickRange(TasksTickRangeSchema.parse(params));
       return {
         content: [
           {
