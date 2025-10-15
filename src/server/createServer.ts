@@ -68,6 +68,10 @@ import {
   PrereqsCheckSchema,
   prereqsCheck,
 } from '../tools/prereqs.js';
+import {
+  TasksVisualizeSchema,
+  tasksVisualize,
+} from '../tools/visualize.js';
 
 /**
  * Server configuration schema
@@ -270,6 +274,23 @@ function registerTools(server: McpServer): void {
           {
             type: 'text',
             text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
+
+  server.tool(
+    'tasks_visualize',
+    'Generate visual dependency graphs from tasks.md. Supports Mermaid flowcharts, Graphviz DOT, and ASCII tree formats. Shows task dependencies, status colors, and optional phase grouping.',
+    TasksVisualizeSchema.shape,
+    async (params) => {
+      const result = await tasksVisualize(TasksVisualizeSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result,
           },
         ],
       };
