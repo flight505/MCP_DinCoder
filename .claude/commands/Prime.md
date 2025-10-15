@@ -13,12 +13,9 @@ eza . --tree --git-ignore
 > Read the files below to get the context of the project. 
 
 README.md
+plan.md
 CLAUDE.md
 CHANGELOG.md
 TODO.md
-docs/ROADMAP_CHANGES.md
 docs/FEATURE_ANALYSIS.md
-docs/ROADMAP_UPDATED.md
-docs/SPEC_KIT_RESEARCH.md
-docs/IMPLEMENTATION_READY.md
 > Dont do anything else.

@@ -54,6 +54,20 @@ import {
   clarifyResolve,
   clarifyList,
 } from '../tools/clarify.js';
+import {
+  SpecValidateSchema,
+  ArtifactsAnalyzeSchema,
+  specValidate,
+  artifactsAnalyze,
+} from '../tools/validate.js';
+import {
+  SpecRefineSchema,
+  specRefine,
+} from '../tools/refine.js';
+import {
+  PrereqsCheckSchema,
+  prereqsCheck,
+} from '../tools/prereqs.js';
 
 /**
  * Server configuration schema
@@ -138,6 +152,42 @@ function registerTools(server: McpServer): void {
     ClarifyListSchema.shape,
     async (params) => {
       return await clarifyList(ClarifyListSchema.parse(params));
+    }
+  );
+
+  server.tool(
+    'spec_validate',
+    'Check specification quality and completeness. Validates required sections, acceptance criteria, clarifications, and checks for premature implementation details.',
+    SpecValidateSchema.shape,
+    async (params) => {
+      return await specValidate(SpecValidateSchema.parse(params));
+    }
+  );
+
+  server.tool(
+    'artifacts_analyze',
+    'Analyze consistency across spec, plan, and tasks artifacts. Verifies that all artifacts are aligned and complete.',
+    ArtifactsAnalyzeSchema.shape,
+    async (params) => {
+      return await artifactsAnalyze(ArtifactsAnalyzeSchema.parse(params));
+    }
+  );
+
+  server.tool(
+    'spec_refine',
+    'Refine/update an existing specification. Supports updating specific sections (goals, requirements, acceptance, edge-cases) or the full spec. Changes are logged to research.md.',
+    SpecRefineSchema.shape,
+    async (params) => {
+      return await specRefine(SpecRefineSchema.parse(params));
+    }
+  );
+
+  server.tool(
+    'prereqs_check',
+    'Check environment prerequisites before project setup. Verifies Node.js version, npm, git, and custom commands are available.',
+    PrereqsCheckSchema.shape,
+    async (params) => {
+      return await prereqsCheck(PrereqsCheckSchema.parse(params));
     }
   );
 

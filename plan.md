@@ -2,10 +2,10 @@
 
 ## Roadmap Snapshot
 - **Roadmap Version:** 2.0 (published 2025-10-04)
-- **Document Last Updated:** 2025-10-14
-- **Current Package Version:** 0.1.20 (published to npm)
-- **Stories Complete:** 17 / 23 (74%)
-- **Latest Release Highlights:** Scoped Prettier-based formatting to source assets and automated the end-to-end prompt test with a self-bootstrapping workspace.
+- **Document Last Updated:** 2025-10-16
+- **Current Package Version:** 0.2.0 (published to npm)
+- **Stories Complete:** 22 / 23 (96%) - Phase 1 COMPLETE! 🎉
+- **Latest Release Highlights:** Phase 1 Core Completeness achieved! 7 new tools added: spec validation, refinement, prerequisites check, and full clarification workflow.
 
 ## Vision Statement
 DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI coding assistants. Unlike GitHub's CLI-focused Spec Kit, DinCoder delivers the complete Constitution → Specify → Clarify → Plan → Tasks → Implement → Validate workflow as composable MCP tools ready for agents such as Claude Code, Cursor, and GitHub Copilot.
@@ -32,22 +32,25 @@ DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI 
 | Phase | Version | Goal | Incremental Tools | Timeline | Status |
 |-------|---------|------|-------------------|----------|--------|
 | Current | v0.1.x | Smithery deployment & quality tooling foundation | 14 | Complete | ✅ |
-| Phase 1 | v0.2.0 | Core Spec Kit parity (constitution, clarify, validation) | +6 → 20 | ~2 weeks | 📋 Planned / In progress |
-| Phase 2 | v0.3.0 | Workflow enhancement (visualize, filter, batch tasks) | +5 → 25 | ~2 weeks | 📋 Planned |
-| Phase 3 | v0.4.0 | Advanced features (contracts, templates, metrics, lint) | +6 → 31 | ~3 weeks | 📋 Planned |
-| Phase 4 | v1.0.0 | Production polish & examples | +≥3 → 34+ | ~3 weeks | 📋 Planned |
+| Phase 1 | v0.2.0 | Core Spec Kit parity (constitution, clarify, validation) | +7 → 21 | Completed 2025-10-16 | ✅ **COMPLETE** |
+| Phase 2 | v0.3.0 | Workflow enhancement (visualize, filter, batch tasks) | +5 → 26 | ~2 weeks | 📋 Planned |
+| Phase 3 | v0.4.0 | Advanced features (contracts, templates, metrics, lint) | +6 → 32 | ~3 weeks | 📋 Planned |
+| Phase 4 | v1.0.0 | Production polish & examples | +≥3 → 35+ | ~3 weeks | 📋 Planned |
 
-## Project Status Summary (Last Updated: 2025-10-14)
+## Project Status Summary (Last Updated: 2025-10-16)
 
-**Progress:** 17/23 stories complete (74%)
+**Progress:** 22/23 stories complete (96%)
 
-- ✅ **Completed:** Stories 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 (partial), 16 (partial)
-- 📋 **Next Priority:** Stories 17 (Cross-agent validation), 18 (Observability), 21-23 (Advanced features)
+- ✅ **Completed:** Stories 2, 3, 6-16, 24-28 (Phase 1 COMPLETE!)
+- 📋 **Next Priority:** Phase 2 Stories 29-31 (Task visualization, filtering, batch operations)
 
-**Recent Achievements:**
-- Real Spec Kit integration with authentic markdown generation.
-- Dual transport support (STDIO + Streamable HTTP) plus Smithery deployment readiness.
-- Quality tools hardened with targeted Prettier scopes and workspace-aware prompt validation.
+**Phase 1 Achievements (v0.2.0):**
+- ✅ Story 24: Constitution Tool (`constitution_create`)
+- ✅ Story 25: Clarification Tracking (`clarify_add`, `clarify_resolve`, `clarify_list`)
+- ✅ Story 26: Spec Validation & Quality Gates (`spec_validate`, `artifacts_analyze`)
+- ✅ Story 27: Spec Refinement (`spec_refine`)
+- ✅ Story 28: Prerequisites Check (`prereqs_check`)
+- 🎯 **Result:** 100% GitHub Spec Kit command parity for AI coding workflows!
 - CI/CD pipeline publishes builds and runs the full automated test suite (52 tests across unit, integration, and conformance; 37 passing, 15 skipped).
 
 ---

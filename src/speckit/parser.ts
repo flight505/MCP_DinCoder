@@ -147,6 +147,105 @@ export async function parseTasks(filePath: string): Promise<TaskDocument> {
   return taskDoc;
 }
 
+/**
+ * Section manipulation helpers for spec refinement
+ */
+
+export interface SectionBoundary {
+  name: string;
+  level: number;
+  startLine: number;
+  endLine: number;
+  content: string;
+}
+
+/**
+ * Parse markdown document into sections
+ */
+export function parseSpecSections(content: string): SectionBoundary[] {
+  const lines = content.split('\n');
+  const sections: SectionBoundary[] = [];
+  let currentSection: Partial<SectionBoundary> | null = null;
+
+  lines.forEach((line, index) => {
+    const headerMatch = line.match(/^(#{1,6})\s+(.+)/);
+
+    if (headerMatch) {
+      // Found a new section header
+      if (currentSection) {
+        // Close previous section
+        currentSection.endLine = index - 1;
+        currentSection.content = lines
+          .slice(currentSection.startLine!, currentSection.endLine + 1)
+          .join('\n');
+        sections.push(currentSection as SectionBoundary);
+      }
+
+      // Start new section
+      currentSection = {
+        name: headerMatch[2].trim(),
+        level: headerMatch[1].length,
+        startLine: index,
+      };
+    }
+  });
+
+  // Close last section
+  if (currentSection) {
+    currentSection.endLine = lines.length - 1;
+    currentSection.content = lines
+      .slice(currentSection.startLine!, currentSection.endLine! + 1)
+      .join('\n');
+    sections.push(currentSection as SectionBoundary);
+  }
+
+  return sections;
+}
+
+/**
+ * Get content of a specific section by name
+ */
+export function getSectionContent(content: string, sectionName: string): string | null {
+  const sections = parseSpecSections(content);
+  const section = sections.find(
+    s => s.name.toLowerCase() === sectionName.toLowerCase()
+  );
+  return section ? section.content : null;
+}
+
+/**
+ * Replace content of a specific section
+ */
+export function setSectionContent(
+  content: string,
+  sectionName: string,
+  newContent: string
+): string {
+  const sections = parseSpecSections(content);
+  const sectionIndex = sections.findIndex(
+    s => s.name.toLowerCase() === sectionName.toLowerCase()
+  );
+
+  if (sectionIndex === -1) {
+    throw new Error(`Section "${sectionName}" not found in document`);
+  }
+
+  const section = sections[sectionIndex];
+  const lines = content.split('\n');
+
+  // Replace section content while preserving header
+  const headerLine = lines[section.startLine];
+  const newSectionContent = `${headerLine}\n\n${newContent}`;
+
+  // Rebuild document
+  const beforeSection = lines.slice(0, section.startLine).join('\n');
+  const afterSection = lines.slice(section.endLine + 1).join('\n');
+
+  return [beforeSection, newSectionContent, afterSection]
+    .filter(part => part.length > 0)
+    .join('\n\n');
+}
+
 // Helper functions for parsing
 
 function extractTitle(content: string): string {
