@@ -72,6 +72,10 @@ import {
   TasksVisualizeSchema,
   tasksVisualize,
 } from '../tools/visualize.js';
+import {
+  TasksFilterSchema,
+  tasksFilter,
+} from '../tools/filter.js';
 
 /**
  * Server configuration schema
@@ -286,6 +290,23 @@ function registerTools(server: McpServer): void {
     TasksVisualizeSchema.shape,
     async (params) => {
       const result = await tasksVisualize(TasksVisualizeSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result,
+          },
+        ],
+      };
+    }
+  );
+
+  server.tool(
+    'tasks_filter',
+    'Filter tasks by status, phase, type, priority, blockers, or tags. Includes smart presets (next, frontend, backend, ready, cleanup) for common workflows. Returns markdown-formatted task list.',
+    TasksFilterSchema.shape,
+    async (params) => {
+      const result = await tasksFilter(TasksFilterSchema.parse(params));
       return {
         content: [
           {
