@@ -84,6 +84,10 @@ import {
   TasksSearchSchema,
   tasksSearch,
 } from '../tools/search.js';
+import {
+  TasksStatsSchema,
+  tasksStats,
+} from '../tools/stats.js';
 
 /**
  * Server configuration schema
@@ -359,7 +363,24 @@ function registerTools(server: McpServer): void {
       };
     }
   );
-  
+
+  server.tool(
+    'tasks_stats',
+    'Generate comprehensive task statistics and progress metrics. Provides insights on completion rates, phase/type distribution, priority breakdown, blocker analysis, and ASCII progress charts.',
+    TasksStatsSchema.shape,
+    async (params) => {
+      const result = await tasksStats(TasksStatsSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result,
+          },
+        ],
+      };
+    }
+  );
+
   // Quality tools
   server.tool(
     'quality_format',
