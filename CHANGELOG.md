@@ -2,6 +2,72 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.4.0] - 2025-10-16
+
+### Added - Integration & Discovery: MCP Prompts 🎯
+
+**Milestone:** Universal slash commands for seamless cross-platform integration!
+
+#### Strategy A: MCP Prompts (Universal) ✅
+- **7 Workflow Prompts:** Auto-discovered slash commands in all MCP clients
+- **Implementation:**
+  - Created `src/server/prompts.ts` module (385 lines)
+  - Modified `src/server/createServer.ts` to enable prompts capability
+  - Used correct MCP SDK API: `server.prompt()` method
+  - All prompts return structured `GetPromptResult` with workflow messages
+
+**Available Prompts:**
+1. **`start_project`** - Initialize new spec-driven project
+   - Arguments: `projectName` (required), `agent` (optional)
+   - Calls: `specify_start`, explains workflow, lists all tools
+2. **`create_spec`** - Create feature specification
+   - Arguments: `description` (required)
+   - Calls: `specify_describe`, `spec_validate`, guides refinement
+3. **`generate_plan`** - Generate implementation plan
+   - Arguments: `specPath` (optional, auto-detected)
+   - Calls: `plan_create`, `artifacts_analyze`, shows structure
+4. **`create_tasks`** - Break down into actionable tasks
+   - Arguments: `planPath` (optional, auto-detected)
+   - Calls: `tasks_generate`, `tasks_visualize`, `tasks_stats`, `tasks_filter`
+5. **`review_progress`** - Generate comprehensive progress report
+   - No arguments
+   - Calls: `tasks_stats`, `tasks_filter`, `tasks_search`, provides insights
+6. **`validate_spec`** - Check specification quality
+   - Arguments: `specPath` (optional, auto-detected)
+   - Calls: `spec_validate`, `clarify_list`, guides fixing issues
+7. **`next_tasks`** - Show next actionable tasks
+   - Arguments: `limit` (optional, default: 5)
+   - Calls: `tasks_filter` with preset "next", recommends priority
+
+**Cross-Platform Compatibility:**
+- Claude Code: `/mcp__dincoder__start_project`
+- VS Code Copilot: `/mcp.dincoder.start_project`
+- OpenAI Codex: `/mcp.dincoder.create_spec`
+- Cursor: `/mcp__dincoder__generate_plan`
+
+**Documentation:**
+- Updated README.md with comprehensive MCP Prompts section
+- Updated CLAUDE.md with implementation details and usage guide
+- Added v0.4.0 version history to both files
+
+**Benefits:**
+- Zero-configuration discovery across all MCP clients
+- Built-in workflow guidance (no need to memorize tool names)
+- Consistent experience everywhere
+- AI receives full context automatically
+
+**Testing:**
+- 52 tests passing (100% pass rate)
+- Build: ✅ Success
+- Lint: ✅ Success
+- All quality gates passed
+
+**Impact:**
+- Makes DinCoder workflows discoverable in new projects
+- Eliminates onboarding friction
+- Provides guided step-by-step workflows
+- Works universally across all platforms
+
 ## [0.3.0] - 2025-10-16
 
 ### Added - Phase 2: Advanced Task Management COMPLETE 🎉🚀
