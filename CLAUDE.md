@@ -157,15 +157,128 @@ export const configSchema = z.object({
 - Build with tsup for ESM output
 - Include type definitions
 
+## MCP Prompts (Slash Commands)
+
+**New in v0.4.0:** DinCoder includes 7 MCP prompts that become slash commands in all MCP clients.
+
+### Registered Prompts
+
+| Prompt Name | Purpose | Arguments |
+|-------------|---------|-----------|
+| `start_project` | Initialize new project | `projectName`, `agent` (optional) |
+| `create_spec` | Create specification | `description` |
+| `generate_plan` | Generate implementation plan | `specPath` (optional) |
+| `create_tasks` | Break down into tasks | `planPath` (optional) |
+| `review_progress` | Generate progress report | None |
+| `validate_spec` | Check specification quality | `specPath` (optional) |
+| `next_tasks` | Show actionable tasks | `limit` (optional) |
+
+### Implementation Details
+
+**Location:** [src/server/prompts.ts](src/server/prompts.ts)
+
+**Registration:** Prompts are registered in `createServer.ts` via `registerPrompts(server)` when `capabilities.prompts` is enabled (default: true).
+
+**API Pattern:**
+```typescript
+server.prompt(
+  "prompt_name",
+  "Description of what this prompt does",
+  {
+    arg1: z.string().describe("Argument description"),
+    arg2: z.string().optional().describe("Optional argument")
+  },
+  async (args) => ({
+    messages: [
+      {
+        role: "user",
+        content: {
+          type: "text",
+          text: `Workflow instructions for AI agent...`
+        }
+      }
+    ]
+  })
+);
+```
+
+**Key Points:**
+- Each prompt returns a `GetPromptResult` with messages array
+- Arguments use Zod schemas for validation
+- Workflow instructions include comprehensive step-by-step guidance
+- AI receives full context automatically when prompt is invoked
+
+### Slash Command Formats
+
+**Claude Code / VS Code:**
+```
+/mcp__dincoder__start_project
+/mcp__dincoder__create_spec
+```
+
+**VS Code Copilot / OpenAI Codex:**
+```
+/mcp.dincoder.start_project
+/mcp.dincoder.create_spec
+```
+
+### Adding New Prompts
+
+1. Add prompt registration to `src/server/prompts.ts`:
+```typescript
+server.prompt(
+  "new_prompt_name",
+  "Description",
+  { /* Zod schema */ },
+  async (args) => ({ messages: [...] })
+);
+```
+
+2. Build and test:
+```bash
+npm run build
+npm test
+```
+
+3. Verify auto-discovery in your MCP client
+
 ## Project Plan
 
 Refer to [plan.md](plan.md) for the complete roadmap:
 - **Total Stories:** 28 across 4 phases
 - **Current Status:** 27/28 complete (96%) - Phase 1 & 2 COMPLETE! 🎉🚀
-- **Current Version:** v0.3.0 (Phase 2 release)
+- **Current Version:** v0.4.0 (Integration & Discovery Update)
 - Each story contains granular 1-point tasks that can be completed independently
 
 ## Version History & Lessons Learned
+
+### v0.4.0 - Integration & Discovery Update 🎯 (2025-10-16)
+
+**Milestone:** Universal slash commands for seamless integration!
+
+**Features Added:**
+- **MCP Prompts** (7 workflow prompts): `start_project`, `create_spec`, `generate_plan`, `create_tasks`, `review_progress`, `validate_spec`, `next_tasks`
+- **Auto-Discovery**: Prompts automatically become slash commands in all MCP clients
+- **Built-in Guidance**: Each prompt includes comprehensive workflow instructions
+- **Cross-Platform**: Works with Claude Code, VS Code Copilot, OpenAI Codex, Cursor
+
+**Implementation:**
+- Created `src/server/prompts.ts` module with 7 prompts (385 lines)
+- Modified `src/server/createServer.ts` to enable prompts capability
+- Used correct MCP SDK API: `server.prompt()` method
+- All prompts return structured `GetPromptResult` with workflow messages
+
+**Testing:**
+- 52 tests passing (100% pass rate)
+- Build: ✅ Success
+- Lint: ✅ Success
+- All quality gates passed
+
+**Impact:**
+- Zero-configuration discovery across all MCP clients
+- Consistent slash command experience everywhere
+- AI receives full workflow context automatically
+- Eliminates need to memorize tool names and parameters
 
 ### v0.3.0 - Phase 2 Complete! 🎉🚀 (2025-10-16)
 

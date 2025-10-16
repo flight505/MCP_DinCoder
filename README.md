@@ -12,7 +12,25 @@
 
 DinCoder brings the power of [GitHub Spec Kit](https://github.com/github/spec-kit) to any AI coding agent through the Model Context Protocol. It transforms the traditional "prompt-then-code-dump" workflow into a systematic, specification-driven process where **specifications don't serve code—code serves specifications**.
 
-## ✨ What's New in v0.1.17 (Phase 1: 40% Complete)
+## ✨ What's New in v0.4.0 (Integration & Discovery Update)
+
+### 🎯 **MCP Prompts - Universal Slash Commands** ✨ NEW!
+- **7 workflow prompts** that work across all MCP clients
+- **Slash command format**: `/mcp__dincoder__start_project`, `/mcp__dincoder__create_spec`, etc.
+- **Built-in guidance**: Each prompt includes comprehensive workflow instructions
+- **Works everywhere**: Claude Code, VS Code Copilot, OpenAI Codex, Cursor
+- **Zero configuration**: Auto-discovered by MCP clients
+
+**Available Prompts:**
+- `/mcp__dincoder__start_project` - Initialize new spec-driven project
+- `/mcp__dincoder__create_spec` - Create feature specification
+- `/mcp__dincoder__generate_plan` - Generate implementation plan
+- `/mcp__dincoder__create_tasks` - Break down into actionable tasks
+- `/mcp__dincoder__review_progress` - Generate progress report
+- `/mcp__dincoder__validate_spec` - Check specification quality
+- `/mcp__dincoder__next_tasks` - Show actionable tasks
+
+**👉 See [MCP Prompts Guide](#-mcp-prompts-slash-commands) for detailed usage**
 
 ### 🧬 **Constitution Tool** - Define Your Project's DNA
 - **New command:** `constitution_create`
@@ -26,8 +44,6 @@ DinCoder brings the power of [GitHub Spec Kit](https://github.com/github/spec-ki
 - Resolve uncertainties with rationale and audit trail
 - Perfect for async collaboration and spec refinement
 - Automatic logging to research.md
-
-**👉 See [Complete Workflow Guide](#-complete-workflow-guide) for usage examples**
 
 ## 🌟 The Power Inversion: A New Development Paradigm
 
@@ -209,7 +225,7 @@ These constraints transform LLMs from creative writers into disciplined specific
 - **✨ Quality Tools**: Formatting, linting, testing, security audits
 - **🔄 Flexible Modes**: Stateless and stateful operation
 
-> **Planning Note:** `plan.md` is the canonical roadmap and implementation plan. Historical roadmap documents (`docs/ROADMAP_UPDATED.md`, `docs/ROADMAP_CHANGES.md`) were merged into that single source to keep future updates in sync.
+> **Planning Note:** `plan.md` is the canonical roadmap and implementation plan.
 
 ## 🤝 For Spec Kit Developers
 
@@ -330,6 +346,190 @@ your-project/
 ```
 
 **Tip:** Launch your MCP client from the project root (or rely on automatic workspace binding) so every tool writes into the correct repo. If you must use Claude Desktop, start it from the desired directory and include `workspacePath` in each command.
+
+## 🎯 MCP Prompts (Slash Commands)
+
+**New in v0.4.0:** DinCoder now includes MCP prompts that automatically become slash commands in all MCP-compatible clients. These prompts provide guided workflows with comprehensive instructions built-in.
+
+### How It Works
+
+Once DinCoder is installed, prompts are automatically discovered by your MCP client:
+
+**Claude Code / VS Code:**
+```
+/mcp__dincoder__start_project
+/mcp__dincoder__create_spec
+/mcp__dincoder__generate_plan
+```
+
+**VS Code Copilot / OpenAI Codex:**
+```
+/mcp.dincoder.start_project
+/mcp.dincoder.create_spec
+/mcp.dincoder.generate_plan
+```
+
+### Available Prompts
+
+#### 1. `/start_project` - Initialize New Spec-Driven Project
+
+**Purpose:** Set up a new project with DinCoder's spec-driven workflow
+
+**Arguments:**
+- `projectName` (required): Name of your project
+- `agent` (optional): AI agent type (`claude`, `copilot`, `gemini`)
+
+**Example:**
+```
+/mcp__dincoder__start_project projectName="task-manager" agent="claude"
+```
+
+**What It Does:**
+- Calls `specify_start` to create `.dincoder/` directory structure
+- Explains the spec-driven workflow (Specify → Plan → Execute)
+- Guides you through creating your first specification
+- Lists all available DinCoder tools
+
+#### 2. `/create_spec` - Create Feature Specification
+
+**Purpose:** Generate a comprehensive specification document
+
+**Arguments:**
+- `description` (required): Brief description of what you want to build
+
+**Example:**
+```
+/mcp__dincoder__create_spec description="Build a task management system with projects and due dates"
+```
+
+**What It Does:**
+- Checks if project is initialized (runs `specify_start` if needed)
+- Asks clarifying questions about requirements
+- Calls `specify_describe` with complete specification
+- Runs `spec_validate` to ensure quality
+- Guides you through addressing validation issues
+
+#### 3. `/generate_plan` - Generate Implementation Plan
+
+**Purpose:** Create technical implementation plan from specification
+
+**Arguments:**
+- `specPath` (optional): Path to spec.md file (auto-detected if omitted)
+
+**Example:**
+```
+/mcp__dincoder__generate_plan
+```
+
+**What It Does:**
+- Verifies specification exists and is validated
+- Calls `plan_create` with technical constraints
+- Runs `artifacts_analyze` to verify spec-plan alignment
+- Presents plan structure (milestones, architecture, phases)
+- Asks if you want to proceed to task generation
+
+#### 4. `/create_tasks` - Break Down into Actionable Tasks
+
+**Purpose:** Generate executable task list from implementation plan
+
+**Arguments:**
+- `planPath` (optional): Path to plan.md file (auto-detected if omitted)
+
+**Example:**
+```
+/mcp__dincoder__create_tasks
+```
+
+**What It Does:**
+- Verifies plan exists
+- Calls `tasks_generate` with granular scope
+- Runs `tasks_visualize` to show dependency graph
+- Runs `tasks_stats` to display progress analytics
+- Runs `tasks_filter` with preset "next" to show actionable items
+- Guides you to start first task
+
+#### 5. `/review_progress` - Generate Comprehensive Progress Report
+
+**Purpose:** Show project status with statistics and charts
+
+**Example:**
+```
+/mcp__dincoder__review_progress
+```
+
+**What It Does:**
+- Calls `tasks_stats` with full analytics
+- Calls `tasks_filter` to show next actionable items
+- Calls `tasks_search` for in-progress tasks
+- Summarizes:
+  - Overall completion percentage
+  - Recent accomplishments
+  - Current work
+  - Next actions (unblocked tasks)
+  - Blockers
+  - Recommendations
+
+#### 6. `/validate_spec` - Check Specification Quality
+
+**Purpose:** Validate specification before moving to implementation
+
+**Arguments:**
+- `specPath` (optional): Path to spec.md file (auto-detected if omitted)
+
+**Example:**
+```
+/mcp__dincoder__validate_spec
+```
+
+**What It Does:**
+- Runs `spec_validate` with all checks enabled:
+  - ✅ Completeness (all required sections)
+  - ✅ Acceptance criteria (testable assertions)
+  - ✅ Clarifications (no unresolved ambiguities)
+  - ✅ Implementation leakage (no HOW in WHAT sections)
+- Calls `clarify_list` to show pending clarifications
+- Guides you through fixing issues with `spec_refine`
+- Re-validates until all checks pass
+
+#### 7. `/next_tasks` - Show Next Actionable Tasks
+
+**Purpose:** Display unblocked tasks ready to start
+
+**Arguments:**
+- `limit` (optional): Maximum number of tasks to show (default: 5)
+
+**Example:**
+```
+/mcp__dincoder__next_tasks limit="10"
+```
+
+**What It Does:**
+- Calls `tasks_filter` with preset "next"
+- Shows each task with:
+  - Task ID and description
+  - Metadata (phase, type, priority, effort)
+  - Why it's actionable (no blockers)
+- Recommends which task to start first
+- Offers to provide more details
+
+### Benefits of MCP Prompts
+
+1. **Universal Compatibility**: Works across all MCP clients (Claude Code, VS Code Copilot, Codex, Cursor)
+2. **Built-in Guidance**: Each prompt includes comprehensive workflow instructions
+3. **Zero Configuration**: Auto-discovered, no setup required
+4. **Consistent Experience**: Same commands work everywhere
+5. **Context-Aware**: AI receives full workflow context automatically
+
+### Cross-Platform Reference
+
+| Client | Prompt Format | Example |
+|--------|--------------|---------|
+| Claude Code | `/mcp__dincoder__<prompt>` | `/mcp__dincoder__start_project` |
+| VS Code Copilot | `/mcp.dincoder.<prompt>` | `/mcp.dincoder.start_project` |
+| OpenAI Codex | `/mcp.dincoder.<prompt>` | `/mcp.dincoder.create_spec` |
+| Cursor | `/mcp__dincoder__<prompt>` | `/mcp__dincoder__generate_plan` |
+
+**Note:** The exact format may vary by client. Use your client's autocomplete to discover available prompts.
 
 ## 🚦 Complete Workflow Guide
 
