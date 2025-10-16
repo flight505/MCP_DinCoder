@@ -105,7 +105,7 @@ async function main() {
         arguments: params,
       });
 
-      const textBlocks = (result.content || [])
+      const textBlocks = (Array.isArray(result.content) ? result.content : [])
         .filter((block): block is { type: 'text'; text: string } => block.type === 'text')
         .map(block => block.text);
 
