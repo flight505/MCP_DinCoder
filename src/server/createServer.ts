@@ -88,6 +88,7 @@ import {
   TasksStatsSchema,
   tasksStats,
 } from '../tools/stats.js';
+import { registerPrompts } from './prompts.js';
 
 /**
  * Server configuration schema
@@ -98,7 +99,7 @@ export const ServerConfigSchema = z.object({
   capabilities: z.object({
     tools: z.boolean().default(true),
     resources: z.boolean().default(false),
-    prompts: z.boolean().default(false),
+    prompts: z.boolean().default(true),
   }).default({}),
 });
 
@@ -565,9 +566,4 @@ function registerResources(_server: McpServer): void {
   // TODO: Implement resource handlers if needed
 }
 
-/**
- * Register MCP prompts
- */
-function registerPrompts(_server: McpServer): void {
-  // TODO: Implement prompt handlers if needed
-}
+// Note: registerPrompts is imported from './prompts.js' at the top of this file
