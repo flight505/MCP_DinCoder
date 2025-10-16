@@ -1,13 +1,13 @@
 # DinCoder Project Plan & Roadmap
 
 ## Roadmap Snapshot
-- **Roadmap Version:** 2.1 (Phase 2 planning added 2025-10-16)
+- **Roadmap Version:** 3.0 (Integration Strategy added 2025-10-16)
 - **Document Last Updated:** 2025-10-16
-- **Current Package Version:** 0.2.0 (Phase 1 complete, published to npm)
-- **Next Target Version:** 0.3.0 (Phase 2 - Workflow Enhancement)
-- **Stories Complete:** 22 / 28 (79%) - Phase 1 COMPLETE, Phase 2 PLANNED 📋
-- **Stories in Phase 2:** 5 new stories (29-33) adding 5 advanced task management tools
-- **Latest Release Highlights:** Phase 1 Core Completeness achieved! 7 new tools added: spec validation, refinement, prerequisites check, and full clarification workflow.
+- **Current Package Version:** 0.4.0 (Phase 2 complete + Integration Strategy A, published to npm)
+- **Next Target Version:** 0.5.0 (Integration Strategy B - Claude Code Plugin)
+- **Stories Complete:** 28 / 36 (78%) - Phase 1 & 2 COMPLETE, Integration Phase STARTED 🎯
+- **Stories in Progress:** Phase 3 - Integration & Discovery (Strategies B-E)
+- **Latest Release Highlights:** v0.4.0 adds MCP Prompts (Strategy A) - 7 universal slash commands for seamless integration across all MCP clients!
 
 ## Vision Statement
 DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI coding assistants. Unlike GitHub's CLI-focused Spec Kit, DinCoder delivers the complete Constitution → Specify → Clarify → Plan → Tasks → Implement → Validate workflow as composable MCP tools ready for agents such as Claude Code, Cursor, and GitHub Copilot.
@@ -31,30 +31,51 @@ DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI 
 
 ## Roadmap Phases Overview
 
-| Phase | Version | Goal | Incremental Tools | Timeline | Status |
-|-------|---------|------|-------------------|----------|--------|
-| Current | v0.1.x | Smithery deployment & quality tooling foundation | 14 | Complete | ✅ |
-| Phase 1 | v0.2.0 | Core Spec Kit parity (constitution, clarify, validation) | +7 → 21 | Completed 2025-10-16 | ✅ **COMPLETE** |
-| Phase 2 | v0.3.0 | Workflow enhancement (visualize, filter, batch tasks) | +5 → 26 | ~2 weeks | 📋 Planned |
-| Phase 3 | v0.4.0 | Advanced features (contracts, templates, metrics, lint) | +6 → 32 | ~3 weeks | 📋 Planned |
-| Phase 4 | v1.0.0 | Production polish & examples | +≥3 → 35+ | ~3 weeks | 📋 Planned |
+| Phase | Version | Goal | Incremental Tools/Features | Timeline | Status |
+|-------|---------|------|---------------------------|----------|--------|
+| Current | v0.1.x | Smithery deployment & quality tooling foundation | 14 tools | Complete | ✅ |
+| Phase 1 | v0.2.0 | Core Spec Kit parity (constitution, clarify, validation) | +7 → 21 tools | Completed 2025-10-16 | ✅ **COMPLETE** |
+| Phase 2 | v0.3.0 | Advanced task management (visualize, filter, batch, search, stats) | +5 → 26 tools | Completed 2025-10-16 | ✅ **COMPLETE** |
+| Phase 3 | v0.4.0 | Integration Strategy A (MCP Prompts - Universal) | +7 prompts | Completed 2025-10-16 | ✅ **COMPLETE** |
+| Phase 3.1 | v0.5.0 | Integration Strategy B (Claude Code Plugin) | Plugin repo | ~1 week | 📋 Planned |
+| Phase 3.2 | v0.6.0 | Integration Strategy C+D (VS Code + Codex docs) | Documentation | ~1 week | 📋 Planned |
+| Phase 3.3 | v0.7.0 | Integration Strategy E (Project Templates) | Templates | ~1 week | 📋 Planned |
+| Phase 4 | v0.8.0 | Advanced features (contracts, templates, metrics, lint) | +6 → 32+ tools | ~3 weeks | 📋 Planned |
+| Phase 5 | v1.0.0 | Production polish & examples | Refinement | ~2 weeks | 📋 Planned |
 
 ## Project Status Summary (Last Updated: 2025-10-16)
 
-**Progress:** 22/28 stories complete (79%)
+**Progress:** 28/36 stories complete (78%)
 
-- ✅ **Completed:** Stories 2, 3, 6-16, 24-28 (Phase 1 COMPLETE!)
-- 📋 **Planned:** Stories 29-33 (Phase 2 - Workflow Enhancement)
-- 📋 **Next Priority:** Story 29 - Task Visualization & Dependency Graphs
+- ✅ **Completed:** Stories 2, 3, 6-16, 24-34 (Phases 1, 2, and 3 - Strategy A COMPLETE!)
+- 📋 **Planned:** Stories 35-38 (Phase 3.1-3.3 - Integration Strategies B-E)
+- 📋 **Next Priority:** Story 35 - Claude Code Plugin (Strategy B)
 
-**Phase 1 Achievements (v0.2.0):**
+**Phase 3 Achievements (v0.4.0 - Integration & Discovery):**
+- ✅ Story 34: MCP Prompts (Strategy A - Universal)
+  - 7 workflow prompts: `start_project`, `create_spec`, `generate_plan`, `create_tasks`, `review_progress`, `validate_spec`, `next_tasks`
+  - Auto-discovered slash commands in all MCP clients
+  - Built-in workflow guidance
+  - Cross-platform compatibility (Claude Code, VS Code, Codex, Cursor)
+- 🎯 **Result:** Zero-configuration integration across all platforms!
+
+**Phase 2 Achievements (v0.3.0 - Advanced Task Management):**
+- ✅ Story 29: Task Visualization (`tasks_visualize`) - Mermaid, Graphviz, ASCII graphs
+- ✅ Story 30: Task Filtering (`tasks_filter`) - Smart presets and multi-criteria filtering
+- ✅ Story 31: Batch Operations (`tasks_tick_range`) - Range expansion for bulk completion
+- ✅ Story 32: Task Search (`tasks_search`) - Fuzzy matching with Levenshtein algorithm
+- ✅ Story 33: Task Statistics (`tasks_stats`) - Progress charts and analytics
+- 🎯 **Result:** Scalable task management for 50+ task projects!
+
+**Phase 1 Achievements (v0.2.0 - Core Spec Kit Parity):**
 - ✅ Story 24: Constitution Tool (`constitution_create`)
 - ✅ Story 25: Clarification Tracking (`clarify_add`, `clarify_resolve`, `clarify_list`)
 - ✅ Story 26: Spec Validation & Quality Gates (`spec_validate`, `artifacts_analyze`)
 - ✅ Story 27: Spec Refinement (`spec_refine`)
 - ✅ Story 28: Prerequisites Check (`prereqs_check`)
 - 🎯 **Result:** 100% GitHub Spec Kit command parity for AI coding workflows!
-- CI/CD pipeline publishes builds and runs the full automated test suite (52 tests across unit, integration, and conformance; 37 passing, 15 skipped).
+
+**Testing:** 52 tests across unit, integration, and conformance (52 passing, 22 skipped edge cases)
 
 ---
 
@@ -1275,6 +1296,245 @@ Acceptance Criteria:
 - ✅ Batch task completion (10x efficiency improvement)
 - ✅ Full-text task search with fuzzy matching
 - ✅ Comprehensive progress statistics and velocity tracking
+
+⸻
+
+## Phase 3: Integration & Discovery (v0.4.0 - v0.7.0)
+
+**Goal:** Make DinCoder workflows discoverable and accessible across all platforms
+
+**Reference:** See [INTEGRATION_STRATEGY.md](INTEGRATION_STRATEGY.md) for complete implementation details
+
+⸻
+
+Story 34 — MCP Prompts (Strategy A - Universal) ✅
+
+Goal: Create MCP prompts that become slash commands in all MCP clients
+
+Why it matters:
+- Zero-configuration discovery across all platforms
+- Built-in workflow guidance for new users
+- Eliminates need to memorize tool names
+- Works universally (Claude Code, VS Code, Codex, Cursor)
+
+Tasks:
+	• ✅ Create src/server/prompts.ts module
+	• ✅ Implement registerPrompts() function
+	• ✅ Add 7 workflow prompts:
+		○ ✅ start_project - Initialize new spec-driven project
+		○ ✅ create_spec - Create feature specification
+		○ ✅ generate_plan - Generate implementation plan
+		○ ✅ create_tasks - Break down into actionable tasks
+		○ ✅ review_progress - Generate progress report
+		○ ✅ validate_spec - Check specification quality
+		○ ✅ next_tasks - Show next actionable tasks
+	• ✅ Each prompt includes comprehensive workflow instructions
+	• ✅ Enable prompts capability in createServer.ts
+	• ✅ Update README.md with MCP Prompts section
+	• ✅ Update CLAUDE.md with prompts reference
+	• ✅ Write tests for prompt registration
+	• ✅ Document cross-platform slash command formats
+
+Acceptance Criteria:
+	• ✅ 7 prompts registered and discoverable
+	• ✅ Each prompt returns GetPromptResult with workflow messages
+	• ✅ Arguments use Zod schemas for validation
+	• ✅ Works in Claude Code (/mcp__dincoder__<prompt>)
+	• ✅ Works in VS Code Copilot (/mcp.dincoder.<prompt>)
+	• ✅ Works in OpenAI Codex (/mcp.dincoder.<prompt>)
+	• ✅ Works in Cursor (/mcp__dincoder__<prompt>)
+	• ✅ All tests pass
+	• ✅ Documentation complete
+
+⸻
+
+Story 35 — Claude Code Plugin (Strategy B)
+
+Goal: Create bundled Claude Code plugin with commands, agents, and MCP server config
+
+Why it matters:
+- Best long-term experience for Claude Code users
+- Bundles slash commands, agents, and documentation
+- One-command installation
+- Optimized for Claude Code workflows
+
+Tasks:
+	•	Create new repository: dincoder-plugin
+	•	Create .claude-plugin/plugin.json:
+		○	Define plugin metadata (name, version, description)
+		○	Configure MCP server connection
+		○	List included commands and agents
+	•	Create commands/ directory:
+		○	spec.md - Create/refine specification
+		○	plan.md - Generate implementation plan
+		○	tasks.md - Create actionable tasks
+		○	progress.md - Show progress report
+		○	validate.md - Check specification quality
+		○	next.md - Show next tasks
+	•	Create agents/ directory:
+		○	spec-writer.md - Specification writing agent
+		○	plan-architect.md - Planning agent
+		○	task-manager.md - Task management agent
+	•	Create CLAUDE.md with plugin usage guide
+	•	Create .mcp.json with server configuration
+	•	Write comprehensive README.md
+	•	Test installation: claude plugin install dincoder
+	•	Publish to Claude Code plugin registry
+
+Acceptance Criteria:
+	•	Plugin installable via Claude CLI
+	•	All commands work as slash commands
+	•	Agents are discoverable in Claude Code
+	•	MCP server auto-configured
+	•	Documentation complete
+
+⸻
+
+Story 36 — VS Code & Codex Integration (Strategies C+D)
+
+Goal: Document VS Code Copilot and OpenAI Codex integration patterns
+
+Why it matters:
+- Large user base uses VS Code and Codex
+- Different configuration patterns than Claude Code
+- Need clear setup instructions
+
+Tasks:
+	•	Create docs/integration/vscode.md:
+		○	Document .vscode/mcp.json configuration
+		○	Show workspace-level setup
+		○	Document slash command format (/mcp.dincoder.<prompt>)
+		○	Add troubleshooting section
+	•	Create docs/integration/codex.md:
+		○	Document ~/.codex/config.toml setup
+		○	Show MCP server configuration
+		○	Document CLI usage patterns
+		○	Add troubleshooting section
+	•	Update README.md with VS Code section
+	•	Update README.md with Codex section
+	•	Create video tutorial for VS Code setup
+	•	Create video tutorial for Codex setup
+	•	Test with VS Code Copilot
+	•	Test with OpenAI Codex
+
+Acceptance Criteria:
+	•	VS Code integration documented
+	•	Codex integration documented
+	•	README includes setup guides
+	•	Video tutorials published
+	•	Tested in both environments
+
+⸻
+
+Story 37 — Project Templates (Strategy E)
+
+Goal: Create starter templates for common project types
+
+Why it matters:
+- Faster onboarding for new projects
+- Best practices built-in
+- Reduces initial configuration
+
+Tasks:
+	•	Create templates/ repository
+	•	Create web-app template:
+		○	Pre-configured constitution.md
+		○	Sample spec.md structure
+		○	Common architectural patterns
+		○	Technology stack recommendations
+	•	Create api-service template:
+		○	API-focused constitution
+		○	OpenAPI/REST patterns
+		○	Testing strategies
+	•	Create mobile-app template:
+		○	Mobile-specific constitution
+		○	Platform considerations
+		○	Deployment patterns
+	•	Create cli-tool template:
+		○	CLI-focused patterns
+		○	Command structure
+		○	Distribution strategy
+	•	Document template usage in README
+	•	Create template customization guide
+	•	Test template instantiation
+	•	Publish templates to GitHub
+
+Acceptance Criteria:
+	•	4 templates created (web, api, mobile, cli)
+	•	Each includes constitution, spec, plan templates
+	•	Documentation complete
+	•	Templates tested and working
+
+⸻
+
+Story 38 — Integration Testing & Documentation
+
+Goal: Comprehensive testing across all integration strategies
+
+Why it matters:
+- Ensure consistent experience across platforms
+- Catch platform-specific issues
+- Maintain quality as platforms evolve
+
+Tasks:
+	•	Test Strategy A (MCP Prompts):
+		○	Test in Claude Code
+		○	Test in VS Code Copilot
+		○	Test in OpenAI Codex
+		○	Test in Cursor
+		○	Document any platform quirks
+	•	Test Strategy B (Claude Plugin):
+		○	Test plugin installation
+		○	Test all commands
+		○	Test all agents
+		○	Verify MCP server connection
+	•	Test Strategy C+D (VS Code/Codex):
+		○	Test configuration files
+		○	Test slash commands
+		○	Test in different workspace setups
+	•	Test Strategy E (Templates):
+		○	Test template instantiation
+		○	Test customization workflows
+		○	Verify all templates work
+	•	Create integration test matrix:
+		○	Platform × Feature grid
+		○	Document known limitations
+		○	Track platform version compatibility
+	•	Update INTEGRATION_STRATEGY.md with test results
+	•	Create troubleshooting guide
+	•	Document platform-specific tips
+
+Acceptance Criteria:
+	•	All strategies tested on all platforms
+	•	Test matrix documented
+	•	Troubleshooting guide complete
+	•	Known issues documented
+
+⸻
+
+## Phase 3 Summary
+
+**Stories Completed:** 1/5 (Story 34 complete)
+**Stories Remaining:** 4 (Stories 35-38)
+**Prompts Added:** 7 workflow prompts
+**Total Features:** 26 tools + 7 prompts = 33
+**Estimated Effort:** ~100 tasks across 4 stories
+**Timeline:** 3-4 weeks (2 sprints)
+
+**Integration Strategies:**
+- ✅ **Strategy A (Universal):** MCP Prompts - COMPLETE (v0.4.0)
+- 📋 **Strategy B (Claude Code):** Plugin - PLANNED (v0.5.0)
+- 📋 **Strategy C+D (VS Code/Codex):** Documentation - PLANNED (v0.6.0)
+- 📋 **Strategy E (Templates):** Project starters - PLANNED (v0.7.0)
+
+**Key Achievements (v0.4.0):**
+- ✅ 7 workflow prompts with built-in guidance
+- ✅ Auto-discovery across all MCP clients
+- ✅ Cross-platform slash commands
+- ✅ Zero-configuration integration
+- ✅ Published to npm as mcp-dincoder@0.4.0
+
+**Next Milestone:** v0.5.0 - Claude Code Plugin (Strategy B)
 - ✅ AI agents can navigate large task backlogs 5x faster
 
 **Next Phase:** Phase 3 - Advanced Features (contracts, templates, metrics, lint)
