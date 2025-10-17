@@ -38,6 +38,9 @@ yarn-error.log*
 *.temp
 .cache/
 
+# Test artifacts (prevent accidental commits of test-generated files)
+# Test Project
+
 # Package files
 *.tgz
 

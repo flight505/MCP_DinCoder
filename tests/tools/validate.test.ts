@@ -101,7 +101,7 @@ describe('Validation Tools', () => {
     it('should detect unresolved clarifications', async () => {
       const specsDir = path.join(testWorkspace, 'specs');
       const featureDirs = fs.readdirSync(specsDir).filter(entry => /^\d{3}-/.test(entry));
-      const _specPath = path.join(specsDir, featureDirs[0], 'spec.md');
+      const specPath = path.join(specsDir, featureDirs[0], 'spec.md');
 
       const specWithClarification = `# Test Project
 
@@ -120,7 +120,7 @@ Build a task manager
 
 - Users can log in
 `;
-      fs.writeFileSync(specWithClarification, specWithClarification, 'utf-8');
+      fs.writeFileSync(specPath, specWithClarification, 'utf-8');
 
       const result = await specValidate({
         checks: { clarifications: true },

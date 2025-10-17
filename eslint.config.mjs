@@ -21,7 +21,7 @@ export default [
     },
     rules: {
       'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { 
+      '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_'
       }],
@@ -32,6 +32,13 @@ export default [
       'no-var': 'error',
       'eqeqeq': ['error', 'always'],
       'curly': ['error', 'all']
+    }
+  },
+  // Allow console.log in examples and scripts directories
+  {
+    files: ['examples/**/*.ts', 'examples/**/*.js', 'scripts/**/*.ts', 'scripts/**/*.js'],
+    rules: {
+      'no-console': 'off'
     }
   }
 ];
