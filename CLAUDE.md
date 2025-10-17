@@ -451,6 +451,13 @@ git commit -m "test(validate): add 6 tests for section parser"
 git commit -m "docs(validate): add validation workflow guide"
 ```
 
+**IMPORTANT:** Do NOT reference "Claude Code" or similar AI attribution in commit messages, documentation, or code comments. Keep commits professional and focused on the technical changes. Avoid phrases like:
+- ❌ "Generated with Claude Code"
+- ❌ "Co-Authored-By: Claude"
+- ❌ "Created by AI assistant"
+
+Keep commit messages clean and professional, describing only the technical work done.
+
 ### Session Recovery Process
 
 If a development session crashes or is interrupted:
