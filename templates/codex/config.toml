@@ -1,0 +1,14 @@
+# OpenAI Codex MCP Server Configuration
+# Copy this to: ~/.codex/config.toml
+
+[mcp_servers.dincoder]
+command = "npx"
+args = ["-y", "mcp-dincoder@latest"]
+
+# Optional: Timeout configuration
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+
+# Optional: Approval mode
+# Options: "agent" (most autonomous), "chat" (ask before each use), "full-access" (no confirmation)
+approval_mode = "chat"

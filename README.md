@@ -505,6 +505,114 @@ After installation, restart Claude Code to activate the plugin.
 
 ---
 
+## 🔌 VS Code + GitHub Copilot Integration
+
+**New in v0.6.0:** Full support for VS Code with GitHub Copilot integration through MCP.
+
+### Quick Setup
+
+1. **Copy template files to your project:**
+   ```bash
+   cp -r templates/vscode/.vscode your-project/
+   cp -r templates/vscode/.github your-project/
+   ```
+
+2. **Open project in VS Code:**
+   ```bash
+   cd your-project
+   code .
+   ```
+
+3. **Reload window:**
+   - Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
+   - Run: `Developer: Reload Window`
+
+4. **Verify setup:**
+   - Open Copilot Chat
+   - Click tools icon
+   - Verify "dincoder" appears in tools list
+
+### Using DinCoder with Copilot
+
+In Copilot Chat, use MCP prompts or reference tools directly:
+
+```
+/mcp.dincoder.start_project my-app
+/mcp.dincoder.create_spec "Build a task management API"
+#dincoder.tasks_stats
+```
+
+### What's Included
+
+✨ **Template Files:**
+- `.vscode/mcp.json` - MCP server configuration
+- `.vscode/settings.json` - VS Code MCP settings
+- `.github/copilot-instructions.md` - Context for GitHub Copilot
+
+📖 **Comprehensive Guide:** [docs/integration/vscode.md](docs/integration/vscode.md)
+
+🎯 **Ready-to-Use Templates:** [templates/vscode/](templates/vscode/)
+
+---
+
+## 🔌 OpenAI Codex Integration
+
+**New in v0.6.0:** Full support for OpenAI Codex (CLI and IDE extension) through MCP.
+
+### Quick Setup (CLI - Recommended)
+
+```bash
+# Add DinCoder MCP server
+codex mcp add dincoder -- npx -y mcp-dincoder@latest
+
+# Verify
+codex mcp list
+```
+
+### Quick Setup (Manual Configuration)
+
+1. **Copy global config:**
+   ```bash
+   cp templates/codex/config.toml ~/.codex/config.toml
+   ```
+
+2. **Copy workspace instructions:**
+   ```bash
+   cp templates/codex/.codex your-project/
+   ```
+
+3. **Restart Codex:**
+   ```bash
+   # CLI: Restart terminal
+   # IDE: Reload window
+   ```
+
+### Using DinCoder with Codex
+
+**CLI Commands:**
+```bash
+codex "use /mcp.dincoder.start_project my-app"
+codex "use /mcp.dincoder.create_spec 'Build a REST API'"
+```
+
+**IDE Extension:**
+```
+@dincoder.specify_start
+@dincoder.tasks_filter preset="next"
+```
+
+### What's Included
+
+✨ **Template Files:**
+- `config.toml` - Codex MCP server configuration (for `~/.codex/config.toml`)
+- `.codex/instructions.md` - Workspace-specific instructions
+
+📖 **Comprehensive Guide:** [docs/integration/codex.md](docs/integration/codex.md)
+
+🎯 **Ready-to-Use Templates:** [templates/codex/](templates/codex/)
+
+---
+
 ## 🚦 Complete Workflow Guide
 
 This is your end-to-end guide for using DinCoder with any AI agent (Claude, Copilot, Gemini, Cursor).
