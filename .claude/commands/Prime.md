@@ -16,6 +16,5 @@ README.md
 plan.md
 CLAUDE.md
 CHANGELOG.md
-TODO.md
 docs/FEATURE_ANALYSIS.md
 > Dont do anything else.

@@ -44,8 +44,8 @@ Implement multiple integration strategies targeting different platforms:
 
 ## Strategy A: MCP Prompts (Universal)
 
-**Status:** 🎯 **Highest Priority - Works Everywhere**
-**Effort:** 2-3 days
+**Status:** ✅ **IMPLEMENTED** (v0.4.0)
+**Effort:** Complete
 **Hosting:** This repository (MCP_DinCoder)
 
 ### Description
@@ -471,23 +471,42 @@ Focus on tasks that can be started immediately.`
 
 ### Usage Across Platforms
 
-**Claude Code:**
+**IMPORTANT:** MCP prompts appear differently in each client. The syntax varies:
+
+#### **Claude Code** (claude.ai/code) - Primary Target
+Type `@` to access prompts (NOT `/`):
 ```bash
 cd /new-project
 claude
-> /mcp__dincoder__start_project my-app
+> @mcp__dincoder__start_project
+# Then provide arguments when prompted
 ```
 
-**VS Code (GitHub Copilot):**
+**Why `@` and not `/`?**
+- `@` is for MCP prompts (workflow templates from MCP servers)
+- `/` is reserved for native Claude Code slash commands (requires separate plugin)
+- MCP prompts work NOW with `@` syntax
+- Native `/spec` commands would require Strategy B (Claude Code Plugin - not yet implemented)
+
+**Key Point:** You ARE getting slash-command-like functionality via `@` prompts. The only difference is the prefix character.
+
+#### **VS Code Copilot**
+In agent mode, use `/` slash commands:
 ```bash
 # In Copilot Chat (agent mode)
 /mcp.dincoder.start_project my-app
+/mcp.dincoder.create_spec description="Build a task API"
 ```
 
-**OpenAI Codex (CLI):**
+#### **OpenAI Codex**
+Explicitly invoke with `use`:
 ```bash
 codex "use /mcp.dincoder.start_project my-app"
+codex "use /mcp.dincoder.create_spec description='Build a task API'"
 ```
+
+#### **Note on Claude Desktop**
+Claude Desktop is NOT recommended for DinCoder due to workspace binding issues. Use Claude Code, VS Code Copilot, or OpenAI Codex instead.
 
 ### Benefits
 

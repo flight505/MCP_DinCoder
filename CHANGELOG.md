@@ -40,10 +40,23 @@ All notable changes to the DinCoder MCP Server project will be documented in thi
    - Calls: `tasks_filter` with preset "next", recommends priority
 
 **Cross-Platform Compatibility:**
-- Claude Code: `/mcp__dincoder__start_project`
-- VS Code Copilot: `/mcp.dincoder.start_project`
-- OpenAI Codex: `/mcp.dincoder.create_spec`
-- Cursor: `/mcp__dincoder__generate_plan`
+
+MCP prompts are **workflow templates** that appear differently in each client:
+
+- **Claude Code:** Type `@` then select `@mcp__dincoder__start_project`
+  - Note: Use `@` (not `/`) - MCP prompts are accessed via prompt picker
+  - Native `/` slash commands require separate Claude Code plugin (Strategy B)
+- **VS Code Copilot:** Type `/mcp.dincoder.start_project` in agent mode
+- **OpenAI Codex:** Type `use /mcp.dincoder.create_spec`
+
+**Important Clarification:**
+MCP prompts provide slash-command-like functionality but are NOT native slash commands. They are workflow orchestrators that:
+1. Guide the AI through multi-step processes
+2. Include comprehensive workflow instructions
+3. Call multiple DinCoder tools in correct sequence
+4. Provide full context on available tools
+
+The prompts ARE working and discoverable - the access method just varies by client (`@` in Claude Code, `/` in VS Code Copilot/Codex).
 
 **Documentation:**
 - Updated README.md with comprehensive MCP Prompts section
