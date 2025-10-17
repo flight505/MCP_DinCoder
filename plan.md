@@ -1,13 +1,13 @@
 # DinCoder Project Plan & Roadmap
 
 ## Roadmap Snapshot
-- **Roadmap Version:** 3.0 (Integration Strategy added 2025-10-16)
+- **Roadmap Version:** 4.0 (Phase 4 Advanced Features Planning added 2025-10-17)
 - **Document Last Updated:** 2025-10-17
-- **Current Package Version:** 0.6.0 (VS Code & Codex Integration, documentation complete)
-- **Next Target Version:** 0.7.0 (Integration Strategy E - Project Templates)
-- **Stories Complete:** 31 / 36 (86%) - Phase 1 & 2 COMPLETE, Integration Phase 80% COMPLETE 🎯
-- **Stories in Progress:** Phase 3 - Integration & Discovery (Strategies C-E)
-- **Latest Release Highlights:** v0.5.0 adds Claude Code Plugin with 6 slash commands and 3 specialized agents!
+- **Current Package Version:** 0.7.0 (Project Templates - Strategy E complete)
+- **Next Target Version:** 0.8.0 (Phase 4 - Advanced Features: Contracts, Templates, Metrics, Lint)
+- **Stories Complete:** 31 / 42 (74%) - Phases 1-3 COMPLETE, Phase 4 planned with detailed stories 🎯
+- **Stories in Progress:** Phase 4 - Advanced Features (research complete, ready for implementation)
+- **Latest Release Highlights:** v0.7.0 adds 4 project templates (web, api, mobile, cli) with comprehensive constitutions!
 
 ## Vision Statement
 DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI coding assistants. Unlike GitHub's CLI-focused Spec Kit, DinCoder delivers the complete Constitution → Specify → Clarify → Plan → Tasks → Implement → Validate workflow as composable MCP tools ready for agents such as Claude Code, Cursor, and GitHub Copilot.
@@ -45,11 +45,11 @@ DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI 
 
 ## Project Status Summary (Last Updated: 2025-10-17)
 
-**Progress:** 31/36 stories complete (86%)
+**Progress:** 31/42 stories complete (74%) - Phase 4 detailed planning complete!
 
 - ✅ **Completed:** Stories 2, 3, 6-16, 24-37 (Phases 1, 2, 3.1-3.3 - Strategies A-E COMPLETE!)
-- 📋 **Planned:** Story 38 (Phase 3 Integration Testing)
-- 📋 **Next Priority:** Story 38 - Integration Testing & Documentation
+- 📋 **Planned:** Stories 38-42 (Phase 3 Integration Testing + Phase 4 Advanced Features)
+- 📋 **Next Priority:** Story 38 - Integration Testing & Documentation, then Story 39 - OpenAPI Contract Generation
 
 **Phase 3 Achievements (v0.4.0 - Integration & Discovery):**
 - ✅ Story 34: MCP Prompts (Strategy A - Universal)
@@ -1670,7 +1670,382 @@ Acceptance Criteria:
 
 **Next Milestone:** v0.8.0 - Advanced Features (Phase 4)
 
-**Next Phase:** Phase 4 - Advanced Features (contracts, diagrams, metrics, lint, bootstrap)
+**Next Phase:** Phase 4 - Advanced Features (contracts, templates, metrics, lint)
+
+---
+
+## 🚀 PHASE 4: ADVANCED FEATURES (v0.8.0)
+
+**Goal:** Professional-grade tooling for API contracts, metrics tracking, and quality automation
+**Timeline:** ~3 weeks (1.5 sprints)
+**New Tools:** 6 (contracts_generate, templates_customize, templates_list, metrics_report, metrics_export, spec_lint)
+**Total Tools After Phase 4:** 32 (26 existing + 6 new)
+
+**Value Proposition:**
+- Phase 3 gave us **platform integration** (prompts, plugins, templates, documentation)
+- Phase 4 gives us **production readiness** (API contracts, metrics, quality automation)
+- Enables enterprise adoption with contract-first development and velocity tracking
+
+**Research Foundation:**
+- **OpenAPI Generation:** tsoa (TypeScript-to-OpenAPI, comprehensive 2025 tool)
+- **Velocity Metrics:** DORA metrics, cycle time (avoid velocity-as-performance trap)
+- **Spec Linting:** markdownlint (Node.js), Vale for prose quality
+- **Template Systems:** MkDocs Material hooks, template override patterns
+
+⸻
+
+Story 39 — OpenAPI Contract Generation 📝
+
+Goal: Generate OpenAPI 3.1 schemas from TypeScript specs and existing code
+
+Why it matters:
+- Contract-first API development prevents integration issues
+- Auto-generated documentation stays synchronized with implementation
+- Enables API mocking and validation tooling
+- Essential for microservices and external API consumers
+
+Tasks:
+	•	Create src/tools/contracts.ts with contracts_generate tool:
+		○	Define Zod schema (specPath, outputPath, format, includeExamples)
+		○	Support OpenAPI 3.1 format (primary)
+		○	Support GraphQL Schema format (secondary)
+		○	Optional JSON Schema output
+	•	Install and configure tsoa for TypeScript-to-OpenAPI generation:
+		○	Add tsoa dependency (~npm install tsoa@latest)
+		○	Configure tsoa.json with output paths
+		○	Support decorators: @Route, @Get, @Post, @Body, @Query
+		○	Generate from TypeScript interfaces and classes
+	•	Implement contract extraction from specs:
+		○	Parse spec.md "API Contracts" or "Data Models" section
+		○	Extract endpoint definitions (method, path, request, response)
+		○	Parse Zod schemas from spec.md code blocks
+		○	Convert Zod schemas to JSON Schema format
+	•	Implement OpenAPI generation:
+		○	Generate OpenAPI 3.1 compliant YAML/JSON
+		○	Include info object (title, version, description from spec)
+		○	Generate paths from endpoint definitions
+		○	Generate components/schemas from Zod types
+		○	Add examples from spec acceptance criteria
+		○	Include security schemes if auth is specified
+	•	Add GraphQL schema generation support:
+		○	Convert OpenAPI to GraphQL SDL (Schema Definition Language)
+		○	Generate type definitions (Query, Mutation, Subscription)
+		○	Map REST endpoints to GraphQL operations
+		○	Support custom scalar types
+	•	Implement contract validation:
+		○	Validate generated OpenAPI against OpenAPI 3.1 spec
+		○	Check for required fields (paths, info, openapi version)
+		○	Validate schema references ($ref integrity)
+		○	Warn about missing examples or descriptions
+	•	Add contract versioning:
+		○	Track contract versions in .dincoder/contracts/
+		○	Detect breaking changes (removed endpoints, changed types)
+		○	Generate contract changelog (added, modified, deprecated)
+		○	Support semantic versioning for APIs
+	•	Write comprehensive tests:
+		○	Test Zod-to-JSON Schema conversion
+		○	Test OpenAPI generation from spec
+		○	Test GraphQL schema generation
+		○	Test breaking change detection
+		○	Test with real TypeScript code (tsoa integration)
+	•	Update documentation:
+		○	Add contracts_generate to README tool list
+		○	Add contract-first workflow guide
+		○	Show OpenAPI and GraphQL examples
+		○	Document tsoa decorator usage
+
+Acceptance Criteria:
+	•	Generates valid OpenAPI 3.1 YAML/JSON
+	•	Supports GraphQL SDL generation
+	•	Extracts contracts from spec.md automatically
+	•	Integrates with tsoa for TypeScript projects
+	•	Detects breaking changes between versions
+	•	All tests pass with 90%+ coverage
+	•	Documentation includes complete workflow examples
+
+⸻
+
+Story 40 — Template Customization System 🎨
+
+Goal: Enable project-specific template overrides and customization hooks
+
+Why it matters:
+- Teams need to adapt templates to their standards
+- Different organizations have different conventions
+- Enables branding and custom boilerplate
+- Supports organizational best practices
+
+Tasks:
+	•	Create src/tools/templates.ts with two tools:
+		○	templates_customize - Customize existing templates
+		○	templates_list - List available templates and their customization points
+	•	Implement template override system:
+		○	Search for .dincoder/templates/ in project workspace
+		○	Load custom templates as overrides for built-in templates
+		○	Support partial overrides (header, footer, sections)
+		○	Merge custom + built-in templates with precedence
+	•	Add template customization hooks:
+		○	before_generate hook - Modify template context before rendering
+		○	after_generate hook - Post-process generated content
+		○	transform hook - Custom transformations on template output
+		○	validate hook - Custom validation rules for generated specs
+	•	Implement hook execution:
+		○	Load hooks from .dincoder/hooks/ directory
+		○	Execute hooks as JavaScript/TypeScript modules
+		○	Pass context (spec, plan, tasks data) to hooks
+		○	Support async hooks with timeout (10s max)
+		○	Handle hook errors gracefully
+	•	Create template variables system:
+		○	Support {{variable}} syntax in templates
+		○	Load variables from .dincoder/template-vars.json
+		○	Support environment variable substitution
+		○	Support computed variables (date, version, etc.)
+		○	Validate all variables are provided before generation
+	•	Add template inheritance:
+		○	Support template extends directive
+		○	Allow templates to extend built-in templates
+		○	Override specific sections while keeping others
+		○	Support multi-level inheritance (base → org → project)
+	•	Implement templates_list tool:
+		○	List all built-in templates (web-app, api-service, mobile-app, cli-tool)
+		○	Show available customization points per template
+		○	Display current overrides (if any)
+		○	Show available hooks and their status
+	•	Add template documentation generator:
+		○	Generate markdown docs for each template
+		○	Document available variables and hooks
+		○	Show example customizations
+		○	Auto-generate from template metadata
+	•	Write comprehensive tests:
+		○	Test template override precedence
+		○	Test hook execution (before/after/transform/validate)
+		○	Test variable substitution
+		○	Test template inheritance
+		○	Test error handling for invalid hooks
+	•	Update documentation:
+		○	Add templates_customize and templates_list to README
+		○	Create comprehensive customization guide
+		○	Show real-world customization examples
+		○	Document hook API and best practices
+
+Acceptance Criteria:
+	•	Supports template overrides from workspace
+	•	Executes customization hooks (before/after/transform/validate)
+	•	Supports variable substitution
+	•	Implements template inheritance
+	•	Lists all templates and customization points
+	•	All tests pass with 90%+ coverage
+	•	Documentation includes customization cookbook
+
+⸻
+
+Story 41 — Metrics & Velocity Tracking 📊
+
+Goal: Track development metrics and velocity with DORA-aligned analytics
+
+Why it matters:
+- Teams need visibility into development velocity
+- DORA metrics are industry-standard performance indicators
+- Helps identify bottlenecks and improve processes
+- Avoids velocity-as-performance-metric trap
+
+Tasks:
+	•	Create src/tools/metrics.ts with two tools:
+		○	metrics_report - Generate comprehensive metrics report
+		○	metrics_export - Export metrics to external systems (CSV, JSON)
+	•	Research and implement DORA metrics:
+		○	Deployment Frequency - How often specs/plans/tasks complete
+		○	Lead Time for Changes - Time from spec creation to task completion
+		○	Time to Restore Service - Not applicable (document why)
+		○	Change Failure Rate - Specs with validation failures
+	•	Implement SPACE metrics (alternative to velocity):
+		○	Satisfaction - Survey data (optional, document limitation)
+		○	Performance - Spec completion rate, validation pass rate
+		○	Activity - Spec/plan/task creation frequency
+		○	Communication - Clarification resolution time
+		○	Efficiency - Time from spec to first task completion
+	•	Calculate cycle time metrics:
+		○	Spec cycle time - Creation to approval/validation
+		○	Plan cycle time - Creation to task generation
+		○	Task cycle time - Creation to completion
+		○	Overall cycle time - Spec creation to final task completion
+	•	Implement trend analysis:
+		○	Calculate 7-day moving average for cycle times
+		○	Compare current period vs previous period (% change)
+		○	Identify trending up/down metrics
+		○	Detect anomalies (sudden spikes/drops)
+	•	Add quality metrics:
+		○	Spec validation pass rate
+		○	Average clarifications per spec
+		○	Spec refinement frequency
+		○	Acceptance criteria coverage
+	•	Implement burndown charts:
+		○	Calculate ideal burndown vs actual
+		○	Show remaining tasks over time
+		○	Project completion date
+		○	Confidence intervals (±X days)
+	•	Add metrics_export tool:
+		○	Export to CSV format (Excel-compatible)
+		○	Export to JSON format (API-compatible)
+		○	Support custom date ranges
+		○	Include all calculated metrics
+	•	Format metrics report:
+		○	Return as JSON object (machine-readable)
+		○	Optionally format as markdown with charts
+		○	Include visual indicators (↑ improving, ↓ declining)
+		○	Add ASCII burndown chart
+	•	⚠️ **CRITICAL: Avoid velocity pitfalls**:
+		○	Never use velocity as performance metric
+		○	Focus on cycle time and quality instead
+		○	Document why velocity can be harmful
+		○	Reference DORA research on metrics misuse
+	•	Write comprehensive tests:
+		○	Test DORA metrics calculations
+		○	Test SPACE metrics calculations
+		○	Test cycle time analysis
+		○	Test trend detection
+		○	Test export formats (CSV, JSON)
+	•	Update documentation:
+		○	Add metrics_report and metrics_export to README
+		○	Create metrics interpretation guide
+		○	Document DORA vs SPACE vs cycle time
+		○	Explain velocity anti-patterns
+		○	Show example reports
+
+Acceptance Criteria:
+	•	Calculates DORA metrics (Deployment Frequency, Lead Time, Change Failure Rate)
+	•	Calculates SPACE metrics where applicable
+	•	Tracks cycle time for specs/plans/tasks
+	•	Detects trends (7-day MA, period-over-period)
+	•	Exports to CSV and JSON formats
+	•	Includes burndown chart with projections
+	•	Avoids velocity-as-performance metric
+	•	All tests pass with 90%+ coverage
+	•	Documentation includes metrics best practices
+
+⸻
+
+Story 42 — Spec Linting & Quality Automation 🔍
+
+Goal: Automated spec quality checking with markdownlint and prose rules
+
+Why it matters:
+- Consistent spec formatting improves readability
+- Prose linting catches unclear language
+- Automation reduces manual review burden
+- Catches common mistakes early
+
+Tasks:
+	•	Create src/tools/lint.ts with spec_lint tool:
+		○	Define Zod schema (specPath, rules, fix, severity)
+		○	Support markdown linting (markdownlint)
+		○	Support prose linting (Vale, optional)
+		○	Return structured lint results
+	•	Install and configure markdownlint:
+		○	Add markdownlint dependency (~npm install markdownlint)
+		○	Create default .markdownlint.json config
+		○	Enable recommended rules (MD001-MD050)
+		○	Customize rules for spec.md format
+	•	Implement spec-specific lint rules:
+		○	Check required sections present (Goals, Acceptance, Edge Cases)
+		○	Verify section header levels (# for title, ## for sections)
+		○	Check acceptance criteria format ("When... Then...")
+		○	Validate code blocks have language tags
+		○	Check link formatting and validity
+	•	Add prose quality checking:
+		○	Detect passive voice in requirements ("will be done" → "does")
+		○	Flag vague language ("should", "might", "probably")
+		○	Check for consistent terminology
+		○	Detect ambiguous pronouns ("it", "this", "that" without antecedent)
+		○	Flag overly complex sentences (>30 words)
+	•	Implement auto-fix capability:
+		○	Fix simple markdown issues (trailing spaces, line endings)
+		○	Fix list formatting (consistent bullets/numbers)
+		○	Fix heading capitalization
+		○	Fix code block language tags
+		○	Preserve spec content accuracy (no semantic changes)
+	•	Add custom DinCoder rules:
+		○	Verify [NEEDS CLARIFICATION] format
+		○	Check Zod schema blocks are valid TypeScript
+		○	Validate acceptance criteria structure
+		○	Check edge case format consistency
+	•	Implement severity levels:
+		○	ERROR - Must fix before plan generation
+		○	WARNING - Should fix, but not blocking
+		○	INFO - Suggestions for improvement
+		○	Configurable severity per rule
+	•	Generate lint report:
+		○	Group issues by severity (errors, warnings, info)
+		○	Show line numbers and context
+		○	Provide fix suggestions for each issue
+		○	Include rule documentation links
+		○	Summary statistics (X errors, Y warnings)
+	•	Add configuration support:
+		○	Load .dincoder/lint.json for custom rules
+		○	Support rule enable/disable per project
+		○	Custom severity overrides
+		○	Ignore specific files or sections
+	•	Write comprehensive tests:
+		○	Test markdownlint integration
+		○	Test spec-specific rules
+		○	Test auto-fix functionality
+		○	Test severity classification
+		○	Test with valid and invalid specs
+	•	Update documentation:
+		○	Add spec_lint to README tool list
+		○	Document all lint rules
+		○	Show auto-fix examples
+		○	Create configuration guide
+		○	Add to workflow as quality gate
+
+Acceptance Criteria:
+	•	Integrates markdownlint for markdown quality
+	•	Implements spec-specific lint rules (7+ rules)
+	•	Detects prose quality issues (passive voice, vague language)
+	•	Supports auto-fix for simple issues
+	•	Configurable rules and severity levels
+	•	Returns structured lint report
+	•	All tests pass with 90%+ coverage
+	•	Documentation includes complete rule reference
+
+⸻
+
+## Phase 4 Summary
+
+**Stories Completed:** 0/4 (all pending)
+**Tools Added:** 6 new tools (when complete)
+**Total Tools:** 32 (26 existing + 6 new)
+**Estimated Effort:** ~60-70 tasks
+**Timeline:** 3 weeks (1.5 sprints)
+
+**Tools by Category After Phase 4:**
+- **Workflow Setup (3):** constitution_create, prereqs_check, specify_start
+- **Specification (3):** specify_describe, clarify_add, clarify_resolve
+- **Validation (4):** spec_validate, artifacts_analyze, spec_refine, spec_lint
+- **Planning (1):** plan_create
+- **Tasks (7):** tasks_generate, tasks_tick, tasks_visualize, tasks_filter, tasks_tick_range, tasks_search, tasks_stats
+- **Contracts & Code Gen (1):** contracts_generate
+- **Templates (2):** templates_customize, templates_list
+- **Metrics (2):** metrics_report, metrics_export
+- **Supporting (3):** artifacts_read, research_append, git_create_branch
+- **Quality (6):** quality_format, quality_lint, quality_test, quality_security_audit, quality_deps_update, quality_license_check
+
+**Key Targets:**
+- ✅ OpenAPI 3.1 contract generation from specs
+- ✅ Template customization with hooks and overrides
+- ✅ DORA-aligned metrics (not velocity)
+- ✅ Automated spec linting with markdownlint
+- ✅ Production-ready API development workflow
+- ✅ Enterprise-grade quality automation
+
+**Research-Backed Tool Choices:**
+- **tsoa** - TypeScript-to-OpenAPI generation (most comprehensive 2025 tool)
+- **markdownlint** - Industry-standard markdown linting (Node.js)
+- **DORA Metrics** - Research-backed performance indicators
+- **SPACE Metrics** - Alternative to problematic velocity tracking
+- **Cycle Time** - More actionable than velocity
+
+**Next Phase:** Phase 5 - Production Polish & v1.0.0 Release
 
 ---
 
