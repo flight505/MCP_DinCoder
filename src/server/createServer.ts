@@ -98,6 +98,12 @@ import {
   templatesList,
   templatesCustomize,
 } from '../tools/templates-mgmt.js';
+import {
+  MetricsReportSchema,
+  MetricsExportSchema,
+  metricsReport,
+  metricsExport,
+} from '../tools/metrics.js';
 import { registerPrompts } from './prompts.js';
 
 /**
@@ -434,6 +440,41 @@ function registerTools(server: McpServer): void {
     TemplatesCustomizeSchema.shape,
     async (params) => {
       const result = await templatesCustomize(TemplatesCustomizeSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
+
+  // Metrics tools
+  server.tool(
+    'metrics_report',
+    'Generate comprehensive metrics report with DORA and SPACE metrics. Tracks development velocity, cycle time, quality, and trends using Git history for timestamps.',
+    MetricsReportSchema.shape,
+    async (params) => {
+      const result = await metricsReport(MetricsReportSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result.formattedReport || JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
+
+  server.tool(
+    'metrics_export',
+    'Export metrics to CSV or JSON format for external analysis. Includes DORA metrics, cycle time, quality metrics, and custom date ranges.',
+    MetricsExportSchema.shape,
+    async (params) => {
+      const result = await metricsExport(MetricsExportSchema.parse(params));
       return {
         content: [
           {
