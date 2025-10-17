@@ -2,6 +2,72 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.4.1] - 2025-10-17
+
+### Fixed - Documentation Corrections for MCP Prompts 📚
+
+**Critical Documentation Issue:** Previous documentation incorrectly described MCP prompts as user-typed slash commands.
+
+#### README.md Corrections
+- **Fixed:** "MCP Prompts (Slash Commands)" section completely rewritten
+- **Changed Title:** "MCP Prompts (Slash Commands)" → "MCP Prompts (AI Workflow Orchestration)"
+- **Corrected Misconception:**
+  - ❌ **Before:** "Type `@mcp__dincoder__start_project` to invoke prompts"
+  - ✅ **After:** "MCP prompts are workflow templates that AI agents use automatically"
+
+**What MCP Prompts Actually Are:**
+- Workflow orchestrators for AI agents (NOT user commands)
+- Discovered programmatically via `prompts/list` JSON-RPC call
+- Invoked automatically by AI when relevant to user's request
+- Invisible to users - just describe goals in natural language
+
+**Platform Behavior Clarification:**
+- **Claude Code:** `@` is for file attachments, `/` is for native commands. MCP prompts work automatically.
+- **VS Code Copilot:** MCP prompts integrated into agent mode
+- **OpenAI Codex:** MCP prompts accessible programmatically
+- **Cursor:** MCP prompts part of agent workflows
+
+**User Experience:**
+- You say: "Let's start a new project"
+- AI thinks: *matches `start_project` prompt*
+- AI invokes: `prompts/get` with workflow instructions
+- AI executes: Calls DinCoder tools following workflow
+- You see: AI guiding you through project setup (NO slash command!)
+
+#### CLAUDE.md Additions
+- **Added:** Prominent "⚠️ MCP Prompts vs Slash Commands - CRITICAL CLARIFICATION" section
+- **Placed:** Right after "Critical Requirements" for maximum visibility
+- **Includes:**
+  - Clear distinction between MCP prompts, slash commands, and custom commands
+  - Detailed workflow example showing programmatic invocation
+  - Platform-specific behavior explanations
+  - Documentation corrections noting previous errors
+
+#### PUBLISH_INSTRUCTIONS.md
+- **Added:** New file with complete npm publishing workflow
+- **Includes:** Pre-publish checklist, testing steps, post-publish tasks
+- **Purpose:** Guide for publishing v0.4.1 to npm registry
+
+#### Table of Contents Fix
+- Updated README.md TOC link from "MCP Prompts (Slash Commands)" to "MCP Prompts (AI Workflow Orchestration)"
+- Updated "What's New" section to clarify prompts are NOT slash commands
+
+### Changed
+- **No code changes** - This is a documentation-only release
+- **Functionality:** Remains identical to v0.4.0
+- **MCP Prompts:** Still work the same way (now correctly documented)
+
+### Impact
+- **User Confusion:** Eliminated - users now understand how MCP prompts work
+- **Integration:** Clearer - explains AI agents use prompts automatically
+- **Platform Differences:** Documented - each client handles prompts differently
+- **Developer Understanding:** Improved - CLAUDE.md has critical clarification
+
+### Package Status
+- ⚠️ **NOT YET PUBLISHED:** v0.4.1 needs to be published to npm
+- **Ready to Publish:** All documentation fixes complete
+- **Next Step:** Run `npm publish --access public`
+
 ## [0.4.0] - 2025-10-16
 
 ### Added - Integration & Discovery: MCP Prompts 🎯

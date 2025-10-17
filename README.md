@@ -15,7 +15,7 @@
 - [What is DinCoder?](#-what-is-dincoder)
 - [Installation](#-installation)
 - [Quickstart](#-quickstart)
-- [MCP Prompts (Slash Commands)](#-mcp-prompts-slash-commands)
+- [MCP Prompts (AI Workflow Orchestration)](#-mcp-prompts-ai-workflow-orchestration)
 - [Complete Workflow](#-complete-workflow-guide)
 - [Available Tools](#-available-tools)
 - [Examples](#-examples)
@@ -33,22 +33,24 @@ DinCoder brings the power of [GitHub Spec Kit](https://github.com/github/spec-ki
 
 ### What's New in v0.4.0 (Integration & Discovery Update)
 
-#### 🎯 MCP Prompts - Universal Slash Commands ✨
+#### 🎯 MCP Prompts - AI Workflow Orchestration ✨
 
-- **7 workflow prompts** that work across all MCP clients
-- **Slash command format**: `/mcp__dincoder__start_project`, `/mcp__dincoder__create_spec`, etc.
+- **7 workflow prompts** that guide AI agents through complex tasks
+- **Automatic discovery**: AI agents find and use prompts programmatically
 - **Built-in guidance**: Each prompt includes comprehensive workflow instructions
 - **Works everywhere**: Claude Code, VS Code Copilot, OpenAI Codex, Cursor
-- **Zero configuration**: Auto-discovered by MCP clients
+- **Natural language**: Just describe what you want - AI uses appropriate prompts automatically
 
 **Available Prompts:**
-- `/mcp__dincoder__start_project` - Initialize new spec-driven project
-- `/mcp__dincoder__create_spec` - Create feature specification
-- `/mcp__dincoder__generate_plan` - Generate implementation plan
-- `/mcp__dincoder__create_tasks` - Break down into actionable tasks
-- `/mcp__dincoder__review_progress` - Generate progress report
-- `/mcp__dincoder__validate_spec` - Check specification quality
-- `/mcp__dincoder__next_tasks` - Show actionable tasks
+- `start_project` - Initialize new spec-driven project
+- `create_spec` - Create feature specification
+- `generate_plan` - Generate implementation plan
+- `create_tasks` - Break down into actionable tasks
+- `review_progress` - Generate progress report
+- `validate_spec` - Check specification quality
+- `next_tasks` - Show actionable tasks
+
+**Note:** These are NOT slash commands you type. They're workflow templates that your AI agent uses automatically when you describe your goals!
 
 #### 🧬 Constitution Tool - Define Your Project's DNA
 
@@ -228,153 +230,230 @@ Transform ideas into production-ready code through three powerful commands:
 
 ---
 
-## 🎯 MCP Prompts (Slash Commands)
+## 🎯 MCP Prompts (AI Workflow Orchestration)
 
-**New in v0.4.0:** DinCoder includes 7 MCP prompts that provide guided workflows with comprehensive instructions built-in. These are automatically discovered by all MCP-compatible clients.
+**New in v0.4.0:** DinCoder includes 7 MCP prompts that provide guided workflows for AI agents. These are **NOT slash commands** you type—they're workflow templates that your AI agent (Claude, Copilot, etc.) automatically discovers and uses to help you.
 
-### How to Access MCP Prompts
+### How MCP Prompts Work
 
-MCP prompts are **workflow templates** exposed via the MCP protocol. Different clients surface them in different ways:
+MCP prompts are **invisible to users** but powerful for AI agents:
 
-#### **Claude Code** (claude.ai/code)
-Type `@` to open the prompt picker, then select:
-```
-@mcp__dincoder__start_project
-@mcp__dincoder__create_spec
-@mcp__dincoder__generate_plan
-@mcp__dincoder__create_tasks
-@mcp__dincoder__review_progress
-@mcp__dincoder__validate_spec
-@mcp__dincoder__next_tasks
-```
+1. **AI Discovery**: When DinCoder is connected, your AI agent automatically discovers available prompts via the MCP protocol
+2. **AI Invocation**: The AI agent invokes prompts programmatically when they're relevant to your task
+3. **Workflow Guidance**: Each prompt includes comprehensive instructions for multi-step workflows
+4. **Tool Orchestration**: Prompts guide the AI to call multiple DinCoder tools in the correct sequence
 
-**Note:** In Claude Code, MCP prompts use `@` (not `/`). The `/` slash is reserved for native slash commands.
+**You don't "run" these prompts directly.** Just describe what you want in natural language, and your AI agent will use the appropriate prompt workflow automatically!
 
-#### **VS Code Copilot**
-In agent mode, use slash commands:
-```
-/mcp.dincoder.start_project
-/mcp.dincoder.create_spec
-/mcp.dincoder.generate_plan
-/mcp.dincoder.create_tasks
-/mcp.dincoder.review_progress
-/mcp.dincoder.validate_spec
-/mcp.dincoder.next_tasks
-```
+### Available Workflow Prompts
 
-#### **OpenAI Codex**
-Explicitly invoke with `use` keyword:
-```
-use /mcp.dincoder.start_project
-use /mcp.dincoder.create_spec
-use /mcp.dincoder.generate_plan
-```
+| Prompt Name | When AI Uses It | What It Does |
+|-------------|-----------------|--------------|
+| `start_project` | You ask to "start a new project" | Initializes .dincoder/, creates spec template |
+| `create_spec` | You describe a feature to build | Generates comprehensive specification |
+| `generate_plan` | You ask for implementation plan | Creates technical architecture from spec |
+| `create_tasks` | You ask to break down work | Generates executable task list from plan |
+| `review_progress` | You ask "how's it going?" | Shows statistics, charts, next actions |
+| `validate_spec` | You ask to check spec quality | Runs quality gates before implementation |
+| `next_tasks` | You ask "what's next?" | Shows unblocked, actionable tasks |
 
-### What Are MCP Prompts?
+### Example: How Prompts Guide AI Workflows
 
-MCP prompts are **workflow orchestrators** that:
+**You say:** "Let's start a new task manager project"
 
-1. **Guide the AI** through multi-step processes
-2. **Include comprehensive instructions** for each workflow phase
-3. **Call multiple MCP tools** in the correct sequence
-4. **Provide context** on available tools and best practices
+**AI thinks:** *This matches the `start_project` prompt. Let me follow its workflow...*
 
-When you invoke an MCP prompt, the AI receives detailed instructions and then uses DinCoder's tools to complete the workflow.
+**AI does:**
+1. Calls `specify_start` tool with projectName="task-manager"
+2. Explains the .dincoder/ structure created
+3. Asks what you want to build
+4. Calls `specify_describe` with your requirements
+5. Validates spec with `spec_validate`
+6. Suggests next steps
+
+**You don't see:** The prompt invocation—just the AI following the workflow naturally!
 
 <details>
-<summary><strong>See detailed prompt descriptions (click to expand)</strong></summary>
+<summary><strong>See detailed prompt workflows (click to expand)</strong></summary>
 
-#### 1. `/start_project` - Initialize New Spec-Driven Project
+#### 1. `start_project` - Initialize New Spec-Driven Project
 
-**Purpose:** Set up a new project with DinCoder's spec-driven workflow
+**AI receives this workflow when you want to start a project:**
 
-**Arguments:**
-- `projectName` (required): Name of your project
-- `agent` (optional): AI agent type (`claude`, `copilot`, `gemini`)
-
-**Example:**
 ```
-/mcp__dincoder__start_project projectName="task-manager" agent="claude"
-```
-
-#### 2. `/create_spec` - Create Feature Specification
-
-**Purpose:** Generate a comprehensive specification document
-
-**Arguments:**
-- `description` (required): Brief description of what you want to build
-
-**Example:**
-```
-/mcp__dincoder__create_spec description="Build a task management system with projects and due dates"
+1. Call `specify_start` with projectName and agent type
+2. Explain .dincoder/ directory structure to user
+3. Explain spec-driven workflow: Specify → Plan → Execute
+4. Ask what they want to build
+5. Guide through specification creation
 ```
 
-#### 3. `/generate_plan` - Generate Implementation Plan
+**Example conversation:**
+- You: "I want to start a new e-commerce project"
+- AI: *Invokes start_project prompt, follows workflow*
+- AI: "I'll initialize a new spec-driven project. What features should the e-commerce platform have?"
 
-**Purpose:** Create technical implementation plan from specification
+---
 
-**Arguments:**
-- `specPath` (optional): Path to spec.md file (auto-detected if omitted)
+#### 2. `create_spec` - Create Feature Specification
 
-**Example:**
+**AI receives this workflow when you describe a feature:**
+
 ```
-/mcp__dincoder__generate_plan
-```
-
-#### 4. `/create_tasks` - Break Down into Actionable Tasks
-
-**Purpose:** Generate executable task list from implementation plan
-
-**Arguments:**
-- `planPath` (optional): Path to plan.md file (auto-detected if omitted)
-
-**Example:**
-```
-/mcp__dincoder__create_tasks
-```
-
-#### 5. `/review_progress` - Generate Progress Report
-
-**Purpose:** Show project status with statistics and charts
-
-**Example:**
-```
-/mcp__dincoder__review_progress
+1. Check if .dincoder/ exists (run specify_start if not)
+2. Gather requirements by asking:
+   - What problem does this solve?
+   - Who are the users?
+   - What are success criteria?
+   - What's out of scope?
+3. Call `specify_describe` with complete specification
+4. Call `spec_validate` to check quality
+5. Address validation issues with `spec_refine`
+6. Confirm spec is complete
 ```
 
-#### 6. `/validate_spec` - Check Specification Quality
+**Example conversation:**
+- You: "Build a real-time chat feature with typing indicators"
+- AI: *Invokes create_spec prompt, asks clarifying questions*
+- AI: "Let me create a specification. Should the chat support file attachments?"
 
-**Purpose:** Validate specification before moving to implementation
+---
 
-**Arguments:**
-- `specPath` (optional): Path to spec.md file (auto-detected if omitted)
+#### 3. `generate_plan` - Generate Implementation Plan
 
-**Example:**
+**AI receives this workflow when planning is needed:**
+
 ```
-/mcp__dincoder__validate_spec
+1. Verify spec exists (guide user to create if missing)
+2. Run `spec_validate` if not already validated
+3. Call `plan_create` with technical constraints
+4. Call `artifacts_analyze` to verify spec-plan alignment
+5. Present plan structure to user
+6. Ask if ready for task generation
 ```
 
-#### 7. `/next_tasks` - Show Next Actionable Tasks
+**Example conversation:**
+- You: "How should we implement this?"
+- AI: *Invokes generate_plan prompt*
+- AI: "I'll create a technical plan. What's your preferred tech stack? (Next.js, Python/FastAPI, etc.)"
 
-**Purpose:** Display unblocked tasks ready to start
+---
 
-**Arguments:**
-- `limit` (optional): Maximum number of tasks to show (default: 5)
+#### 4. `create_tasks` - Break Down into Actionable Tasks
 
-**Example:**
+**AI receives this workflow for task generation:**
+
 ```
-/mcp__dincoder__next_tasks limit="10"
+1. Verify plan exists (guide to create if missing)
+2. Call `tasks_generate` with granular scope
+3. Call `tasks_visualize` to show dependency graph
+4. Call `tasks_stats` to show effort estimates
+5. Call `tasks_filter` with preset:"next" for actionable items
+6. Guide user to start first task
 ```
+
+**Example conversation:**
+- You: "Let's break this down into tasks"
+- AI: *Invokes create_tasks prompt*
+- AI: "I've generated 23 tasks. Here's the dependency graph... Ready to start with T001?"
+
+---
+
+#### 5. `review_progress` - Generate Progress Report
+
+**AI receives this workflow for progress checks:**
+
+```
+1. Call `tasks_stats` with charts and blockers
+2. Call `tasks_filter` preset:"next" for actionable items
+3. Call `tasks_search` for in-progress tasks
+4. Summarize in structured format:
+   - Overall completion %
+   - Recent accomplishments
+   - Current work
+   - Next actions (unblocked)
+   - Blockers
+   - Recommendations
+5. Include visual progress charts
+```
+
+**Example conversation:**
+- You: "How's the project coming along?"
+- AI: *Invokes review_progress prompt*
+- AI: "We're 67% complete (15/23 tasks). 3 tasks in progress, 2 blocked. Next up: authentication tests."
+
+---
+
+#### 6. `validate_spec` - Check Specification Quality
+
+**AI receives this workflow for validation:**
+
+```
+1. Call `spec_validate` with all checks enabled
+2. Check for:
+   - Completeness (all required sections)
+   - Acceptance criteria (testable when/then)
+   - Clarifications (no unresolved markers)
+   - Implementation leakage (no HOW in WHAT)
+3. Call `clarify_list` for pending questions
+4. If validation fails:
+   - List specific issues
+   - Call `spec_refine` to fix
+   - Re-validate
+5. If passes: suggest `plan_create` next
+```
+
+**Example conversation:**
+- You: "Is the spec ready for implementation?"
+- AI: *Invokes validate_spec prompt*
+- AI: "Validation found 2 issues: missing edge cases section, 1 unresolved clarification. Let me fix these..."
+
+---
+
+#### 7. `next_tasks` - Show Next Actionable Tasks
+
+**AI receives this workflow when you ask what's next:**
+
+```
+1. Call `tasks_filter` with preset:"next" and priority sorting
+2. For each task display:
+   - Task ID and description
+   - Metadata (phase, type, priority, effort)
+   - Why it's actionable
+3. Recommend which task to start based on:
+   - Priority level
+   - Dependencies completed
+   - Effort estimate
+4. Offer task details on request
+```
+
+**Example conversation:**
+- You: "What should I work on next?"
+- AI: *Invokes next_tasks prompt*
+- AI: "Top priority: T007 (Implement user authentication, effort: 5). It's unblocked and high priority. Want to start?"
 
 </details>
 
-### Cross-Platform Quick Reference
+### Platform Compatibility
 
-| Client | Access Method | Prefix | Example |
-|--------|--------------|--------|---------|
-| **Claude Code** | Type `@` | `@mcp__dincoder__` | `@mcp__dincoder__start_project` |
-| **VS Code Copilot** | Type `/` in agent mode | `/mcp.dincoder.` | `/mcp.dincoder.start_project` |
-| **OpenAI Codex** | Type `use /` | `use /mcp.dincoder.` | `use /mcp.dincoder.create_spec` |
+MCP prompts work across all MCP-compatible clients:
+
+| Client | How It Works |
+|--------|--------------|
+| **Claude Code** | Prompts auto-discovered; AI uses them automatically when relevant |
+| **VS Code Copilot** | Prompts available in agent mode; AI invokes based on context |
+| **OpenAI Codex** | Prompts accessible via MCP protocol; AI uses for complex workflows |
+| **Cursor** | MCP prompts integrated into agent workflows |
+
+### The Key Difference: MCP Prompts vs Slash Commands
+
+**Important distinction:**
+
+- **MCP Prompts** (DinCoder workflows): AI agents use these programmatically. You don't type them.
+- **Slash Commands** (Native): User-typed commands like `/help`, `/clear` in Claude Code
+- **Custom Commands** (`.claude/commands/`): Project-specific slash commands you create
+
+**In practice:** You describe what you want in natural language ("Let's start a new project"), and your AI agent automatically uses the appropriate MCP prompt workflow!
 
 ---
 

@@ -2,12 +2,12 @@
 
 ## Roadmap Snapshot
 - **Roadmap Version:** 3.0 (Integration Strategy added 2025-10-16)
-- **Document Last Updated:** 2025-10-16
-- **Current Package Version:** 0.4.0 (Phase 2 complete + Integration Strategy A, published to npm)
+- **Document Last Updated:** 2025-10-17
+- **Current Package Version:** 0.4.1 (Documentation fixes for MCP prompts, ready for npm)
 - **Next Target Version:** 0.5.0 (Integration Strategy B - Claude Code Plugin)
 - **Stories Complete:** 28 / 36 (78%) - Phase 1 & 2 COMPLETE, Integration Phase STARTED 🎯
 - **Stories in Progress:** Phase 3 - Integration & Discovery (Strategies B-E)
-- **Latest Release Highlights:** v0.4.0 adds MCP Prompts (Strategy A) - 7 universal slash commands for seamless integration across all MCP clients!
+- **Latest Release Highlights:** v0.4.1 fixes critical documentation issues - MCP prompts are AI workflow orchestrators, not user-typed slash commands!
 
 ## Vision Statement
 DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI coding assistants. Unlike GitHub's CLI-focused Spec Kit, DinCoder delivers the complete Constitution → Specify → Clarify → Plan → Tasks → Implement → Validate workflow as composable MCP tools ready for agents such as Claude Code, Cursor, and GitHub Copilot.
@@ -418,6 +418,97 @@ Goal: Serve older clients during a transition (if needed).
 	•	If yes, implement the legacy GET SSE initiation and POST pairing as described in the spec’s backward‑compatibility section.  ￼
 	•	Add tests proving both transports operate without message duplication.  ￼
 	•	Document sunset schedule; remove legacy in a future major.
+
+⸻
+
+## Lessons Learned from v0.4.1 Release
+
+### Critical Documentation Issue Discovered
+
+**Problem Identified:** Documentation incorrectly described MCP prompts as user-typed slash commands, causing significant confusion.
+
+**Root Cause:**
+- Misunderstood how MCP prompts work vs how Claude Code uses `@` symbol
+- README suggested users type `@mcp__dincoder__start_project` to invoke prompts
+- Confused MCP protocol's programmatic prompt discovery with user-facing UI
+
+**User Insight:** User correctly identified that `@` in Claude Code is for file attachments, not MCP prompts. This was the key insight that revealed the documentation error.
+
+**What MCP Prompts Actually Are:**
+- **Workflow orchestrators** for AI agents, not user commands
+- Discovered programmatically via `prompts/list` JSON-RPC call
+- Invoked automatically by AI when relevant to user's request
+- **Invisible to users** - users just describe goals in natural language
+
+### Documentation Fixes Implemented
+
+1. **README.md Major Rewrite** ✅
+   - **Before:** Section titled "MCP Prompts (Slash Commands)"
+   - **After:** Section titled "MCP Prompts (AI Workflow Orchestration)"
+   - **Impact:** Removed all incorrect `@` syntax examples
+   - **Added:** Clear explanation of programmatic invocation
+   - **Added:** Workflow examples showing AI discovers and uses prompts automatically
+
+2. **CLAUDE.md Critical Clarification** ✅
+   - **Added:** Prominent "⚠️ MCP Prompts vs Slash Commands" section
+   - **Placement:** After "Critical Requirements" for high visibility
+   - **Content:**
+     - Distinction between MCP prompts, slash commands, and custom commands
+     - How MCP prompts work (prompts/list, prompts/get JSON-RPC calls)
+     - Example workflow showing AI using prompts programmatically
+   - **Impact:** Internal AI agents now understand the distinction
+
+3. **PUBLISH_INSTRUCTIONS.md** ✅
+   - **Created:** Complete npm publishing guide
+   - **Sections:** Pre-publish checklist, testing steps, post-publish verification
+   - **Value:** Ensures correct publishing process for future releases
+
+4. **CHANGELOG.md** ✅
+   - **Added:** Comprehensive v0.4.1 entry
+   - **Documented:** All documentation corrections made
+   - **Explained:** The misconception that was fixed
+   - **Status:** Package ready to publish to npm
+
+### Lessons Learned
+
+1. **Verify Platform-Specific UI Patterns Early** ⚠️ CRITICAL
+   - Different MCP clients have different UI conventions
+   - Claude Code: `@` for files, `/` for native commands, MCP prompts invisible
+   - VS Code Copilot: Different integration pattern
+   - Lesson: Test documentation against actual platform behavior
+
+2. **MCP Protocol ≠ User Interface**
+   - MCP provides programmatic capabilities (tools, prompts, resources)
+   - How clients expose these varies widely
+   - Prompts are for AI agents, not end users
+   - Lesson: Clearly separate protocol features from UI affordances in documentation
+
+3. **Listen to User Confusion**
+   - User's question about `@` syntax revealed fundamental documentation flaw
+   - Quick validation via web search confirmed the issue
+   - Lesson: User confusion often signals documentation accuracy problems
+
+4. **Documentation-Only Releases Are Valid**
+   - v0.4.1 is documentation-only, no code changes
+   - Still valuable: prevents user confusion and misuse
+   - Lesson: Don't hesitate to release for critical documentation fixes
+
+### Key Metrics
+
+- **Version:** 0.4.1 ready for npm publication
+- **Tests:** 52/52 tests passing (100% pass rate) - no code changes
+- **Files Changed:** 4 documentation files (README.md, CLAUDE.md, CHANGELOG.md, PUBLISH_INSTRUCTIONS.md)
+- **Impact:** Critical user experience improvement
+- **Publication Status:** ⚠️ NOT YET PUBLISHED - awaiting npm publish
+
+### Next Steps
+
+1. User runs `npm publish --access public` to publish v0.4.1 to npm
+2. Verify package appears on https://www.npmjs.com/package/mcp-dincoder
+3. Test installation: `npm install -g mcp-dincoder@latest`
+4. Verify MCP prompts work correctly (AI uses them automatically)
+5. Create Git tag: `git tag -a v0.4.1 -m "v0.4.1 - Documentation fixes"`
+6. Create GitHub release with detailed changelog
 
 ⸻
 

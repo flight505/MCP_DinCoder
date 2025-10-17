@@ -9,11 +9,58 @@ This is a **Spec-Driven MCP Orchestrator** that implements a Model Context Proto
 ## Critical Requirements
 
 - **Protocol**: MCP Streamable HTTP (Protocol Revision 2025-03-26)
-- **TypeScript SDK**: @modelcontextprotocol/sdk v1.17.5+ 
+- **TypeScript SDK**: @modelcontextprotocol/sdk v1.17.5+
 - **Node.js**: >=20
 - **Transport**: HTTP only (STDIO deprecated Sept 7, 2025 on Smithery)
   - Migration benefits: 20x higher concurrency, lower latency, better resource efficiency
 - **TypeScript Config**: MUST use module/moduleResolution: "NodeNext"
+
+## ⚠️ MCP Prompts vs Slash Commands - CRITICAL CLARIFICATION
+
+**IMPORTANT:** DinCoder's MCP prompts are **NOT slash commands** that users type.
+
+### What Are MCP Prompts?
+
+- **MCP Prompts**: Workflow templates for AI agents (programmatic, invisible to users)
+- **Slash Commands**: User-typed commands like `/help`, `/clear` in Claude Code
+- **Custom Commands**: Project-specific commands in `.claude/commands/`
+
+### How MCP Prompts Work
+
+1. **AI Discovery**: When DinCoder is connected, AI agents automatically discover prompts via `prompts/list` JSON-RPC call
+2. **AI Invocation**: AI agents call prompts programmatically via `prompts/get` when relevant
+3. **Workflow Execution**: Prompts guide AI through multi-step workflows using DinCoder's tools
+4. **User Experience**: Users describe goals in natural language; AI uses appropriate prompt automatically
+
+### Example Workflow
+
+**User says:** "Let's start a new project called task-manager"
+
+**What happens:**
+1. AI recognizes this matches `start_project` prompt
+2. AI invokes `prompts/get` with name: "start_project" and args: {projectName: "task-manager"}
+3. AI receives workflow instructions from prompt
+4. AI follows workflow: calls `specify_start`, explains structure, asks for requirements, etc.
+
+**User sees:** AI guiding them through project setup (NOT a slash command they typed)
+
+### Platform-Specific Behavior
+
+- **Claude Code**: `@` is for files/context, `/` is for native commands. MCP prompts are invisible.
+- **VS Code Copilot**: MCP prompts integrated into agent mode
+- **OpenAI Codex**: MCP prompts accessible programmatically
+- **Cursor**: MCP prompts part of agent workflows
+
+### Documentation Corrections
+
+**Previous documentation incorrectly stated:**
+- ❌ "Type `@` to access MCP prompts" (WRONG - `@` is for file attachments)
+- ❌ "Use `/mcp__dincoder__start_project`" (WRONG - this is not how users access prompts)
+
+**Correct understanding:**
+- ✅ Users describe goals in natural language
+- ✅ AI agents automatically use appropriate prompts
+- ✅ Prompts are workflow orchestrators, not user commands
 
 ## Development Commands
 
