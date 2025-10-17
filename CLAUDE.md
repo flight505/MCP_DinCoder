@@ -1,70 +1,61 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI agents when working with code in this repository.
 
 ## Project Overview
 
-This is a **Spec-Driven MCP Orchestrator** that implements a Model Context Protocol server with Streamable HTTP transport. The server exposes Spec Kit tools (specify, plan, tasks) to enable AI-assisted spec-driven development workflows.
+**Spec-Driven MCP Orchestrator** - Model Context Protocol server with Streamable HTTP transport, exposing Spec Kit tools (specify, plan, tasks) for AI-assisted spec-driven development workflows.
 
 ## Critical Requirements
 
 - **Protocol**: MCP Streamable HTTP (Protocol Revision 2025-03-26)
 - **TypeScript SDK**: @modelcontextprotocol/sdk v1.17.5+
 - **Node.js**: >=20
-- **Transport**: HTTP only (STDIO deprecated Sept 7, 2025 on Smithery)
-  - Migration benefits: 20x higher concurrency, lower latency, better resource efficiency
+- **Transport**: HTTP only (STDIO deprecated Sept 7, 2025)
 - **TypeScript Config**: MUST use module/moduleResolution: "NodeNext"
 
-## ⚠️ MCP Prompts vs Slash Commands - CRITICAL CLARIFICATION
+## ⚠️ MCP Prompts - CRITICAL UNDERSTANDING
 
-**IMPORTANT:** DinCoder's MCP prompts are **NOT slash commands** that users type.
+**MCP prompts are workflow orchestrators for AI agents, NOT user-typed commands.**
 
-### What Are MCP Prompts?
+### How They Work
 
-- **MCP Prompts**: Workflow templates for AI agents (programmatic, invisible to users)
-- **Slash Commands**: User-typed commands like `/help`, `/clear` in Claude Code
-- **Custom Commands**: Project-specific commands in `.claude/commands/`
+1. **AI Discovery**: Agents discover prompts via `prompts/list` JSON-RPC call
+2. **AI Invocation**: Agents call `prompts/get` programmatically when relevant
+3. **User Experience**: Users describe goals in natural language; AI uses appropriate prompt automatically
 
-### How MCP Prompts Work
+### Example
 
-1. **AI Discovery**: When DinCoder is connected, AI agents automatically discover prompts via `prompts/list` JSON-RPC call
-2. **AI Invocation**: AI agents call prompts programmatically via `prompts/get` when relevant
-3. **Workflow Execution**: Prompts guide AI through multi-step workflows using DinCoder's tools
-4. **User Experience**: Users describe goals in natural language; AI uses appropriate prompt automatically
+**User:** "Let's start a new project called task-manager"
 
-### Example Workflow
+**Behind the scenes:**
+- AI recognizes this matches `start_project` prompt
+- AI invokes prompt programmatically
+- AI receives workflow instructions
+- AI guides user through setup
 
-**User says:** "Let's start a new project called task-manager"
+**User sees:** Natural conversation (NOT a slash command)
 
-**What happens:**
-1. AI recognizes this matches `start_project` prompt
-2. AI invokes `prompts/get` with name: "start_project" and args: {projectName: "task-manager"}
-3. AI receives workflow instructions from prompt
-4. AI follows workflow: calls `specify_start`, explains structure, asks for requirements, etc.
+### Platform Behavior
 
-**User sees:** AI guiding them through project setup (NOT a slash command they typed)
+- **Claude Code**: `@` = files, `/` = native commands, MCP prompts = invisible
+- **VS Code/Copilot/Cursor**: MCP prompts integrated into agent workflows
 
-### Platform-Specific Behavior
+### Registered Prompts (v0.4.0+)
 
-- **Claude Code**: `@` is for files/context, `/` is for native commands. MCP prompts are invisible.
-- **VS Code Copilot**: MCP prompts integrated into agent mode
-- **OpenAI Codex**: MCP prompts accessible programmatically
-- **Cursor**: MCP prompts part of agent workflows
+| Prompt | Purpose | Arguments |
+|--------|---------|-----------|
+| `start_project` | Initialize new project | projectName, agent (optional) |
+| `create_spec` | Create specification | description |
+| `generate_plan` | Generate implementation plan | specPath (optional) |
+| `create_tasks` | Break down into tasks | planPath (optional) |
+| `review_progress` | Generate progress report | None |
+| `validate_spec` | Check specification quality | specPath (optional) |
+| `next_tasks` | Show actionable tasks | limit (optional) |
 
-### Documentation Corrections
-
-**Previous documentation incorrectly stated:**
-- ❌ "Type `@` to access MCP prompts" (WRONG - `@` is for file attachments)
-- ❌ "Use `/mcp__dincoder__start_project`" (WRONG - this is not how users access prompts)
-
-**Correct understanding:**
-- ✅ Users describe goals in natural language
-- ✅ AI agents automatically use appropriate prompts
-- ✅ Prompts are workflow orchestrators, not user commands
+**Implementation:** [src/server/prompts.ts](src/server/prompts.ts)
 
 ## Development Commands
-
-Once bootstrapped (see plan.md Story 2):
 
 ```bash
 # Development
@@ -76,8 +67,7 @@ npm run start:local  # Start production server locally
 npm run lint         # Run ESLint
 npm run format       # Run Prettier
 npm run test         # Run all tests
-npm run test:watch   # Run tests in watch mode
-npm run test:coverage # Run tests with coverage
+npm run precommit    # Run build + lint + test (pre-commit hook)
 
 # Deployment
 npm pack             # Create tarball for inspection
@@ -88,572 +78,104 @@ npm publish          # Publish to NPM (after version bump)
 
 ### Core Components
 
-1. **HTTP Transport Layer** (`src/http/`)
-   - `app.ts`: Express application setup
-   - `transport.ts`: StreamableHTTPServerTransport wrapper
-   - Handles `/mcp` endpoint with POST/GET/DELETE methods
-   - Session management via Mcp-Session-Id headers
+1. **HTTP Transport** (`src/http/`) - Express app with `/mcp` endpoint (POST/GET/DELETE)
+2. **MCP Server** (`src/server/`) - McpServer factory, registers tools/resources/prompts
+3. **Spec Kit Tools** (`src/tools/`) - 26 tools across workflow, validation, quality categories
+4. **Spec Kit Modules** (`src/speckit/`) - Document detection, parsing, templates, validators
+5. **Configuration** (`src/config/`) - Zod schemas, Smithery config support
+6. **Security** (`src/security/`) - Origin validation, bearer token auth
 
-2. **MCP Server** (`src/server/`)
-   - `createServer.ts`: Factory for McpServer instances
-   - Registers tools, resources, and prompts
-   - **CRITICAL**: For stateless deployments, create new server/transport per request
+### Session Management
 
-3. **Spec Kit Tools** (`src/tools/`)
-   - Core workflow: `specify.ts`, `plan.ts`, `tasks.ts`
-   - Phase 1 additions: `constitution.ts`, `clarify.ts`, `validate.ts`, `refine.ts`, `prereqs.ts`
-   - Phase 2 additions: `visualize.ts`, `filter.ts`, `batch.ts`, `search.ts`, `stats.ts`
-   - Quality tools: `quality.ts` (lint, test, format, security, deps, license)
-   - Supporting tools: `artifacts.ts`, `research.ts`, `git.ts`, `workspace.ts`
+**Stateless (Serverless):** Create new server/transport per request
+**Stateful (Persistent):** Maintain session map with UUID session IDs
 
-4. **Spec Kit Modules** (`src/speckit/`)
-   - `detector.ts`: Document type detection (spec, plan, tasks)
-   - `parser.ts`: Markdown parsing and section manipulation
-   - `templates.ts`: Official Spec Kit markdown templates
-   - `validators.ts`: Quality checking (completeness, acceptance, clarifications, implementation)
-   - `taskParser.ts`: Task parsing and dependency graph analysis (Phase 2)
-
-5. **Configuration** (`src/config/`)
-   - `schema.ts`: Zod schemas for validation
-   - Handles Smithery ?config=<base64> parameter
-
-6. **Security** (`src/security/`)
-   - `origin.ts`: Origin validation middleware
-   - `auth.ts`: Bearer token/API key authentication
-
-## Session Management Patterns
-
-### Stateless Mode (Serverless/Lambda)
-```typescript
-// Create new instances per request
-app.post('/mcp', async (req, res) => {
-  const server = createServer();
-  const transport = new StreamableHTTPServerTransport({ 
-    sessionIdGenerator: undefined 
-  });
-  // Handle request...
-});
-```
-
-### Stateful Mode (Persistent Server)
-```typescript
-// Maintain session map
-const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
-// Use crypto.randomUUID() for session IDs
-```
-
-## Error Handling
-
-- Use `McpError` class with `ErrorCode` enum for protocol errors
-- All diagnostic output to `stderr` only (never stdout)
-- Wrap handlers in try-catch blocks
-- Return valid JSON-RPC error responses
-
-## Testing Strategy
+## Testing
 
 - Unit tests for each tool handler
 - Integration tests for HTTP endpoints
-- SSE stream tests for event framing
-- Session management tests
+- MCP protocol conformance tests
 - Coverage requirement: 90% statements
-
-## Deployment
-
-### Smithery (Recommended: ts-smithery-cli approach)
-
-#### Configuration Files
-1. **smithery.yaml** (not json):
-```yaml
-runtime: "typescript"
-```
-
-2. **package.json** updates:
-```json
-{
-  "scripts": {
-    "build": "npx @smithery/cli build",
-    "dev": "npx @smithery/cli dev"
-  }
-}
-```
-
-3. **Server Structure** (`src/index.ts`):
-```typescript
-export default function createServer({ config }) {
-  const server = new McpServer({ /* ... */ });
-  return server.server;
-}
-
-export const configSchema = z.object({
-  // Optional configuration schema
-});
-```
-
-#### Deployment Process
-- Push code to GitHub
-- Connect GitHub to Smithery
-- Navigate to Deployments tab
-- Click Deploy
-
-#### Migration Tools
-- Use @smithery-ai/migration-guide-mcp for guided migration
-- Tools available: validate_smithery_yaml, validate_package_json, create_migration_template
-
-### NPM
-- Ensure proper package.json exports
-- Build with tsup for ESM output
-- Include type definitions
-
-## MCP Prompts (Slash Commands)
-
-**New in v0.4.0:** DinCoder includes 7 MCP prompts that become slash commands in all MCP clients.
-
-### Registered Prompts
-
-| Prompt Name | Purpose | Arguments |
-|-------------|---------|-----------|
-| `start_project` | Initialize new project | `projectName`, `agent` (optional) |
-| `create_spec` | Create specification | `description` |
-| `generate_plan` | Generate implementation plan | `specPath` (optional) |
-| `create_tasks` | Break down into tasks | `planPath` (optional) |
-| `review_progress` | Generate progress report | None |
-| `validate_spec` | Check specification quality | `specPath` (optional) |
-| `next_tasks` | Show actionable tasks | `limit` (optional) |
-
-### Implementation Details
-
-**Location:** [src/server/prompts.ts](src/server/prompts.ts)
-
-**Registration:** Prompts are registered in `createServer.ts` via `registerPrompts(server)` when `capabilities.prompts` is enabled (default: true).
-
-**API Pattern:**
-```typescript
-server.prompt(
-  "prompt_name",
-  "Description of what this prompt does",
-  {
-    arg1: z.string().describe("Argument description"),
-    arg2: z.string().optional().describe("Optional argument")
-  },
-  async (args) => ({
-    messages: [
-      {
-        role: "user",
-        content: {
-          type: "text",
-          text: `Workflow instructions for AI agent...`
-        }
-      }
-    ]
-  })
-);
-```
-
-**Key Points:**
-- Each prompt returns a `GetPromptResult` with messages array
-- Arguments use Zod schemas for validation
-- Workflow instructions include comprehensive step-by-step guidance
-- AI receives full context automatically when prompt is invoked
-
-### Slash Command Formats
-
-**Claude Code / VS Code:**
-```
-/mcp__dincoder__start_project
-/mcp__dincoder__create_spec
-```
-
-**VS Code Copilot / OpenAI Codex:**
-```
-/mcp.dincoder.start_project
-/mcp.dincoder.create_spec
-```
-
-### Adding New Prompts
-
-1. Add prompt registration to `src/server/prompts.ts`:
-```typescript
-server.prompt(
-  "new_prompt_name",
-  "Description",
-  { /* Zod schema */ },
-  async (args) => ({ messages: [...] })
-);
-```
-
-2. Build and test:
-```bash
-npm run build
-npm test
-```
-
-3. Verify auto-discovery in your MCP client
-
-## Project Plan
-
-Refer to [plan.md](plan.md) for the complete roadmap:
-- **Total Stories:** 28 across 4 phases
-- **Current Status:** 27/28 complete (96%) - Phase 1 & 2 COMPLETE! 🎉🚀
-- **Current Version:** v0.4.0 (Integration & Discovery Update)
-- Each story contains granular 1-point tasks that can be completed independently
-
-## Version History & Lessons Learned
-
-### v0.4.0 - Integration & Discovery Update 🎯 (2025-10-16)
-
-**Milestone:** Universal slash commands for seamless integration!
-
-**Features Added:**
-- **MCP Prompts** (7 workflow prompts): `start_project`, `create_spec`, `generate_plan`, `create_tasks`, `review_progress`, `validate_spec`, `next_tasks`
-- **Auto-Discovery**: Prompts automatically become slash commands in all MCP clients
-- **Built-in Guidance**: Each prompt includes comprehensive workflow instructions
-- **Cross-Platform**: Works with Claude Code, VS Code Copilot, OpenAI Codex, Cursor
-
-**Implementation:**
-- Created `src/server/prompts.ts` module with 7 prompts (385 lines)
-- Modified `src/server/createServer.ts` to enable prompts capability
-- Used correct MCP SDK API: `server.prompt()` method
-- All prompts return structured `GetPromptResult` with workflow messages
-
-**Testing:**
-- 52 tests passing (100% pass rate)
-- Build: ✅ Success
-- Lint: ✅ Success
-- All quality gates passed
-
-**Impact:**
-- Zero-configuration discovery across all MCP clients
-- Consistent slash command experience everywhere
-- AI receives full workflow context automatically
-- Eliminates need to memorize tool names and parameters
-
-### v0.3.0 - Phase 2 Complete! 🎉🚀 (2025-10-16)
-
-**Milestone:** Advanced task management for large-scale projects (50+ tasks)!
-
-**Features Added:**
-- **Task Visualization** (`tasks_visualize`): Mermaid, Graphviz, ASCII dependency graphs
-- **Task Filtering** (`tasks_filter`): Smart presets (next, frontend, backend, ready, cleanup)
-- **Batch Operations** (`tasks_tick_range`): Range expansion, 10x efficiency for bulk completion
-- **Task Search** (`tasks_search`): Fuzzy matching with Levenshtein distance algorithm
-- **Task Statistics** (`tasks_stats`): Progress charts, blocker analysis, phase/type/priority breakdown
-
-**Testing:**
-- 52 tests passing (22 skipped edge cases)
-- 100% pass rate for enabled tests
-- Full MCP protocol conformance validated
-
-**Impact:**
-- 26 total MCP tools (21 Phase 1 + 5 Phase 2)
-- Advanced task management capabilities
-- Scalable for projects with 50+ tasks
-- Visual dependency analysis
-- Real-time progress tracking
-
-### v0.2.0 - Phase 1 Complete! 🎉 (2025-10-16)
-
-**Milestone:** 100% GitHub Spec Kit command parity for AI coding workflows!
-
-**Features Added:**
-- **Constitution Tool** (`constitution_create`): Project principles, constraints, and preferences
-- **Clarification Tracking** (`clarify_add`, `clarify_resolve`, `clarify_list`): Flag and resolve spec ambiguities
-- **Spec Validation** (`spec_validate`, `artifacts_analyze`): 4 validation rules for quality gates
-- **Spec Refinement** (`spec_refine`): Section-based iterative improvement
-- **Prerequisites Check** (`prereqs_check`): Environment validation (Node, npm, git, custom commands)
-
-**Testing:**
-- 52 tests passing (22 skipped edge cases)
-- 100% pass rate for enabled tests
-- Full MCP protocol conformance validated
-
-**Impact:**
-- All critical Spec Kit gaps identified in FEATURE_ANALYSIS.md are now addressed
-- Living documents that improve iteratively through AI workflows
-- Quality gates prevent incomplete specs from reaching implementation
-- Full parity with GitHub Spec Kit's CLI commands, optimized for MCP agents
-
-### v0.1.7 - Real Spec Kit Integration
-
-**Critical Features:**
-- Transformed from mock to authentic Spec-Driven Development
-- Created detector.ts, parser.ts, templates.ts for real markdown generation
-- CI/CD fix: Resolved smoke test failure by setting PORT=3000
-- Smithery deployment ready with base64 config support
-
-**Achievements:**
-- Published to NPM as mcp-dincoder
-- Complete CI/CD pipeline with GitHub Actions
-- Cached official Spec Kit templates locally
-- Backward compatibility (JSON + Markdown)
-- Full integration with Claude Desktop confirmed
-
-## Known Pitfalls to Avoid
-
-1. **Tool Naming Validation** ⚠️ CRITICAL: Tool names must match pattern `^[a-zA-Z0-9_-]{1,64}$` - no periods allowed
-2. **Console Logging** ⚠️ CRITICAL: Only `console.warn()` and `console.error()` are allowed in source code. `console.log()` is only permitted in `examples/` and `scripts/` directories. This is enforced by ESLint rule `no-console` to maintain production code quality.
-3. **External Dependencies**: MCP tools should be self-contained, not rely on external CLI tools
-4. **Request ID Collisions**: Always create new transport instances in stateless mode
-5. **Session ID Format**: Must be visible ASCII (0x21-0x7E) only
-6. **Timeout Issues**: Send progress updates for long-running operations (>60s)
-7. **Browser Compatibility**: Test session management in both Node.js and browser
-8. **STDIO Logging**: Never log to stdout when STDIO transport is active
-9. **Migration Deadline**: STDIO transport will be discontinued on Smithery by September 7, 2025
-10. **Transport Choice**: Always use Streamable HTTP for remote deployments (not STDIO)
-11. **Directory Structure**: Use consistent .dincoder/ directory for all generated artifacts
-
-## Session Recovery & Progress Tracking
-
-### Git-First Workflow (No TODO.md)
-
-**Philosophy:** Use frequent, atomic Git commits as the primary progress tracking mechanism. This eliminates redundancy and ensures session recovery is always reliable.
-
-### Why No TODO.md?
-
-- ✅ **plan.md** contains complete roadmap with all story tasks
-- ✅ **Git commits** track actual progress (more reliable than manual TODO updates)
-- ✅ **CHANGELOG.md** summarizes what shipped in each release
-- ✅ **Pre-commit hooks** ensure quality before each commit
-- ❌ **TODO.md was redundant** - everything in it was already in plan.md
-
-### Commit Frequency Guidelines
-
-**CRITICAL:** Commit frequently during development to ensure session recovery works.
-
-#### When to Commit (Atomic Milestones)
-
-Commit after completing each discrete unit of work:
-
-```bash
-# ✅ Created a new file
-git add src/speckit/validators.ts
-git commit -m "feat(validate): add validators module with 4 validation rules"
-
-# ✅ Completed a function
-git commit -am "feat(validate): implement checkCompleteness validator"
-
-# ✅ Wrote tests
-git add tests/tools/validate.test.ts
-git commit -m "test(validate): add 3 tests for completeness check"
-
-# ✅ Registered tool
-git commit -am "feat(validate): register spec_validate tool in server"
-
-# ✅ Updated docs
-git commit -am "docs(validate): add validation examples to README"
-
-# ✅ Fixed a bug
-git commit -am "fix(validate): handle missing sections correctly"
-```
-
-**Don't wait** to commit! Small, frequent commits are BETTER for recovery.
-
-#### Commit Message Format
+- **Current:** 52 tests passing (100% pass rate)
+
+## Known Pitfalls
+
+1. ⚠️ **Tool Names**: Must match `^[a-zA-Z0-9_-]{1,64}$` - no periods
+2. ⚠️ **Console Logging**: Only `console.warn()` and `console.error()` allowed in source. `console.log()` only in `examples/` and `scripts/`
+3. **External Dependencies**: Tools should be self-contained
+4. **Stateless Mode**: Always create new transport instances per request
+5. **Session IDs**: Must be visible ASCII (0x21-0x7E) only
+6. **STDIO**: Never log to stdout when STDIO transport active
+7. **Directory Structure**: Use `.dincoder/` for all generated artifacts
+
+## Commit Guidelines
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 <type>(<scope>): <description>
-
-[optional body]
-[optional footer]
 ```
 
-**Types:**
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `test`: Adding/updating tests
-- `refactor`: Code refactoring
-- `chore`: Maintenance tasks
-- `build`: Build system changes
-- `ci`: CI/CD changes
-
-**Scopes:** `validate`, `refine`, `clarify`, `prereqs`, `server`, etc.
+**Types:** feat, fix, docs, test, refactor, chore, build, ci
+**Scopes:** validate, refine, clarify, prereqs, server, etc.
 
 **Examples:**
 ```bash
-# Simple feature
 git commit -m "feat(validate): add spec_validate tool"
-
-# Feature with context
-git commit -m "feat(validate): add checkAcceptanceCriteria validator
-
-Validates that every feature has testable when/then criteria.
-Warns if acceptance section exists but has no bullets/criteria."
-
-# Feature with decision rationale
-git commit -m "feat(validate): use Zod for validation schemas
-
-DECISION: Use Zod instead of JSON Schema
-RATIONALE: Better TypeScript integration, already used in project
-IMPACT: All validation schemas are now type-safe"
-
-# Bug fix
-git commit -m "fix(validate): handle undefined section gracefully"
-
-# Tests
+git commit -m "fix(validate): handle missing sections correctly"
 git commit -m "test(validate): add 6 tests for section parser"
-
-# Documentation
-git commit -m "docs(validate): add validation workflow guide"
 ```
 
-**IMPORTANT:** Do NOT reference "Claude Code" or similar AI attribution in commit messages, documentation, or code comments. Keep commits professional and focused on the technical changes. Avoid phrases like:
-- ❌ "Generated with Claude Code"
-- ❌ "Co-Authored-By: Claude"
-- ❌ "Created by AI assistant"
+**Important:**
+- ✅ Commit frequently (after each discrete unit of work)
+- ✅ Small commits are better than large ones
+- ❌ Do NOT reference AI tools in commits (no "Generated with...", "Co-Authored-By: Claude", etc.)
+- ❌ Do NOT skip pre-commit hooks (they ensure quality)
 
-Keep commit messages clean and professional, describing only the technical work done.
+## Session Recovery
 
-### Session Recovery Process
+Use Git commits + plan.md to track progress:
 
-If a development session crashes or is interrupted:
+1. **Check completed work:** `git log --oneline --since="1 day ago"`
+2. **Check in-progress:** `git status` + `git diff`
+3. **Find next tasks:** Open plan.md, compare task list vs git log
+4. **Resume work:** Continue from first uncompleted task
 
-#### 1. Check What Was Completed
-```bash
-# See recent commits
-git log --oneline --since="1 day ago"
+**Pre-commit hook automatically runs:**
+- `npm run build:local` - TypeScript compilation
+- `npm run lint` - ESLint
+- `npm run test` - Full test suite
 
-# Output example:
-# abc123 test(validate): add 8 tests for validation tools
-# def456 feat(validate): register validation tools in server
-# ghi789 feat(validate): add spec_validate tool
-# jkl012 feat(validate): add validators module
-```
+Every commit is verified and deployable.
 
-#### 2. Check What's In Progress
-```bash
-# See uncommitted changes
-git status
+## Project Status
 
-# See actual changes
-git diff
-```
+**Current Version:** v0.4.2 (Documentation fixes for MCP prompts)
+**Tools:** 26 MCP tools + 7 prompts
+**Testing:** 52 tests passing (100% pass rate)
+**Progress:** 28/36 stories complete (78%)
 
-#### 3. Find Next Tasks
-```bash
-# Open plan.md
-# Find current story (e.g., Story 26)
-# Check task list against git log
-# Tasks with commits = done ✅
-# Tasks without commits = remaining ⏸️
-```
+See [plan.md](plan.md) for complete roadmap and version history.
 
-#### 4. Resume Work
-Continue from the first uncompleted task in plan.md.
+## Deployment
 
-### Example: Working on Story 26
+### Smithery (Recommended)
 
-**plan.md shows:**
-```markdown
-Story 26 — Spec Validation & Quality Gates
+1. **smithery.yaml**: `runtime: "typescript"`
+2. Push to GitHub, connect to Smithery
+3. Navigate to Deployments → Click Deploy
 
-Tasks:
-  • Create src/tools/validate.ts
-  • Create src/speckit/validators.ts
-  • Implement checkCompleteness()
-  • Implement checkAcceptanceCriteria()
-  • Register tools in createServer.ts
-  • Write unit tests
-  • Update README
-```
-
-**Git history shows:**
-```bash
-$ git log --oneline --since="1 day ago"
-abc123 feat(validate): implement checkAcceptanceCriteria
-def456 feat(validate): implement checkCompleteness
-ghi789 feat(validate): add validators module
-jkl012 feat(validate): add validate.ts with spec_validate tool
-```
-
-**Recovery logic:**
-- ✅ Create validate.ts (commit jkl012)
-- ✅ Create validators.ts (commit ghi789)
-- ✅ Implement checkCompleteness (commit def456)
-- ✅ Implement checkAcceptanceCriteria (commit abc123)
-- ⏸️ **Next:** Register tools in createServer.ts
-
-Resume from that point!
-
-### Pre-Commit Hook Integration
-
-Pre-commit hooks automatically run before each commit:
+### NPM
 
 ```bash
-npm run precommit
-# Runs:
-# - npm run build:local (TypeScript compilation)
-# - npm run lint (ESLint)
-# - npm run test (Full test suite)
+npm version patch  # Bump version
+npm publish --access public
+git push origin main --tags
 ```
 
-This ensures every commit:
-- ✅ Compiles successfully
-- ✅ Passes linting
-- ✅ Passes all tests
+## Reference
 
-**Result:** Every commit is deployable!
-
-### Progress Tracking Without TODO.md
-
-**Instead of TODO.md, use:**
-
-1. **Current Story:** Check plan.md → Current phase → Active stories
-2. **Tasks Done:** `git log --oneline --since="1 week ago"`
-3. **Tasks In Progress:** `git status` + `git diff`
-4. **Tasks Remaining:** Compare plan.md task list vs git log
-5. **What Shipped:** Check CHANGELOG.md
-
-### Release Process
-
-When completing a story or phase:
-
-1. **Verify all story tasks are committed:**
-   ```bash
-   git log --oneline --since="[start-date]" | grep "Story-26"
-   ```
-
-2. **Update CHANGELOG.md** with story summary
-
-3. **Bump version in package.json**
-
-4. **Create release commit:**
-   ```bash
-   git commit -am "chore: release v0.2.0"
-   ```
-
-5. **Create Git tag:**
-   ```bash
-   git tag -a v0.2.0 -m "Phase 1 Complete - Core Spec Kit Parity"
-   ```
-
-6. **Push with tags:**
-   ```bash
-   git push origin main --tags
-   ```
-
-7. **Create GitHub release** (via gh CLI or web UI)
-
-8. **Publish to npm:**
-   ```bash
-   npm publish
-   ```
-
-### Best Practices Summary
-
-1. ✅ **Commit frequently** - After each discrete unit of work
-2. ✅ **Use conventional commits** - `type(scope): description`
-3. ✅ **Include context** - Add "why" in commit body when needed
-4. ✅ **Trust the pre-commit hooks** - They ensure quality
-5. ✅ **Use plan.md as task source** - It's the master list
-6. ✅ **Use git log for progress** - It never lies
-7. ❌ **Don't batch commits** - Small is better
-8. ❌ **Don't skip pre-commit** - Quality gates exist for a reason
-9. ❌ **Don't maintain TODO.md** - It's redundant with git + plan.md
-
-## Reference Implementations
-
-- invariantlabs-ai/mcp-streamable-http
-- ferrants/mcp-streamable-http-typescript-server
-- modelcontextprotocol/typescript-sdk examples
+- [MCP Specification](https://modelcontextprotocol.io)
+- [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
+- [plan.md](plan.md) - Complete roadmap and version history
+- [CHANGELOG.md](CHANGELOG.md) - Release notes
