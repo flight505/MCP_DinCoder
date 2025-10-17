@@ -2,6 +2,145 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
+## [0.5.0] - 2025-10-17
+
+### Added - Claude Code Plugin (Strategy B) 🔌
+
+**Milestone:** Premium bundled experience for Claude Code users!
+
+#### Claude Code Plugin Repository Created ✅
+- **New Repository:** `dincoder-plugin` (sibling to main repo)
+- **Installation:** `/plugin install dincoder/claude-plugin`
+- **One-command setup** - Everything bundled and auto-configured
+
+#### Plugin Components
+
+**Slash Commands** (6 total):
+- `/spec` - Create or refine specification
+- `/plan` - Generate implementation plan
+- `/tasks` - Break down into actionable tasks
+- `/progress` - View progress report with analytics
+- `/validate` - Check specification quality
+- `/next` - Show next actionable tasks
+
+**Specialized Agents** (3 total):
+- `@spec-writer` - Expert at creating validated specifications
+  - Guides through discovery, drafting, validation, refinement phases
+  - Uses tools: `specify_start`, `specify_describe`, `spec_validate`, `spec_refine`, `clarify_add/resolve`
+- `@plan-architect` - Expert at designing technical implementation plans
+  - Handles technical discovery, plan creation, validation, decision documentation
+  - Uses tools: `plan_create`, `artifacts_analyze`, `research_append`
+- `@task-manager` - Expert at managing tasks, tracking progress, optimizing workflow
+  - Capabilities: task generation, progress tracking, filtering, search, dependency management, batch operations
+  - Uses tools: `tasks_generate`, `tasks_visualize`, `tasks_filter`, `tasks_search`, `tasks_stats`, `tasks_tick/tick_range`
+
+**MCP Server Integration**:
+- `.mcp.json` configures `mcp-dincoder@latest` automatically
+- No manual MCP setup required
+- Version-locked for stability
+
+**Documentation**:
+- `CLAUDE.md` - Comprehensive methodology guide (auto-loaded in Claude Code)
+- `README.md` - User-facing installation and usage guide
+- Workflow examples and best practices
+- Quality gates and tips
+
+#### Plugin Structure
+
+```
+dincoder-plugin/
+├── .claude-plugin/
+│   └── plugin.json          # Plugin manifest (v0.5.0)
+├── commands/
+│   ├── spec.md
+│   ├── plan.md
+│   ├── tasks.md
+│   ├── progress.md
+│   ├── validate.md
+│   └── next.md
+├── agents/
+│   ├── spec-writer.md
+│   ├── plan-architect.md
+│   └── task-manager.md
+├── .mcp.json               # MCP server configuration
+├── CLAUDE.md                # Plugin documentation
+├── README.md                # Installation guide
+├── LICENSE                  # MIT license
+└── .gitignore
+```
+
+#### Plugin vs MCP Server Only
+
+| Feature | Plugin | MCP Server Only |
+|---------|--------|-----------------|
+| **Slash Commands** | ✅ `/spec`, `/plan`, etc. | ❌ Use tool names directly |
+| **Specialized Agents** | ✅ `@spec-writer`, etc. | ❌ Not available |
+| **Documentation** | ✅ Auto-loaded CLAUDE.md | ❌ Manual reference |
+| **Installation** | ✅ One command | ⚠️ Manual MCP config |
+| **Updates** | ✅ Version-locked | ⚠️ Manual upgrade |
+
+### Changed
+
+**Main Repository Updates**:
+- **README.md:** Added "Claude Code Plugin (Premium Experience)" section after MCP Prompts
+- **Version:** Bumped to 0.5.0 in package.json
+- **Documentation:** Highlighted plugin as recommended experience for Claude Code users
+
+**Integration Strategy**:
+- Strategy A (MCP Prompts): ✅ Complete (v0.4.0)
+- Strategy B (Claude Code Plugin): ✅ Complete (v0.5.0)
+- Strategy C+D (VS Code/Codex): 📋 Next
+- Strategy E (Templates): 📋 Planned
+
+### Technical Details
+
+- **Plugin Files:** 15 files (plugin.json, 6 commands, 3 agents, 5 supporting files)
+- **Total Lines:** 1,296 lines of documentation and workflow guidance
+- **Git Repository:** Initialized with initial commit
+- **License:** MIT
+- **Compatible With:** Claude Code 2.0.13+
+
+### Impact
+
+- **Best Experience:** Plugin provides the most streamlined Claude Code workflow
+- **Discoverability:** Slash commands visible in command palette
+- **Expert Guidance:** Agents provide phase-specific expertise
+- **Automatic Updates:** Plugin version locks MCP server version
+- **Team Sharing:** Plugin can be distributed via marketplaces
+
+### Next Steps
+
+**Plugin Repository Tasks**:
+1. Create GitHub repository `dincoder/claude-plugin`
+2. Push initial commit
+3. Test plugin installation locally
+4. Publish to Claude Code marketplace
+5. Update main repo README with marketplace link
+
+**Documentation Tasks**:
+1. Add plugin section to main README ✅
+2. Update CHANGELOG with v0.5.0 ✅
+3. Update plan.md to mark Story 35 complete
+4. Commit and tag v0.5.0
+
+**Recommended for Users**:
+- Claude Code users: Install the plugin for best experience
+- VS Code/Codex users: Use MCP server directly (for now)
+- Universal access: MCP prompts work everywhere
+
+### Story 35 Status
+
+✅ **COMPLETE** - All deliverables achieved:
+- ✅ Created dincoder-plugin repository structure
+- ✅ Implemented 6 slash commands
+- ✅ Created 3 specialized agents
+- ✅ Added MCP server configuration
+- ✅ Wrote comprehensive documentation
+- ✅ Initialized git repository
+- ✅ Ready for GitHub publication
+
+---
+
 ## [0.4.2] - 2025-10-17
 
 ### Fixed - Documentation Corrections for MCP Prompts 📚

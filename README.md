@@ -457,6 +457,54 @@ MCP prompts work across all MCP-compatible clients:
 
 ---
 
+## 🔌 Claude Code Plugin (Premium Experience)
+
+**New in v0.5.0:** For the best Claude Code experience, install the **DinCoder Plugin** which bundles slash commands, specialized agents, and the MCP server into a single package.
+
+### Installation
+
+```bash
+# In Claude Code
+/plugin install dincoder/claude-plugin
+```
+
+After installation, restart Claude Code to activate the plugin.
+
+### What's Included
+
+✨ **Slash Commands** - Quick access without memorizing tool names
+- `/spec` - Create or refine specification
+- `/plan` - Generate implementation plan
+- `/tasks` - Break down into actionable tasks
+- `/progress` - View progress report
+- `/validate` - Check spec quality
+- `/next` - Show next actionable tasks
+
+🤖 **Specialized Agents** - Expert assistance for each phase
+- `@spec-writer` - Expert at creating validated specifications
+- `@plan-architect` - Expert at designing technical plans
+- `@task-manager` - Expert at managing tasks and progress
+
+🔧 **Automatic MCP Server** - Installs and configures `mcp-dincoder` automatically
+
+📝 **Built-in Documentation** - CLAUDE.md loads automatically with methodology guide
+
+### Plugin vs MCP Server Only
+
+| Feature | Plugin | MCP Server Only |
+|---------|--------|-----------------|
+| **Slash Commands** | ✅ `/spec`, `/plan`, etc. | ❌ Use tool names directly |
+| **Specialized Agents** | ✅ `@spec-writer`, etc. | ❌ Not available |
+| **Documentation** | ✅ Auto-loaded CLAUDE.md | ❌ Manual reference |
+| **Installation** | ✅ One command | ⚠️ Manual MCP config |
+| **Updates** | ✅ Version-locked | ⚠️ Manual upgrade |
+
+**Recommendation:** Use the plugin for the best experience. Only use the MCP server directly if you're on VS Code, Codex, or another MCP client.
+
+**Plugin Repository:** [dincoder/claude-plugin](https://github.com/dincoder/claude-plugin)
+
+---
+
 ## 🚦 Complete Workflow Guide
 
 This is your end-to-end guide for using DinCoder with any AI agent (Claude, Copilot, Gemini, Cursor).
