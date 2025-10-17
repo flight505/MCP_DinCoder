@@ -1,0 +1,17 @@
+{
+  "entryFile": "src/index.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/**/*Controller.ts"],
+  "spec": {
+    "outputDirectory": "contracts",
+    "specVersion": 3,
+    "name": "DinCoder API",
+    "description": "Generated OpenAPI specification from DinCoder specs",
+    "version": "1.0.0",
+    "yaml": true,
+    "basePath": "/api"
+  },
+  "routes": {
+    "routesDir": "src/routes"
+  }
+}

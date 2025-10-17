@@ -1,7 +1,7 @@
 # DinCoder Roadmap
 
-> **Current Version:** v0.6.0 (VS Code & Codex Integration)
-> **Status:** 30/36 stories complete (83%)
+> **Current Version:** v0.7.0 (Project Templates - Strategy E)
+> **Status:** 31/42 stories complete (74%) - Phase 4 detailed planning complete!
 > **Last Updated:** 2025-10-17
 
 ## Vision
@@ -83,41 +83,86 @@ Transform spec-driven development into a seamless, integrated experience across 
 
 ---
 
+### Phase 3.3: Project Templates (v0.7.0) - Released 2025-10-17
+**Goal:** Pre-configured templates for common project types
+
+✅ **Deliverables:**
+- 4 project type templates (web-app, api-service, mobile-app, cli-tool)
+- Pre-configured constitutions with best practices (~200 lines each)
+- Sample spec-example.md showing proper structure
+- Technology stack recommendations for each type
+- Comprehensive master README (~250 lines)
+- Complete integration with DinCoder constitution tool
+- 1,160+ lines of template content
+
+**Result:** Instant project setup with opinionated best practices built-in
+
+---
+
 ## Current Sprint 🚀
 
-### Phase 3.3: Project Templates (v0.7.0)
-**Timeline:** 1 week
-**Status:** 📋 In Planning
+### Phase 4: Advanced Features (v0.8.0)
+**Timeline:** 3 weeks
+**Status:** 📋 Detailed Planning Complete - Ready for Implementation
 
-**Features:**
-- Project type templates (web-app, api-service, mobile-app, cli-tool)
-- Pre-configured constitution.md for each type
-- Sample spec.md structures
-- Common architectural patterns
-- Technology stack recommendations
-- Template customization guide
+**Research-Backed Tool Choices:**
+- **tsoa** - TypeScript-to-OpenAPI generation (most comprehensive 2025 tool)
+- **markdownlint** - Industry-standard markdown linting (Node.js)
+- **DORA Metrics** - Research-backed performance indicators
+- **SPACE Metrics** - Alternative to problematic velocity tracking
+- **Cycle Time** - More actionable than velocity
 
-**Why:** Instant project setup with best practices built-in
+**New Tools (6):**
+
+1. **`contracts_generate`** - OpenAPI 3.1/GraphQL schema generation
+   - TypeScript-to-OpenAPI with tsoa integration
+   - Extract contracts from spec.md automatically
+   - GraphQL SDL generation support
+   - Contract versioning with breaking change detection
+
+2. **`templates_customize`** - Template customization with hooks
+   - Override system for built-in templates
+   - Before/after/transform/validate hooks
+   - Variable substitution and inheritance
+   - Multi-level template inheritance
+
+3. **`templates_list`** - Template discovery
+   - List all built-in and custom templates
+   - Show customization points
+   - Display current overrides
+   - Hook status reporting
+
+4. **`metrics_report`** - DORA-aligned metrics tracking
+   - DORA metrics (Deployment Frequency, Lead Time, Change Failure Rate)
+   - SPACE metrics (Performance, Activity, Communication, Efficiency)
+   - Cycle time analysis (spec → plan → tasks)
+   - Trend detection (7-day MA, period-over-period)
+   - ⚠️ Avoids velocity-as-performance metric trap
+
+5. **`metrics_export`** - Metrics export
+   - CSV format (Excel-compatible)
+   - JSON format (API-compatible)
+   - Custom date ranges
+   - Burndown charts with projections
+
+6. **`spec_lint`** - Automated spec quality checking
+   - markdownlint integration
+   - 7+ spec-specific lint rules
+   - Prose quality checking (passive voice, vague language)
+   - Auto-fix capability for simple issues
+   - Configurable severity levels
+
+**Total Tools After Phase 4:** 32 (26 existing + 6 new)
+
+**Why:** Enterprise-grade features for contract-first development, quality automation, and metrics tracking
 
 ---
 
 ## Upcoming Releases 📋
 
-### Phase 4: Advanced Features (v0.8.0)
-**Timeline:** 3 weeks
+### Phase 5: Production Polish (v1.0.0)
+**Timeline:** 2 weeks
 **Status:** Planned
-
-**New Tools:**
-1. **`contracts_generate`** - Auto-generate OpenAPI/GraphQL schemas from specs
-2. **`templates_customize`** - Override default Spec Kit templates
-3. **`metrics_report`** - Track project velocity and spec quality
-4. **`spec_lint`** - Automated spec quality checking
-5. **`diagram_generate`** - Visual architecture diagrams from plans
-6. **`project_bootstrap`** - One-command full project setup
-
-**Total Tools:** 32+
-
-**Why:** Power-user features and extensibility
 
 ---
 

@@ -88,6 +88,10 @@ import {
   TasksStatsSchema,
   tasksStats,
 } from '../tools/stats.js';
+import {
+  ContractsGenerateSchema,
+  contractsGenerate,
+} from '../tools/contracts.js';
 import { registerPrompts } from './prompts.js';
 
 /**
@@ -376,6 +380,24 @@ function registerTools(server: McpServer): void {
           {
             type: 'text',
             text: result,
+          },
+        ],
+      };
+    }
+  );
+
+  // Contract generation tools
+  server.tool(
+    'contracts_generate',
+    'Generate OpenAPI 3.1, GraphQL, or JSON Schema contracts from specifications. Supports automatic extraction from spec.md or TypeScript code using tsoa.',
+    ContractsGenerateSchema.shape,
+    async (params) => {
+      const result = await contractsGenerate(ContractsGenerateSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
           },
         ],
       };
