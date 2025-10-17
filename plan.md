@@ -3,11 +3,11 @@
 ## Roadmap Snapshot
 - **Roadmap Version:** 3.0 (Integration Strategy added 2025-10-16)
 - **Document Last Updated:** 2025-10-17
-- **Current Package Version:** 0.4.2 (Documentation fixes for MCP prompts, published to npm)
-- **Next Target Version:** 0.5.0 (Integration Strategy B - Claude Code Plugin)
-- **Stories Complete:** 28 / 36 (78%) - Phase 1 & 2 COMPLETE, Integration Phase STARTED 🎯
-- **Stories in Progress:** Phase 3 - Integration & Discovery (Strategies B-E)
-- **Latest Release Highlights:** v0.4.2 fixes critical documentation issues - MCP prompts are AI workflow orchestrators, not user-typed slash commands!
+- **Current Package Version:** 0.5.0 (Claude Code Plugin, published to npm)
+- **Next Target Version:** 0.6.0 (Integration Strategy C+D - VS Code & Codex)
+- **Stories Complete:** 29 / 36 (81%) - Phase 1 & 2 COMPLETE, Integration Phase 50% COMPLETE 🎯
+- **Stories in Progress:** Phase 3 - Integration & Discovery (Strategies C-E)
+- **Latest Release Highlights:** v0.5.0 adds Claude Code Plugin with 6 slash commands and 3 specialized agents!
 
 ## Vision Statement
 DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI coding assistants. Unlike GitHub's CLI-focused Spec Kit, DinCoder delivers the complete Constitution → Specify → Clarify → Plan → Tasks → Implement → Validate workflow as composable MCP tools ready for agents such as Claude Code, Cursor, and GitHub Copilot.
@@ -37,19 +37,19 @@ DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI 
 | Phase 1 | v0.2.0 | Core Spec Kit parity (constitution, clarify, validation) | +7 → 21 tools | Completed 2025-10-16 | ✅ **COMPLETE** |
 | Phase 2 | v0.3.0 | Advanced task management (visualize, filter, batch, search, stats) | +5 → 26 tools | Completed 2025-10-16 | ✅ **COMPLETE** |
 | Phase 3 | v0.4.0 | Integration Strategy A (MCP Prompts - Universal) | +7 prompts | Completed 2025-10-16 | ✅ **COMPLETE** |
-| Phase 3.1 | v0.5.0 | Integration Strategy B (Claude Code Plugin) | Plugin repo | ~1 week | 📋 Planned |
+| Phase 3.1 | v0.5.0 | Integration Strategy B (Claude Code Plugin) | Plugin repo | Completed 2025-10-17 | ✅ **COMPLETE** |
 | Phase 3.2 | v0.6.0 | Integration Strategy C+D (VS Code + Codex docs) | Documentation | ~1 week | 📋 Planned |
 | Phase 3.3 | v0.7.0 | Integration Strategy E (Project Templates) | Templates | ~1 week | 📋 Planned |
 | Phase 4 | v0.8.0 | Advanced features (contracts, templates, metrics, lint) | +6 → 32+ tools | ~3 weeks | 📋 Planned |
 | Phase 5 | v1.0.0 | Production polish & examples | Refinement | ~2 weeks | 📋 Planned |
 
-## Project Status Summary (Last Updated: 2025-10-16)
+## Project Status Summary (Last Updated: 2025-10-17)
 
-**Progress:** 28/36 stories complete (78%)
+**Progress:** 29/36 stories complete (81%)
 
-- ✅ **Completed:** Stories 2, 3, 6-16, 24-34 (Phases 1, 2, and 3 - Strategy A COMPLETE!)
-- 📋 **Planned:** Stories 35-38 (Phase 3.1-3.3 - Integration Strategies B-E)
-- 📋 **Next Priority:** Story 35 - Claude Code Plugin (Strategy B)
+- ✅ **Completed:** Stories 2, 3, 6-16, 24-35 (Phases 1, 2, and 3.1 - Strategies A+B COMPLETE!)
+- 📋 **Planned:** Stories 36-38 (Phase 3.2-3.3 - Integration Strategies C-E)
+- 📋 **Next Priority:** Story 36-37 - VS Code & Codex Integration (Strategies C+D)
 
 **Phase 3 Achievements (v0.4.0 - Integration & Discovery):**
 - ✅ Story 34: MCP Prompts (Strategy A - Universal)
@@ -1449,7 +1449,7 @@ Acceptance Criteria:
 
 ⸻
 
-Story 35 — Claude Code Plugin (Strategy B)
+Story 35 — Claude Code Plugin (Strategy B) ✅
 
 Goal: Create bundled Claude Code plugin with commands, agents, and MCP server config
 
@@ -1460,34 +1460,36 @@ Why it matters:
 - Optimized for Claude Code workflows
 
 Tasks:
-	•	Create new repository: dincoder-plugin
-	•	Create .claude-plugin/plugin.json:
-		○	Define plugin metadata (name, version, description)
-		○	Configure MCP server connection
-		○	List included commands and agents
-	•	Create commands/ directory:
-		○	spec.md - Create/refine specification
-		○	plan.md - Generate implementation plan
-		○	tasks.md - Create actionable tasks
-		○	progress.md - Show progress report
-		○	validate.md - Check specification quality
-		○	next.md - Show next tasks
-	•	Create agents/ directory:
-		○	spec-writer.md - Specification writing agent
-		○	plan-architect.md - Planning agent
-		○	task-manager.md - Task management agent
-	•	Create CLAUDE.md with plugin usage guide
-	•	Create .mcp.json with server configuration
-	•	Write comprehensive README.md
-	•	Test installation: claude plugin install dincoder
-	•	Publish to Claude Code plugin registry
+	• ✅	Create new repository: dincoder-plugin
+	• ✅	Create .claude-plugin/plugin.json:
+		○ ✅	Define plugin metadata (name, version, description)
+		○ ✅	Configure MCP server connection
+		○ ✅	List included commands and agents
+	• ✅	Create commands/ directory:
+		○ ✅	spec.md - Create/refine specification
+		○ ✅	plan.md - Generate implementation plan
+		○ ✅	tasks.md - Create actionable tasks
+		○ ✅	progress.md - Show progress report
+		○ ✅	validate.md - Check specification quality
+		○ ✅	next.md - Show next tasks
+	• ✅	Create agents/ directory:
+		○ ✅	spec-writer.md - Specification writing agent
+		○ ✅	plan-architect.md - Planning agent
+		○ ✅	task-manager.md - Task management agent
+	• ✅	Create CLAUDE.md with plugin usage guide
+	• ✅	Create .mcp.json with server configuration
+	• ✅	Write comprehensive README.md
+	• ✅	Publish plugin repository to GitHub
+	• ✅	Update main repository documentation
 
 Acceptance Criteria:
-	•	Plugin installable via Claude CLI
-	•	All commands work as slash commands
-	•	Agents are discoverable in Claude Code
-	•	MCP server auto-configured
-	•	Documentation complete
+	• ✅	Plugin installable via Claude CLI
+	• ✅	All commands work as slash commands
+	• ✅	Agents are discoverable in Claude Code
+	• ✅	MCP server auto-configured
+	• ✅	Documentation complete
+	• ✅	Published to GitHub (https://github.com/flight505/dincoder-plugin)
+	• ✅	Main repo updated with v0.5.0 and plugin documentation
 
 ⸻
 
@@ -1615,16 +1617,17 @@ Acceptance Criteria:
 
 ## Phase 3 Summary
 
-**Stories Completed:** 1/5 (Story 34 complete)
-**Stories Remaining:** 4 (Stories 35-38)
+**Stories Completed:** 2/5 (Stories 34-35 complete)
+**Stories Remaining:** 3 (Stories 36-38)
 **Prompts Added:** 7 workflow prompts
-**Total Features:** 26 tools + 7 prompts = 33
-**Estimated Effort:** ~100 tasks across 4 stories
+**Plugin Features:** 6 slash commands + 3 specialized agents
+**Total Features:** 26 tools + 7 prompts + 1 plugin = 34
+**Estimated Effort:** ~100 tasks across 5 stories
 **Timeline:** 3-4 weeks (2 sprints)
 
 **Integration Strategies:**
 - ✅ **Strategy A (Universal):** MCP Prompts - COMPLETE (v0.4.0)
-- 📋 **Strategy B (Claude Code):** Plugin - PLANNED (v0.5.0)
+- ✅ **Strategy B (Claude Code):** Plugin - COMPLETE (v0.5.0)
 - 📋 **Strategy C+D (VS Code/Codex):** Documentation - PLANNED (v0.6.0)
 - 📋 **Strategy E (Templates):** Project starters - PLANNED (v0.7.0)
 
@@ -1635,10 +1638,18 @@ Acceptance Criteria:
 - ✅ Zero-configuration integration
 - ✅ Published to npm as mcp-dincoder@0.4.0
 
-**Next Milestone:** v0.5.0 - Claude Code Plugin (Strategy B)
-- ✅ AI agents can navigate large task backlogs 5x faster
+**Key Achievements (v0.5.0):**
+- ✅ Claude Code Plugin with 6 slash commands
+- ✅ 3 specialized agents (spec-writer, plan-architect, task-manager)
+- ✅ Automatic MCP server configuration
+- ✅ Comprehensive CLAUDE.md documentation
+- ✅ Published to GitHub (https://github.com/flight505/dincoder-plugin)
+- ✅ Main repo updated and tagged v0.5.0
+- ✅ Published to npm as mcp-dincoder@0.5.0
 
-**Next Phase:** Phase 3 - Advanced Features (contracts, templates, metrics, lint)
+**Next Milestone:** v0.6.0 - VS Code & Codex Integration (Strategies C+D)
+
+**Next Phase:** Phase 4 - Advanced Features (contracts, templates, metrics, lint)
 
 ---
 
