@@ -92,6 +92,12 @@ import {
   ContractsGenerateSchema,
   contractsGenerate,
 } from '../tools/contracts.js';
+import {
+  TemplatesListSchema,
+  TemplatesCustomizeSchema,
+  templatesList,
+  templatesCustomize,
+} from '../tools/templates-mgmt.js';
 import { registerPrompts } from './prompts.js';
 
 /**
@@ -393,6 +399,41 @@ function registerTools(server: McpServer): void {
     ContractsGenerateSchema.shape,
     async (params) => {
       const result = await contractsGenerate(ContractsGenerateSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
+
+  // Template management tools
+  server.tool(
+    'templates_list',
+    'List all available templates (built-in and custom). Filter by category and discover customization points.',
+    TemplatesListSchema.shape,
+    async (params) => {
+      const result = await templatesList(TemplatesListSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
+
+  server.tool(
+    'templates_customize',
+    'Create or update template customization with hooks, variable substitution, and inheritance. Supports before/after/transform/validate hooks.',
+    TemplatesCustomizeSchema.shape,
+    async (params) => {
+      const result = await templatesCustomize(TemplatesCustomizeSchema.parse(params));
       return {
         content: [
           {
