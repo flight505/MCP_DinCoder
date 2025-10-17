@@ -104,6 +104,10 @@ import {
   metricsReport,
   metricsExport,
 } from '../tools/metrics.js';
+import {
+  SpecLintSchema,
+  specLint,
+} from '../tools/lint.js';
 import { registerPrompts } from './prompts.js';
 
 /**
@@ -480,6 +484,24 @@ function registerTools(server: McpServer): void {
           {
             type: 'text',
             text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
+
+  // Linting tools
+  server.tool(
+    'spec_lint',
+    'Automated spec quality checking with markdownlint, spec-specific rules, and prose quality analysis. Checks for required sections, acceptance criteria format, passive voice, vague language, and more. Supports auto-fix for simple issues.',
+    SpecLintSchema.shape,
+    async (params) => {
+      const result = await specLint(SpecLintSchema.parse(params));
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result.report || JSON.stringify(result, null, 2),
           },
         ],
       };

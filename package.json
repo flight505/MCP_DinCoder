@@ -70,6 +70,8 @@
     "@smithery/sdk": "^1.6.8",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "markdownlint": "^0.39.0",
+    "markdownlint-rule-helpers": "^0.30.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
