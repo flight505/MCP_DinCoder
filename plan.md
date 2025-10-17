@@ -505,13 +505,20 @@ Goal: Serve older clients during a transition (if needed).
 
 v0.4.1 was already published 23 hours ago with the OLD documentation. Since npm doesn't allow overwriting published versions, we bumped to v0.4.2 to publish the corrected documentation.
 
-### Next Steps (Post-Publication)
+### Publication Complete! ✅
 
 1. ✅ Version bumped to v0.4.2
-2. Publishing to npm in progress...
-3. Create Git tag after successful publish
-4. Push commits and tags to GitHub
-5. Verify package on https://www.npmjs.com/package/mcp-dincoder
+2. ✅ Published to npm successfully
+3. ✅ Git tag v0.4.2 created
+4. ✅ Commits and tags pushed to GitHub
+5. ✅ Verified live on https://www.npmjs.com/package/mcp-dincoder
+
+**Install the corrected version:**
+```bash
+npm install -g mcp-dincoder@latest
+# or
+npx -y mcp-dincoder@latest
+```
 
 ⸻
 
