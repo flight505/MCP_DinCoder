@@ -2,7 +2,7 @@
 
 All notable changes to the DinCoder MCP Server project will be documented in this file.
 
-## [0.4.1] - 2025-10-17
+## [0.4.2] - 2025-10-17
 
 ### Fixed - Documentation Corrections for MCP Prompts 📚
 

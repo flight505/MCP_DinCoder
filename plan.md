@@ -3,11 +3,11 @@
 ## Roadmap Snapshot
 - **Roadmap Version:** 3.0 (Integration Strategy added 2025-10-16)
 - **Document Last Updated:** 2025-10-17
-- **Current Package Version:** 0.4.1 (Documentation fixes for MCP prompts, ready for npm)
+- **Current Package Version:** 0.4.2 (Documentation fixes for MCP prompts, published to npm)
 - **Next Target Version:** 0.5.0 (Integration Strategy B - Claude Code Plugin)
 - **Stories Complete:** 28 / 36 (78%) - Phase 1 & 2 COMPLETE, Integration Phase STARTED 🎯
 - **Stories in Progress:** Phase 3 - Integration & Discovery (Strategies B-E)
-- **Latest Release Highlights:** v0.4.1 fixes critical documentation issues - MCP prompts are AI workflow orchestrators, not user-typed slash commands!
+- **Latest Release Highlights:** v0.4.2 fixes critical documentation issues - MCP prompts are AI workflow orchestrators, not user-typed slash commands!
 
 ## Vision Statement
 DinCoder is a fully-fledged Spec-Driven Development MCP server optimized for AI coding assistants. Unlike GitHub's CLI-focused Spec Kit, DinCoder delivers the complete Constitution → Specify → Clarify → Plan → Tasks → Implement → Validate workflow as composable MCP tools ready for agents such as Claude Code, Cursor, and GitHub Copilot.
@@ -421,7 +421,7 @@ Goal: Serve older clients during a transition (if needed).
 
 ⸻
 
-## Lessons Learned from v0.4.1 Release
+## Lessons Learned from v0.4.2 Release
 
 ### Critical Documentation Issue Discovered
 
@@ -495,20 +495,23 @@ Goal: Serve older clients during a transition (if needed).
 
 ### Key Metrics
 
-- **Version:** 0.4.1 ready for npm publication
+- **Version:** 0.4.2 published to npm
 - **Tests:** 52/52 tests passing (100% pass rate) - no code changes
 - **Files Changed:** 4 documentation files (README.md, CLAUDE.md, CHANGELOG.md, PUBLISH_INSTRUCTIONS.md)
 - **Impact:** Critical user experience improvement
-- **Publication Status:** ⚠️ NOT YET PUBLISHED - awaiting npm publish
+- **Publication Status:** ✅ PUBLISHED to npm (v0.4.2)
 
-### Next Steps
+### What Happened
 
-1. User runs `npm publish --access public` to publish v0.4.1 to npm
-2. Verify package appears on https://www.npmjs.com/package/mcp-dincoder
-3. Test installation: `npm install -g mcp-dincoder@latest`
-4. Verify MCP prompts work correctly (AI uses them automatically)
-5. Create Git tag: `git tag -a v0.4.1 -m "v0.4.1 - Documentation fixes"`
-6. Create GitHub release with detailed changelog
+v0.4.1 was already published 23 hours ago with the OLD documentation. Since npm doesn't allow overwriting published versions, we bumped to v0.4.2 to publish the corrected documentation.
+
+### Next Steps (Post-Publication)
+
+1. ✅ Version bumped to v0.4.2
+2. Publishing to npm in progress...
+3. Create Git tag after successful publish
+4. Push commits and tags to GitHub
+5. Verify package on https://www.npmjs.com/package/mcp-dincoder
 
 ⸻
 
