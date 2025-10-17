@@ -564,16 +564,16 @@ dincoder-plugin/
 {
   "name": "dincoder",
   "description": "Spec-driven development workflow with DinCoder MCP server. Transform ideas into implementation through structured specifications, technical plans, and actionable tasks.",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "author": {
     "name": "DinCoder Team",
     "email": "support@dincoder.dev",
     "url": "https://github.com/dincoder"
   },
-  "homepage": "https://github.com/dincoder/claude-plugin",
+  "homepage": "https://github.com/flight505/dincoder-plugin",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dincoder/claude-plugin.git"
+    "url": "https://github.com/flight505/dincoder-plugin.git"
   },
   "license": "MIT",
   "keywords": [
@@ -581,7 +581,8 @@ dincoder-plugin/
     "planning",
     "task-management",
     "spec-driven",
-    "workflow"
+    "workflow",
+    "mcp-server"
   ],
   "mcpServers": {
     "dincoder": {
@@ -1644,7 +1645,7 @@ Type `@` to access agents:
 ```bash
 # In any project
 claude
-> /plugin install dincoder/claude-plugin
+> /plugin install flight505/dincoder-plugin
 ```
 
 **Plugin automatically:**
@@ -1674,7 +1675,7 @@ claude
 
 **Completed:** 2025-10-17
 **Repository:** https://github.com/flight505/dincoder-plugin
-**Installation:** `/plugin install dincoder/claude-plugin` (when published to marketplace)
+**Installation:** `/plugin install flight505/dincoder-plugin` (when published to marketplace)
 
 ---
 
@@ -2109,10 +2110,10 @@ template-universal/
 **Create from template:**
 ```bash
 # GitHub CLI
-gh repo create my-project --template dincoder/template-claude
+gh repo create my-project --template flight505/template-claude
 
 # GitHub Web UI
-# Use template → dincoder/template-claude
+# Use template → flight505/template-claude
 
 cd my-project
 claude  # or code . or codex
