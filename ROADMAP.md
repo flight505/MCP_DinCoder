@@ -1,8 +1,8 @@
 # DinCoder Roadmap
 
-> **Current Version:** v0.4.0 (Integration & Discovery Update)
-> **Status:** 28/36 stories complete (78%)
-> **Last Updated:** 2025-10-16
+> **Current Version:** v0.6.0 (VS Code & Codex Integration)
+> **Status:** 30/36 stories complete (83%)
+> **Last Updated:** 2025-10-17
 
 ## Vision
 
@@ -54,61 +54,54 @@ Transform spec-driven development into a seamless, integrated experience across 
 
 ---
 
-## Current Sprint 🚀
-
-### Phase 3.1: Claude Code Plugin (v0.5.0) - In Planning
+### Phase 3.1: Claude Code Plugin (v0.5.0) - Released 2025-10-17
 **Goal:** Premium bundled experience for Claude Code users
-**Timeline:** 1 week
-**Status:** 📋 Planned
 
-**Features:**
+✅ **Features:**
 - Native `/spec`, `/plan`, `/tasks` slash commands (no prefix)
 - Specialized agents: `@spec-writer`, `@plan-architect`, `@task-manager`
 - Bundled CLAUDE.md with methodology documentation
 - One-command install: `/plugin install dincoder`
 
-**Repository:** `dincoder/claude-plugin` (separate repo)
+**Repository:** [dincoder-plugin](https://github.com/flight505/dincoder-plugin)
 
-**Why:** Better UX than MCP prompts for Claude Code-specific workflows
+**Result:** Premium Claude Code experience with 6 slash commands + 3 agents
+
+---
+
+### Phase 3.2: VS Code & Codex Integration (v0.6.0) - Released 2025-10-17
+**Goal:** Comprehensive documentation and templates for VS Code & Codex
+
+✅ **Deliverables:**
+- Complete VS Code + Copilot integration guide (docs/integration/vscode.md)
+- Complete OpenAI Codex integration guide (docs/integration/codex.md)
+- Ready-to-use template files for both platforms
+- Quick setup instructions with troubleshooting
+- Updated main README with integration sections
+
+**Result:** Effortless onboarding for VS Code/Codex users with copy-paste templates
+
+---
+
+## Current Sprint 🚀
+
+### Phase 3.3: Project Templates (v0.7.0)
+**Timeline:** 1 week
+**Status:** 📋 In Planning
+
+**Features:**
+- Project type templates (web-app, api-service, mobile-app, cli-tool)
+- Pre-configured constitution.md for each type
+- Sample spec.md structures
+- Common architectural patterns
+- Technology stack recommendations
+- Template customization guide
+
+**Why:** Instant project setup with best practices built-in
 
 ---
 
 ## Upcoming Releases 📋
-
-### Phase 3.2: VS Code & Codex Integration Docs (v0.6.0)
-**Timeline:** 1 week
-**Status:** Planned
-
-**Deliverables:**
-- `.vscode/` template files (mcp.json, settings.json)
-- `.github/copilot-instructions.md` template
-- OpenAI Codex `config.toml` template
-- Video tutorials for each platform
-- Setup validation scripts
-
-**Why:** Make onboarding effortless for VS Code/Codex users
-
----
-
-### Phase 3.3: Project Templates (v0.7.0)
-**Timeline:** 1 week
-**Status:** Planned
-
-**Repositories:**
-- `dincoder/template-claude` - Pre-configured for Claude Code
-- `dincoder/template-vscode` - Pre-configured for VS Code Copilot
-- `dincoder/template-universal` - Platform-agnostic setup
-
-**Features:**
-- GitHub template repositories
-- One-click "Use this template" setup
-- Pre-configured MCP server connections
-- Example specs, plans, and tasks
-- CI/CD workflows included
-
-**Why:** Instant project setup, zero configuration
-
----
 
 ### Phase 4: Advanced Features (v0.8.0)
 **Timeline:** 3 weeks
