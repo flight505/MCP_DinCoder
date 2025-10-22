@@ -32,6 +32,11 @@ yarn-error.log*
 *.swp
 *.swo
 .DS_Store
+.claude/
+
+# DinCoder test artifacts (generated when running tools on itself)
+.dincoder/
+specs/*/
 
 # Temporary files
 *.tmp
