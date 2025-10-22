@@ -461,14 +461,36 @@ MCP prompts work across all MCP-compatible clients:
 
 **New in v0.5.0:** For the best Claude Code experience, install the **DinCoder Plugin** which bundles slash commands, specialized agents, and the MCP server into a single package.
 
+### Prerequisites
+
+Before installing the plugin:
+- ✅ Claude Code version 2.0.13 or higher
+- ✅ Node.js >= 18
+- ✅ npm installed
+
 ### Installation
 
+**Step 1: Add the DinCoder marketplace**
 ```bash
 # In Claude Code
-/plugin install dincoder/claude-plugin
+/plugin marketplace add flight505/dincoder-plugin
 ```
 
-After installation, restart Claude Code to activate the plugin.
+**Step 2: Install the plugin**
+```bash
+/plugin install dincoder
+```
+
+**Step 3: Restart Claude Code**
+- Press `Cmd+Q` (Mac) or `Alt+F4` (Windows) to quit, then reopen
+- Or use `Cmd/Ctrl+Shift+P` → "Developer: Reload Window"
+
+### Verify Installation
+
+After restart, check that:
+- Slash commands appear: `/spec`, `/plan`, `/tasks`, `/progress`, `/validate`, `/next`
+- Agents appear: `@spec-writer`, `@plan-architect`, `@task-manager`
+- MCP server is active in Settings → Extensions → MCP Servers
 
 ### What's Included
 
@@ -501,7 +523,7 @@ After installation, restart Claude Code to activate the plugin.
 
 **Recommendation:** Use the plugin for the best experience. Only use the MCP server directly if you're on VS Code, Codex, or another MCP client.
 
-**Plugin Repository:** [dincoder/claude-plugin](https://github.com/dincoder/claude-plugin)
+**Plugin Repository:** [flight505/dincoder-plugin](https://github.com/flight505/dincoder-plugin)
 
 ---
 
