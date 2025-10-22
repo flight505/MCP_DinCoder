@@ -43,10 +43,12 @@ export async function loadTemplate(name: TemplateName): Promise<string> {
   const possiblePaths = [
     // Path 1: Relative to dist/speckit/ (local development with tsup)
     path.join(_dirname, '../../templates', 'speckit', `${name}-template.md`),
-    // Path 2: Relative to package root (npm installation)
+    // Path 2: From dist/ to package root (npx cache case)
+    path.join(_dirname, '../templates', 'speckit', `${name}-template.md`),
+    // Path 3: Relative to package root (npm installation)
     // From node_modules/mcp-dincoder/dist/speckit -> node_modules/mcp-dincoder/templates
     path.join(_dirname, '../..', 'templates', 'speckit', `${name}-template.md`),
-    // Path 3: Resolve from module (handles npx edge cases)
+    // Path 4: Resolve from module (handles npx edge cases)
     path.resolve(process.cwd(), 'node_modules', 'mcp-dincoder', 'templates', 'speckit', `${name}-template.md`),
   ];
 
