@@ -886,7 +886,7 @@ DinCoder is actively evolving! We're at **v0.4.0** with **28/36 stories complete
 - Enhanced collaboration features
 - External integrations (Jira, Linear, GitHub Issues)
 
-**Vote on features and view the complete roadmap:** [ROADMAP.md](ROADMAP.md)
+**Vote on features and view the complete roadmap:** [docs/ROADMAP.md](docs/ROADMAP.md)
 
 ---
 
