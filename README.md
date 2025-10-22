@@ -68,6 +68,12 @@ DinCoder brings the power of [GitHub Spec Kit](https://github.com/github/spec-ki
 
 ## 📦 Installation
 
+> **🎯 Quick Decision Guide:**
+> - **Using Claude Code?** → Install the [Plugin](#-claude-code-plugin-recommended-for-claude-code) (easier, includes slash commands & agents)
+> - **Using VS Code/Codex/Cursor?** → Install [MCP Server Only](#installing-via-smithery) (plugins not supported)
+>
+> ⚠️ **Don't install both!** The plugin automatically installs the MCP server - installing both may cause conflicts.
+
 ### Prerequisites
 
 - Node.js >= 20.0.0
@@ -457,9 +463,13 @@ MCP prompts work across all MCP-compatible clients:
 
 ---
 
-## 🔌 Claude Code Plugin (Premium Experience)
+## 🔌 Claude Code Plugin (Recommended for Claude Code)
 
-**New in v0.5.0:** For the best Claude Code experience, install the **DinCoder Plugin** which bundles slash commands, specialized agents, and the MCP server into a single package.
+**New in v0.5.0:** For the best Claude Code experience, install the **DinCoder Plugin** which bundles slash commands, specialized agents, and automatically installs the MCP server.
+
+> **⚠️ Important:** The plugin **includes** the MCP server - you don't need to install both! Choose **one** installation method:
+> - **Plugin** (Claude Code only) → Slash commands + agents + MCP server (all-in-one)
+> - **MCP Server only** (VS Code, Codex, etc.) → Just the tools (manual setup required)
 
 ### Prerequisites
 
@@ -507,21 +517,30 @@ After restart, check that:
 - `@plan-architect` - Expert at designing technical plans
 - `@task-manager` - Expert at managing tasks and progress
 
-🔧 **Automatic MCP Server** - Installs and configures `mcp-dincoder` automatically
+🔧 **Automatic MCP Server** - Installs and configures `mcp-dincoder@latest` from npm automatically
+   - Runs `npx -y mcp-dincoder@latest` on installation
+   - Always pulls the latest version for bug fixes and features
+   - No manual MCP server setup needed!
 
 📝 **Built-in Documentation** - CLAUDE.md loads automatically with methodology guide
 
 ### Plugin vs MCP Server Only
 
-| Feature | Plugin | MCP Server Only |
+| Feature | Plugin (Claude Code) | MCP Server Only (VS Code/Codex) |
 |---------|--------|-----------------|
-| **Slash Commands** | ✅ `/spec`, `/plan`, etc. | ❌ Use tool names directly |
-| **Specialized Agents** | ✅ `@spec-writer`, etc. | ❌ Not available |
-| **Documentation** | ✅ Auto-loaded CLAUDE.md | ❌ Manual reference |
-| **Installation** | ✅ One command | ⚠️ Manual MCP config |
-| **Updates** | ✅ Version-locked | ⚠️ Manual upgrade |
+| **Platform** | Claude Code 2.0.13+ | VS Code, Codex, Cursor, etc. |
+| **Slash Commands** | ✅ `/spec`, `/plan`, etc. | ❌ Not supported (plugins only) |
+| **Specialized Agents** | ✅ `@spec-writer`, etc. | ❌ Not supported (plugins only) |
+| **MCP Tools** | ✅ 30+ tools (auto-installed) | ✅ 30+ tools (manual install) |
+| **Installation** | ✅ Two commands (`marketplace add` + `install`) | ⚠️ Manual `.mcp.json` config |
+| **MCP Server Updates** | ✅ Auto (uses `@latest`) | ⚠️ Manual version bump |
 
-**Recommendation:** Use the plugin for the best experience. Only use the MCP server directly if you're on VS Code, Codex, or another MCP client.
+**Choose Your Installation Method:**
+
+- **Claude Code users:** Use the **plugin** (recommended) - get slash commands, agents, and MCP server in one package
+- **VS Code/Codex users:** Use the **MCP server only** (plugins not supported on these platforms)
+
+> **⚠️ Avoid Dual Installation:** If you're using the plugin, **do NOT** also manually configure the MCP server in your MCP settings. The plugin handles this automatically and doing both may cause conflicts.
 
 **Plugin Repository:** [flight505/dincoder-plugin](https://github.com/flight505/dincoder-plugin)
 
