@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/flight505-mcp-dincoder-badge.png)](https://mseep.ai/app/flight505-mcp-dincoder)
+
 <div align="center">
   <img width="320" alt="Image@0 5x" src="https://github.com/user-attachments/assets/defd2ef0-5804-431c-8549-618eb3434aee" />
 </div>
