@@ -2,7 +2,7 @@
   <img width="320" alt="Image@0 5x" src="https://github.com/user-attachments/assets/defd2ef0-5804-431c-8549-618eb3434aee" />
 </div>
 
-[![smithery badge](https://smithery.ai/badge/@flight505/mcp_dincoder)](https://smithery.ai/server/@flight505/mcp_dincoder)
+[![LightNow capabilities](https://lightnow.ai/badge/io.github.flight505/mcp_dincoder)](https://lightnow.ai/servers/io.github.flight505/mcp_dincoder)
 
 **D**riven **I**ntent **N**egotiation — **C**ontract-**O**riented **D**eterministic **E**xecutable **R**untime
 
